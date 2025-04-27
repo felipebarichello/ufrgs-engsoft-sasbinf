@@ -21,7 +21,7 @@ function App() {
         // IMPORTANT: Use the relative path '/api/hello'.
         // Vite's proxy (configured in vite.config.js) will forward this
         // to your ASP.NET Core backend during development.
-        const response = await fetch('/api/hello');
+        const response = await fetch('/api/test');
 
         if (!response.ok) {
           // If the response status is not OK (e.g., 404, 500), throw an error
@@ -66,8 +66,8 @@ function App() {
       <h1>Vite + React + API Call</h1> {/* Updated title */}
 
       {/* Display API message or loading/error state */}
-      <div className="card" style={{ backgroundColor: '#f9f9f9', padding: '1rem', margin: '1rem 0', border: '1px solid #eee' }}>
-        <h2>Message from /api/hello:</h2>
+      <div className="card" style={{ padding: '1rem', margin: '1rem 0', border: '1px solid #eee' }}>
+        <h2>Message from /api/test:</h2>
         {error ? (
           <p style={{ color: 'red' }}>Error: {error}</p>
         ) : apiMessage !== null ? (
