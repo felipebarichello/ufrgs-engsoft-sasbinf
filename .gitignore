@@ -1,0 +1,14 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Other common ignores might include:
+# User-specific files
+*.user
+*.suo
+
+# IDE specific folders
+.vs/
+.vscode/
+
+# etc...
