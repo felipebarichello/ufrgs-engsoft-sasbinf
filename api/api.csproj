@@ -6,4 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- Add required wwwrooot -->
+  <Target Name="EnsureWwwRootDirectory" BeforeTargets="Build;Publish">
+    <!-- Optional: Log a message to the build output -->
+    <Message Text="Ensuring wwwroot directory exists at $(MSBuildProjectDirectory)\wwwroot" Importance="high" />
+    <!-- Create the wwwroot directory using the MakeDir task -->
+    <!-- Condition ensures it only runs if the directory doesn't already exist -->
+    <MakeDir Directories="$(MSBuildProjectDirectory)\wwwroot" Condition="!Exists('$(MSBuildProjectDirectory)\wwwroot')" />
+  </Target>
+
 </Project>
