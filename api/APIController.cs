@@ -7,6 +7,5 @@ public class ApiController : ControllerBase
     public IActionResult HealthCheck()
     {
         return Ok(new { message = "api funcionando" });
-
     }
 }
