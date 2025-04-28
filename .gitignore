@@ -12,3 +12,5 @@
 .vscode/
 
 # etc...
+
+/api/wwwroot/

@@ -1,3 +1,11 @@
+# Install the toolchain
+function install() {
+    # Install the client dependencies
+    cd ClientApp
+    npm install
+    cd -
+}
+
 # For running commands like `dotnet watch --project api` as `api watch`
 function api() {
     dotnet $@ --project api
