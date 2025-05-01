@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <nav style={{ padding: '10px', borderBottom: '1px solid #ccc', marginBottom: '10px' }}>
-        <Link to="/" style={{ marginRight: '15px' }}>Home (App.tsx)</Link>
+        <Link to="/" style={{ marginRight: '15px' }}>Home</Link>
         <Link to="/react">React Example</Link>
       </nav>
       
