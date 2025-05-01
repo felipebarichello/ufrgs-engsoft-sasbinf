@@ -1,52 +1,19 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+// import { useState } from "react";
+// import reactLogo from "./assets/react.svg";
+// import viteLogo from "/vite.svg";\
+import { Link } from "react-router-dom";
 import "./App.css";
-import { useGetHealthQuery } from "./api/sasbinfAPI";
+import AppRouter from "./routes/AppRouter";
 
 function App() {
-  // Chama a query do RTK
-  const getHealth = useGetHealthQuery();
-
-  // State para o contador
-  const [count, setCount] = useState(0);
-
-  // Estado de carregamento
-  if (getHealth.isLoading) {
-    return <>PAGINA CARREGANDO...</>;
-  }
-
-  // Estado de erro
-  if (getHealth.isError) {
-    console.error("Erro ao carregar os dados:", getHealth.error); // Imprime o erro no console
-    return <>ERRO AO CARREGAR A PÁGINA. TENTE NOVAMENTE!</>;
-  }
-
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + API Call</h1>
-      {/* Exibe dados da API, se presentes */}
-
-      {/* Contador padrão do Vite */}
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <nav style={{ padding: '10px', borderBottom: '1px solid #ccc', marginBottom: '10px' }}>
+        <Link to="/" style={{ marginRight: '15px' }}>Home (App.tsx)</Link>
+        <Link to="/react">React Example</Link>
+      </nav>
+      
+      <AppRouter />
     </>
   );
 }
