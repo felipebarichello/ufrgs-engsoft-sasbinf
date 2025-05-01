@@ -3,11 +3,14 @@ import { Routes, Route } from 'react-router-dom'; // Import Routes and Route
 import RoomsPage from '../pages/RoomsPage';
 import Error404Page from '../pages/errors/Error404';
 import ReactExamplePage from '../pages/ReactExample';
+import LoginPage from '../pages/LoginPage';
 
 function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<RoomsPage />} />
+
+      <Route path="/login" element={<LoginPage />} />
 
       <Route path="/react" element={<ReactExamplePage />} /> {/* Example of another route */}
 
