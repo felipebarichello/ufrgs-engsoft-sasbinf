@@ -9,13 +9,18 @@ public class ApiController : ControllerBase
     {
         return Ok(new { message = "api funcionando" });
     }
-
-    //after implementing entity framework we change this function to async
+    
     [Route("api/login")]
     [HttpPost]
     public ActionResult LoginPost([FromBody] LoginDTO login)
     {
-        // implement the logic after the entity framework; returns ok now
-        return Ok(new { message = "login approved" });
+        if (login != null && login.user == "qualquercoisa" && login.password == "vazia")
+        {
+            return Ok(new { message = "Login approved" });
+        }
+        else
+        {
+            return Unauthorized(new { message = "Invalid credentials" });
+        }
     }
 }
