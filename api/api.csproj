@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="DotNext" Version="5.21.0" />
+  </ItemGroup>
+
   <!-- Add required wwwrooot -->
   <Target Name="EnsureWwwRootDirectory" BeforeTargets="Build;Publish">
     <!-- Optional: Log a message to the build output -->
