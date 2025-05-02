@@ -10,9 +10,9 @@ public class ApiController : ControllerBase
         return Ok(new { message = "api funcionando" });
     }
 
+    //after implementing entity framework we change this function to async
     [Route("api/login")]
     [HttpPost]
-    //after implementing entity framework we change this function to async
     public ActionResult LoginPost([FromBody] LoginDTO login)
     {
         // implement the logic after the entity framework; returns ok now
