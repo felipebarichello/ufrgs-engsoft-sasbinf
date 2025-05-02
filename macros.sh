@@ -11,14 +11,13 @@ function api() {
     dotnet $@ --project api
 }
 
-# Run, build, lint or preview the frontend
-# Run this function like the following:
-# - client dev => run the client in dev mode
-# - client build => build the client for production
-# - client lint => run the linter on the client
-# - client preview => preview the client in production mode
+# Execute npm commands in the ClientApp directory
+# Use `client run` to run, build, lint or preview the frontend
+# For that, run this function like the following:
+# - client run dev => run the client in dev mode
+# - client run build => build the client for production
+# - client run lint => run the linter on the client
+# - client run preview => preview the client in production mode
 function client() {
-    cd ClientApp
-    npm run $1
-    cd -
+    npm --prefix ./ClientApp $@
 }

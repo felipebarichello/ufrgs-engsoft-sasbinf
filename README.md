@@ -11,8 +11,8 @@
 ## Run (development)
 
 1. In one terminal which sourced `macros.sh`, run `api watch`
-2. In **another** terminal which sourced `macros.sh`, run `client dev`
+2. In **another** terminal which sourced `macros.sh`, run `client run dev`
 
 That's it!
 The API server started by `api watch` will be available at a localhost URL shown in its terminal.
-The client development server started by `client dev` will be available at a localhost URL shown in its terminal.
+The client development server started by `client run dev` will be available at a localhost URL shown in its terminal.
