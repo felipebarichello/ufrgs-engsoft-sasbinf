@@ -1,19 +1,16 @@
-class Room {
-    private int Id;
-    int Capacity;
-    public Room(int id, int capacity)
-    {
+internal class Room {
+    private readonly int Id;
+    private readonly int Capacity;
+    public Room(int id, int capacity) {
         Id = id;
         Capacity = capacity;
     }
 
-    public int GetId()
-    {
+    public int GetId() {
         return Id;
     }
 
-    public int GetCapacity()
-    {
+    public int GetCapacity() {
         return Capacity;
     }
 }

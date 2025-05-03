@@ -1,12 +1,13 @@
-class Scheduler {
+internal class Scheduler {
 
-    private List<Booking> bookings = new List<Booking>();
-    private List<Room> rooms = Rooms.GetRooms();
-    
+    private readonly List<Booking> bookings = new List<Booking>();
+    private readonly List<Room> rooms = Rooms.GetRooms();
+
     private bool isRoomAvailable(Room room, DateTime startDate, DateTime endDate, int capacity) {
         if (room.GetCapacity() < capacity) {
             return false;
         }
+
         foreach (var booking in bookings) {
             if (booking.GetRoom().GetId() == room.GetId()) {
                 if (startDate < booking.GetEndDate() && endDate > booking.GetStartDate()) {
@@ -14,6 +15,7 @@ class Scheduler {
                 }
             }
         }
+
         return true;
     }
     public List<Room> GetAvailableRooms(DateTime startDate, DateTime endDate, int capacity) {
@@ -23,6 +25,7 @@ class Scheduler {
                 availableRooms.Add(room);
             }
         }
+
         return availableRooms;
     }
 
@@ -30,6 +33,7 @@ class Scheduler {
         if (!isRoomAvailable(room, startDate, endDate, room.GetCapacity())) {
             throw new InvalidOperationException("Room is not available for the selected time.");
         }
+
         bookings.Add(Booking.CreateBooking(userId, room, startDate, endDate).Value);
     }
 

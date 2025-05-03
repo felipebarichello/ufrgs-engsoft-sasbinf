@@ -1,6 +1,5 @@
-class Rooms {
-    public static List<Room> GetRooms()
-    {
+internal class Rooms {
+    public static List<Room> GetRooms() {
         return new List<Room>
         {
             new Room(6, 200),

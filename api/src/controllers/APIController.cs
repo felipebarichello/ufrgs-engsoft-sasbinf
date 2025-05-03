@@ -7,8 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
 [Route("api")]
-public class ApiController : ControllerBase
-{
+public class ApiController : ControllerBase {
     public readonly IConfiguration _configuration;
     public readonly string jwtSecret;
 
@@ -18,21 +17,18 @@ public class ApiController : ControllerBase
     }
 
     [HttpGet("health")]
-    public IActionResult HealthCheck()
-    {
+    public IActionResult HealthCheck() {
         return Ok(new { message = "api funcionando" });
     }
-    
+
     [HttpPost("login")]
-    public IActionResult LoginPost([FromBody] LoginDTO login)
-    {
+    public IActionResult LoginPost([FromBody] LoginDTO login) {
         const string stubUsername = "qualquercoisa"; // Stub username for testing
         const string stubPassword = "vazia"; // Stub password for testing
         const string stubUid = "stub-user-id-123"; // Stub user ID for testing
         const double tokenExpirationHours = 1; // Token expiration time in hours
 
-        if (login == null || login.user != stubUsername || login.password != stubPassword)
-        {
+        if (login == null || login.user != stubUsername || login.password != stubPassword) {
             return Unauthorized(new { message = "Invalid credentials" });
         }
 
@@ -64,8 +60,7 @@ public class ApiController : ControllerBase
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         // Return Token: Send the token string and its expiration back to the client
-        return Ok(new
-        {
+        return Ok(new {
             token = tokenString,
             expiration = token.ValidTo
             // You could also include some non-sensitive user info here if desired
