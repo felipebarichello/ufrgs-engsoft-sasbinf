@@ -6,7 +6,7 @@ interface RestrictedProps {
 }
 
 function Restricted({ children }: RestrictedProps) {
-  const isLoggedIn = !!sessionStorage.getItem("authToken");
+  const isLoggedIn = Boolean(sessionStorage.getItem("authToken"));
 
   if (isLoggedIn) {
     // If logged in, render the children components

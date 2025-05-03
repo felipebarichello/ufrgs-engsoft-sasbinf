@@ -9,6 +9,7 @@ export const sasbinf = createApi({
       getHealth: build.query<{ message: string }, void>({  // Espera um objeto com a chave message
         query: () => "health",
       }),
+      
       postLogin: build.mutation({
         query: (login:Login) => ({
           url: "login",

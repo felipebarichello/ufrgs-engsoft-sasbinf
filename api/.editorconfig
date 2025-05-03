@@ -195,7 +195,7 @@ dotnet_diagnostic.IDE0005.severity = warning
 dotnet_diagnostic.IDE2000.severity = warning
 
 # csharp_style_allow_embedded_statements_on_same_line_experimental
-dotnet_diagnostic.IDE2001.severity = warning
+# dotnet_diagnostic.IDE2001.severity = warning
 
 # csharp_style_allow_blank_lines_between_consecutive_braces_experimental
 dotnet_diagnostic.IDE2002.severity = warning
