@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
+[Route("api")]
 public class ApiController : ControllerBase
 {
     public readonly IConfiguration _configuration;
@@ -16,13 +17,13 @@ public class ApiController : ControllerBase
         jwtSecret = _configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret not found in configuration");
     }
 
-    [HttpGet("api/health")]
+    [HttpGet("health")]
     public IActionResult HealthCheck()
     {
         return Ok(new { message = "api funcionando" });
     }
     
-    [Route("api/login")]
+    [Route("login")]
     [HttpPost]
     public IActionResult LoginPost([FromBody] LoginDTO login)
     {
