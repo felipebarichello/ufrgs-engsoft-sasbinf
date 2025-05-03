@@ -1,5 +1,5 @@
 import { useState } from "react";
-import reactLogo from "../assets/react.svg";
+import reactLogo from "#svgs/react.svg";
 import viteLogo from "/vite.svg";
 import { useGetHealthQuery } from "../api/sasbinfAPI";
 

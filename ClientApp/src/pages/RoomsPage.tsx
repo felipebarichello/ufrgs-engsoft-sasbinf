@@ -1,8 +1,8 @@
 import Restricted from "../components/Restricted";
 
-import BigRoom from "../assets/rooms/components/BigRoom";
-import SimpleRoom from "../assets/rooms/components/SimpleRoom";
-import SimpleTable from "../assets/rooms/components/TableSeats";
+import BigRoom from "../components/BigRoom";
+import SimpleRoom from "../components/SimpleRoom";
+import SimpleTable from "../components/TableSeats";
 
 function RoomsPage() {
   return (
