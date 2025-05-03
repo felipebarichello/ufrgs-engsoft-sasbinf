@@ -35,8 +35,10 @@ function LoginPage() {
       // --- Store the token ---
       // Type assertion to tell TypeScript we expect LoginResponse
       const responseData = data as LoginResponse;
-      if (responseData.token) {
+      if (responseData.token && responseData.expiration) {
+        // TODO: Place this inside a ts class
         sessionStorage.setItem("authToken", responseData.token); // Store token
+        sessionStorage.setItem("authTokenExpiration", responseData.expiration); // Store expiration
 
         // --- Redirect on success ---
         // Redirect to the rooms page (or dashboard, or root)

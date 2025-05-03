@@ -6,9 +6,10 @@ interface RestrictedProps {
 }
 
 function Restricted({ children }: RestrictedProps) {
-  const isLoggedIn = Boolean(sessionStorage.getItem("authToken"));
+  const tokenExpiration = sessionStorage.getItem("authTokenExpiration");
+  const isTokenValid = tokenExpiration ? new Date(tokenExpiration) > new Date() : false;
 
-  if (isLoggedIn) {
+  if (isTokenValid) {
     // If logged in, render the children components
     return <>{children}</>;
   } else {
