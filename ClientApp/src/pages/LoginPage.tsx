@@ -71,7 +71,7 @@ function LoginPage() {
           />
         </div>
         {/* Submit button */}
-        <button type="submit" disabled={emptyInputs(formState) || meta.isLoading}>
+        <button type="submit" disabled={anyInputIsEmpty(formState) || meta.isLoading}>
           {meta.isLoading ? "Logging in..." : "Log In"}
         </button>
       </form>
