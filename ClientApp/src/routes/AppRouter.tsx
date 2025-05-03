@@ -17,7 +17,7 @@ function AppRouter() {
 
       <Route path="/react" element={<ReactExamplePage />} />
 
-      <Route path="/svg-test" element={<BigRoomIcon/>} />
+      <Route path="/svg-test" element={<BigRoomIcon />} />
 
       {/* Catch-all for 404 */}
       <Route path="*" element={<Error404Page />} />
