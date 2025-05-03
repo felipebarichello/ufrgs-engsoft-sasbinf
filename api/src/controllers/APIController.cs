@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -66,4 +67,22 @@ public class ApiController : ControllerBase {
             // user = new { username = stubUsername }
         });
     }
+
+    [HttpPost("checkauth")] // Define the route and HTTP method
+    [Authorize]             // Require a valid JWT (triggers authentication middleware)
+    public IActionResult CheckAuthStatus()
+    {
+        // If the execution reaches this point, the [Authorize] attribute
+        // has confirmed that the JWT presented by the client is valid
+        // (signature, expiration, issuer, audience all checked by the middleware). 
+        // You can optionally retrieve claims from the validated token
+        var username = User.FindFirstValue(ClaimTypes.Name);
+        var userId = User.FindFirstValue("uid"); // Your custom claim   
+        // Return a success response, optionally including some user info
+        return Ok(new {
+            user = username,
+            uid = userId
+        });
+    }
+    // ----------------------------------------------------
 }
