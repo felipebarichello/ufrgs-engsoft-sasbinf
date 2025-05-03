@@ -24,7 +24,7 @@ public class ApiController : ControllerBase
     
     [Route("api/login")]
     [HttpPost]
-    public async Task<ActionResult> LoginPost([FromBody] LoginDTO login)
+    public IActionResult LoginPost([FromBody] LoginDTO login)
     {
         const string stubUsername = "qualquercoisa"; // Stub username for testing
         const string stubPassword = "vazia"; // Stub password for testing
@@ -33,7 +33,6 @@ public class ApiController : ControllerBase
 
         if (login == null || login.user != stubUsername || login.password != stubPassword)
         {
-            await Task.Delay(50); // Simulate a delay for invalid login attempts
             return Unauthorized(new { message = "Invalid credentials" });
         }
 
