@@ -23,8 +23,7 @@ public class ApiController : ControllerBase
         return Ok(new { message = "api funcionando" });
     }
     
-    [Route("login")]
-    [HttpPost]
+    [HttpPost("login")]
     public IActionResult LoginPost([FromBody] LoginDTO login)
     {
         const string stubUsername = "qualquercoisa"; // Stub username for testing
