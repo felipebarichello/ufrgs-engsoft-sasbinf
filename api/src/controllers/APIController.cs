@@ -11,8 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 public class ApiController : ControllerBase {
     private const string STUB_USERNAME = "qualquercoisa"; // Stub username for testing
     private const string STUB_PASSWORD = "vazia"; // Stub password for testing
-    private const string STUP_UID = "stub-user-id-123"; // Stub user ID for testing
+    private const string STUB_UID = "stub-user-id-123"; // Stub user ID for testing
     private const double TOKEN_EXPIRATION_HOURS = 1; // Token expiration time in hours
+    private const string STUB_LOGIN_KEY = "stub-login-key"; // Stub login key for testing
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
 
@@ -35,13 +36,12 @@ public class ApiController : ControllerBase {
         var authClaims = new List<Claim>
         {
             // Standard claim types:
-            new(ClaimTypes.Name, STUB_USERNAME), // Username
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique Token ID
+            new(ClaimTypes.Name, STUB_USERNAME), // TODO: Username
+            new(ClaimTypes.NameIdentifier, STUB_UID), // TODO: In a real app with Identity, we'd use user.Id from the database
 
             // You can add custom claims or a stub user ID if needed:
-            new("uid", STUP_UID) // Example custom claim for user ID
-            // In a real app with Identity, we'd use user.Id from the database:
-            // new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new("login_key", STUB_LOGIN_KEY), // TODO: Should be stored in the database
         };
 
         // Get Secret Key: Read from configuration and encode
