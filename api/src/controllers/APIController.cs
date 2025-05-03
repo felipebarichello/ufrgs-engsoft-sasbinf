@@ -8,16 +8,16 @@ using Microsoft.IdentityModel.Tokens;
 [ApiController]
 [Route("api")]
 public class ApiController : ControllerBase {
-    public readonly IConfiguration Configuration;
-    public readonly string JwtSecret;
     private const string STUB_USERNAME = "qualquercoisa"; // Stub username for testing
     private const string STUB_PASSWORD = "vazia"; // Stub password for testing
     private const string STUP_UID = "stub-user-id-123"; // Stub user ID for testing
     private const double TOKEN_EXPIRATION_HOURS = 1; // Token expiration time in hours
+    private readonly IConfiguration configuration;
+    private readonly string jwtSecret;
 
     public ApiController(IConfiguration configuration) {
-        Configuration = configuration;
-        JwtSecret = Configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret not found in configuration");
+        this.configuration = configuration;
+        jwtSecret = this.configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret not found in configuration");
     }
 
     [HttpGet("health")]
@@ -44,12 +44,12 @@ public class ApiController : ControllerBase {
         };
 
         // Get Secret Key: Read from configuration and encode
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSecret));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
         // Create Token Object: Define token parameters
         var token = new JwtSecurityToken(
-            issuer: Configuration["JWT:ValidIssuer"],
-            audience: Configuration["JWT:ValidAudience"],
+            issuer: configuration["JWT:ValidIssuer"],
+            audience: configuration["JWT:ValidAudience"],
             expires: DateTime.Now.AddHours(TOKEN_EXPIRATION_HOURS),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256) // Use HMAC SHA256 algorithm
