@@ -10,6 +10,10 @@ using Microsoft.IdentityModel.Tokens;
 public class ApiController : ControllerBase {
     public readonly IConfiguration Configuration;
     public readonly string JwtSecret;
+    private const string STUB_USERNAME = "qualquercoisa"; // Stub username for testing
+    private const string STUB_PASSWORD = "vazia"; // Stub password for testing
+    private const string STUP_UID = "stub-user-id-123"; // Stub user ID for testing
+    private const double TOKEN_EXPIRATION_HOURS = 1; // Token expiration time in hours
 
     public ApiController(IConfiguration configuration) {
         Configuration = configuration;
@@ -23,23 +27,18 @@ public class ApiController : ControllerBase {
 
     [HttpPost("login")]
     public IActionResult LoginPost([FromBody] LoginDTO login) {
-        const string StubUsername = "qualquercoisa"; // Stub username for testing
-        const string StubPassword = "vazia"; // Stub password for testing
-        const string StubUid = "stub-user-id-123"; // Stub user ID for testing
-        const double TokenExpirationHours = 1; // Token expiration time in hours
-
-        if (login == null || login.user != StubUsername || login.password != StubPassword) {
+        if (login == null || login.user != STUB_USERNAME || login.password != STUB_PASSWORD) {
             return Unauthorized(new { message = "Invalid credentials" });
         }
 
         var authClaims = new List<Claim>
         {
             // Standard claim types:
-            new(ClaimTypes.Name, StubUsername), // Username
+            new(ClaimTypes.Name, STUB_USERNAME), // Username
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique Token ID
 
             // You can add custom claims or a stub user ID if needed:
-            new("uid", StubUid) // Example custom claim for user ID
+            new("uid", STUP_UID) // Example custom claim for user ID
             // In a real app with Identity, we'd use user.Id from the database:
             // new Claim(ClaimTypes.NameIdentifier, user.Id),
         };
@@ -51,7 +50,7 @@ public class ApiController : ControllerBase {
         var token = new JwtSecurityToken(
             issuer: Configuration["JWT:ValidIssuer"],
             audience: Configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(TokenExpirationHours),
+            expires: DateTime.Now.AddHours(TOKEN_EXPIRATION_HOURS),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256) // Use HMAC SHA256 algorithm
         );
