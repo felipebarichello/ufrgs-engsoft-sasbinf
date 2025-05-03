@@ -4,6 +4,7 @@ import RoomsPage from '../pages/RoomsPage';
 import Error404Page from '../pages/errors/Error404';
 import ReactExamplePage from '../pages/ReactExample';
 import LoginPage from '../pages/LoginPage';
+import BigRoomIcon from '../assets/rooms/components/BigRoom';
 
 function AppRouter() {
   return (
@@ -15,6 +16,8 @@ function AppRouter() {
       <Route path="/rooms" element={<RoomsPage />} />
 
       <Route path="/react" element={<ReactExamplePage />} />
+
+      <Route path="/svg-test" element={<BigRoomIcon/>} />
 
       {/* Catch-all for 404 */}
       <Route path="*" element={<Error404Page />} />
