@@ -21,16 +21,20 @@ function LoginPage() {
 
   // Use useEffect to react to changes in the mutation state (isSuccess, data)
   useEffect(() => {
-    if (!meta.isSuccess || 'message' in meta.data) {
+    if (!meta.isSuccess && !meta.isError) { // Not equivalent to meta.isLoading
+      return;
+    }
+
+    if (meta.isError || !meta.data || "message" in meta.data) {
       throw new Error("Login Failed"); // TODO: Handle this error properly
-    }      
-    
-    console.log("Login successful!");
-
-    sessionStorage.setItem("authToken", meta.data.token); // Store token
-    sessionStorage.setItem("authTokenExpiration", meta.data.expiration); // Store expiration
-
-    navigate("/rooms")
+    } else if (meta.isSuccess) {
+      console.log("Login successful!");
+  
+      sessionStorage.setItem("authToken", meta.data.token); // Store token
+      sessionStorage.setItem("authTokenExpiration", meta.data.expiration); // Store expiration
+  
+      navigate("/rooms")
+    }
   }, [meta, navigate]); // Dependencies for the effect
 
   return (
