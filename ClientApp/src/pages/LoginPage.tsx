@@ -6,7 +6,7 @@ import { Login } from "../schemas/login";
 
 function LoginPage() {
   // The login mutation hook now returns more info, including 'data' and 'isSuccess'
-  const [login, meta] = usePostLoginMutation();
+  const [login, loginState] = usePostLoginMutation();
   const [formState, setFormState] = useState<Login>({ user: "", password: "" });
   const navigate = useNavigate(); // Hook for programmatic navigation
 
@@ -21,15 +21,15 @@ function LoginPage() {
 
   // Use useEffect to react to changes in the mutation state (isSuccess, data)
   useEffect(() => {
-    if (meta.isSuccess) {
+    if (loginState.isSuccess) {
       console.log("Login successful!");
   
-      sessionStorage.setItem("authToken", meta.data.token); // Store token
-      sessionStorage.setItem("authTokenExpiration", meta.data.expiration); // Store expiration
+      sessionStorage.setItem("authToken", loginState.data.token); // Store token
+      sessionStorage.setItem("authTokenExpiration", loginState.data.expiration); // Store expiration
   
       navigate("/rooms")
     }
-  }, [meta, navigate]); // Dependencies for the effect
+  }, [loginState, navigate]); // Dependencies for the effect
 
   return (
     <div>
@@ -51,7 +51,7 @@ function LoginPage() {
               setFormState({ ...formState, user: e.target.value });
             }}
             value={formState.user}
-            disabled={meta.isLoading} // Disable inputs while loading
+            disabled={loginState.isLoading} // Disable inputs while loading
           />
         </div>
         {/* Password input */}
@@ -65,17 +65,17 @@ function LoginPage() {
               setFormState({ ...formState, password: e.target.value });
             }}
             value={formState.password}
-            disabled={meta.isLoading} // Disable inputs while loading
+            disabled={loginState.isLoading} // Disable inputs while loading
           />
         </div>
         {/* Submit button */}
-        <button type="submit" disabled={anyInputIsEmpty(formState) || meta.isLoading}>
-          {meta.isLoading ? "Logging in..." : "Log In"}
+        <button type="submit" disabled={anyInputIsEmpty(formState) || loginState.isLoading}>
+          {loginState.isLoading ? "Logging in..." : "Log In"}
         </button>
       </form>
 
       {/* Display error message if the mutation fails */}
-      {meta.isError && <p style={{ color: "red" }}>Login failed, please try again.</p>}
+      {loginState.isError && <p style={{ color: "red" }}>Login failed, please try again.</p>}
     </div>
   );
 }
