@@ -28,6 +28,10 @@ internal class Program {
             // options.Events = new JwtBearerEvents { ... };
         });
 
+
+        // var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
+        // logger.LogInformation("Example: {Var}", 123);
+
         // --- Add Authorization Services ---
         // Ensures services needed by UseAuthorization() middleware are registered
         builder.Services.AddAuthorization();
@@ -53,7 +57,6 @@ internal class Program {
 
         // TODO: Configure 404 pages
         app.MapFallbackToFile("index.html"); // When endpoint not found, serve the index.html file for the SPA routing to handle
-
         app.Run();
     }
 }
