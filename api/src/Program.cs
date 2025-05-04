@@ -28,7 +28,6 @@ internal class Program {
             // options.Events = new JwtBearerEvents { ... };
         });
 
-
         // var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
         // logger.LogInformation("Example: {Var}", 123);
 
