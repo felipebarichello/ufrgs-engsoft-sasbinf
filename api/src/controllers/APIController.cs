@@ -5,6 +5,7 @@ using api.src.Models;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
@@ -32,10 +33,16 @@ public class ApiController : ControllerBase {
     }
 
     [HttpPost("login")]
-    public IActionResult LoginPost([FromBody] LoginDTO login) {
-        if (login == null || login.user != STUB_USERNAME || login.password != STUB_PASSWORD) {
-            return Unauthorized(new { message = "Invalid credentials" });
+    public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
+
+        var user = await _dbContext.Users
+        .Where(u => u.UserName == login.user && u.Password == login.password).FirstOrDefaultAsync();
+
+        if (user == null) {
+            return Unauthorized(new { message = "user not found" });
         }
+
+        System.Console.WriteLine("user: " + user);
 
         var authClaims = new List<Claim>
         {
