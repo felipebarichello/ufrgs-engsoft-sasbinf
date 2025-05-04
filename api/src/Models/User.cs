@@ -4,7 +4,6 @@ namespace api.src.Models {
         public string UserName { get; set; } = default!;
         public string Password { get; set; } = default!;
         public int? BookingId { get; set; }
-        public bool IsTimedOut { get; set; } = default!;
         public DateTime? TimeOutAt { get; set; }
         public DateTime CreatedAt { get; set; } = default!;
 

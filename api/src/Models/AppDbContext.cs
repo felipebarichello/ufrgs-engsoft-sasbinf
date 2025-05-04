@@ -11,7 +11,7 @@ namespace api.src.Models {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>(model => {
-                model.ToTable("users");
+                model.ToTable("members");
                 model.HasKey(u => u.UserId);
 
                 // Configuração das colunas
@@ -22,29 +22,28 @@ namespace api.src.Models {
 
                 model.Property(u => u.UserName)
                     .HasColumnName("username")
+                    .HasColumnType("nvarchar(16)")
                     .HasMaxLength(50)
                     .IsRequired();
 
                 model.Property(u => u.Password)
                     .HasColumnName("passwd_hash")
-                    .HasMaxLength(255)
+                    .HasColumnType("nvarchar(256)")
+                    .HasMaxLength(256)
                     .IsRequired();
 
                 model.Property(u => u.BookingId)
                     .HasColumnName("booking_id")
                     .HasColumnType("bigint");
 
-                model.Property(u => u.IsTimedOut)
-                    .HasColumnName("is_timedout")
-                    .HasDefaultValue(false);
-
                 model.Property(u => u.TimeOutAt)
-                    .HasColumnName("timedout_at")
-                    .HasColumnType("datetime");
+                    .HasColumnName("timeout_until")
+                    .HasColumnType("timestamp");
 
                 model.Property(u => u.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime")
+                    .HasColumnType("timestamp")
+                    .IsRequired()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
