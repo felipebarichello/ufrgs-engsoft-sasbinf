@@ -1,7 +1,10 @@
+import { useState } from "react";
 import BigRoom from "../components/BigRoom";
 import Restricted from "../components/Restricted";
 import SimpleRoom from "../components/SimpleRoom";
-// import SimpleTable from "../components/TableSeats";
+import { VerticalSpacer } from "../components/Spacer";
+// import {HorizontalSpacer} from "../components/Spacer";
+import SimpleTable from "../components/TableSeats";
 
 function RoomsPage() {
   return (
@@ -9,7 +12,7 @@ function RoomsPage() {
       <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
         <strong>This is an example</strong>
         <strong>This is another example</strong>
-        <RoomSelector />
+        <INFLibrary />
       </div>
     </Restricted >
   );
@@ -17,26 +20,41 @@ function RoomsPage() {
 
 export default RoomsPage;
 
-
-function RoomSelector() {
+function INFLibrary() {
   return (
     <div>
-      <SimpleRoom style={SimpleRoomStyle} />
-      <SimpleRoom style={SimpleRoomStyle} />
-      <SimpleRoom style={SimpleRoomStyle} />
-      <SimpleRoom style={SimpleRoomStyle} />
-      <SimpleRoom style={SimpleRoomStyle} />
-      <SimpleRoom style={SimpleRoomStyle} />
-      <BigRoom style={BigRoomStyle} />
+      <h5>Salas Disponíveis</h5>
+      <div className="d-flex flex-row" style={{ width: "25vw", border: "3px solid black", backgroundColor: "#D9D9D9" }}>
+        <RoomSelector />
+        <StandaloneTables />
+      </div>
     </div>
   )
 }
 
-const SimpleRoomStyle = {
-  width: "10vw",
-  borderTop: "3px solid black",
-  borderLeft: "3px solid black",
-  borderRight: "3px solid black",
+const SimpleRoomStyle = { width: "40%", borderRight: "3px solid black", borderBottom: "3px solid black" }
+const BigRoomStyle = { width: "40%", borderRight: "3px solid black" }
+function RoomSelector() {
+  const simpleRooms = Object.freeze([0, 1, 2, 3, 4, 5]) // Trust me, I know what I'm doing
+  const [selected, setSelected] = useState(2)
+  return (
+    <div >
+      {simpleRooms.map((index) => <SimpleRoom selected={index === selected} props={{ style: SimpleRoomStyle, onClick: () => { setSelected(index) } }} />)}
+      <BigRoom selected={selected === 6} props={{ style: BigRoomStyle, onClick: () => { setSelected(6) } }} />
+    </div>
+  )
 }
 
-const BigRoomStyle = { width: "10vw", border: "3px solid black" }
+const SimpleTableStyle = { width: "40%", paddingBottom: "15px" }
+function StandaloneTables() {
+  return (
+    <div className="d-flex flex-column">
+      <VerticalSpacer size={`${(1280 + 100) * 0.25 * 0.4 * 36 / 84}px`} />
+      <SimpleTable style={SimpleTableStyle} />
+      <SimpleTable style={SimpleTableStyle} />
+      <SimpleTable style={SimpleTableStyle} />
+      <SimpleTable style={SimpleTableStyle} />
+      <SimpleTable style={SimpleTableStyle} />
+    </div>)
+}
+
