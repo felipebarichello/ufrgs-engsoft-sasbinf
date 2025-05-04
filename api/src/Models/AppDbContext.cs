@@ -12,12 +12,12 @@ namespace api.src.Models {
 
             modelBuilder.Entity<User>(model => {
                 model.ToTable("users");
-                model.HasKey(u => u.UserId); // Chave primária do tipo GUID
+                model.HasKey(u => u.UserId);
 
                 // Configuração das colunas
                 model.Property(u => u.UserId)
                     .HasColumnName("uid")
-                    .HasColumnType("char(36)") // Formato padrão para GUID no MySQL
+                    .HasColumnType("bigint")
                     .IsRequired();
 
                 model.Property(u => u.UserName)
@@ -32,7 +32,7 @@ namespace api.src.Models {
 
                 model.Property(u => u.BookingId)
                     .HasColumnName("booking_id")
-                    .HasColumnType("char(36)"); // GUID opcional
+                    .HasColumnType("bigint");
 
                 model.Property(u => u.IsTimedOut)
                     .HasColumnName("is_timedout")
