@@ -1,22 +1,42 @@
-import Restricted from "../components/Restricted";
-
 import BigRoom from "../components/BigRoom";
+import Restricted from "../components/Restricted";
 import SimpleRoom from "../components/SimpleRoom";
-import SimpleTable from "../components/TableSeats";
+// import SimpleTable from "../components/TableSeats";
 
 function RoomsPage() {
   return (
     <Restricted>
-      <div>
-        <h2>This is a Simple Page</h2>
-        <p>It has minimal content and exists on a different route.</p>
-        <a href="/">Go back to Home</a> {/* Simple link back */}
+      <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
+        <strong>This is an example</strong>
+        <strong>This is another example</strong>
+        <RoomSelector />
       </div>
-      <SimpleRoom height="360px" width="840px" />
-      <BigRoom height="840px" width="510px"/>
-      <SimpleTable width="840px"/>
-    </Restricted>
+    </Restricted >
   );
 }
 
 export default RoomsPage;
+
+
+function RoomSelector() {
+  return (
+    <div>
+      <SimpleRoom style={SimpleRoomStyle} />
+      <SimpleRoom style={SimpleRoomStyle} />
+      <SimpleRoom style={SimpleRoomStyle} />
+      <SimpleRoom style={SimpleRoomStyle} />
+      <SimpleRoom style={SimpleRoomStyle} />
+      <SimpleRoom style={SimpleRoomStyle} />
+      <BigRoom style={BigRoomStyle} />
+    </div>
+  )
+}
+
+const SimpleRoomStyle = {
+  width: "10vw",
+  borderTop: "3px solid black",
+  borderLeft: "3px solid black",
+  borderRight: "3px solid black",
+}
+
+const BigRoomStyle = { width: "10vw", border: "3px solid black" }

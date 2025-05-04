@@ -7,7 +7,6 @@ const SimpleRoom = (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLImageEl
         <div>
             <img
                 src={SimpleRoomSvg}
-                // style={{ height: "100%", width: "100%" }}
                 alt="SimpleRoomImg"
                 {...props}
             />
