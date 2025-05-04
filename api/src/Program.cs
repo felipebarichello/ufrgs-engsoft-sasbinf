@@ -35,12 +35,10 @@ internal class Program {
 
         builder.Services.AddControllers();
 
-        // Adiciona o DbContext com MySQL
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
-                new MySqlServerVersion(new Version(8, 0, 23)) // Versão do seu MySQL
-            )
+                new MySqlServerVersion(new Version(8, 0, 23)), mySqlOptions => mySqlOptions.EnableRetryOnFailure())
         );
 
         var app = builder.Build();
