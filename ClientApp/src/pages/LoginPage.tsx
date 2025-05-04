@@ -25,9 +25,7 @@ function LoginPage() {
       return;
     }
 
-    if (meta.isError || !meta.data || "message" in meta.data) {
-      throw new Error("Login Failed"); // TODO: Handle this error properly
-    } else if (meta.isSuccess) {
+    if (meta.isSuccess && !meta.isError && meta.data && !("message" in meta.data)) {
       console.log("Login successful!");
   
       sessionStorage.setItem("authToken", meta.data.token); // Store token
