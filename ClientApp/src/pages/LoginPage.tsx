@@ -21,11 +21,7 @@ function LoginPage() {
 
   // Use useEffect to react to changes in the mutation state (isSuccess, data)
   useEffect(() => {
-    if (!meta.isSuccess && !meta.isError) { // Not equivalent to meta.isLoading
-      return;
-    }
-
-    if (meta.isSuccess && !meta.isError && meta.data && !("message" in meta.data)) {
+    if (meta.isSuccess) {
       console.log("Login successful!");
   
       sessionStorage.setItem("authToken", meta.data.token); // Store token

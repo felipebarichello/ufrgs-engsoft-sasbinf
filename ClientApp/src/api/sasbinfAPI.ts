@@ -22,7 +22,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(LoginResponseSchema, response)
         } catch {
-          return { message: "Invalid credentials" }
+          throw new Error("Invalid credentials");
         }
       }
     })
