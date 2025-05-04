@@ -4,6 +4,7 @@ import RoomsPage from '../pages/RoomsPage';
 import Error404Page from '../pages/errors/Error404';
 import ReactExamplePage from '../pages/ReactExample';
 import LoginPage from '../pages/LoginPage';
+import DevContainer from '../pages/DevContainer';
 
 function AppRouter() {
   return (
@@ -15,6 +16,8 @@ function AppRouter() {
       <Route path="/rooms" element={<RoomsPage />} />
 
       <Route path="/react" element={<ReactExamplePage />} />
+
+      <Route path="/dev" element={<DevContainer />} />
 
       {/* Catch-all for 404 */}
       <Route path="*" element={<Error404Page />} />
