@@ -1,4 +1,6 @@
 using System.Text;
+using api.src.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 internal class Program {
@@ -10,8 +12,7 @@ internal class Program {
         builder.Services.AddAuthentication()
         .AddJwtBearer(options => // Configure the specifics for the JWT Bearer scheme
         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
+            options.TokenValidationParameters = new TokenValidationParameters {
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
@@ -33,6 +34,14 @@ internal class Program {
         // ----------------------------------
 
         builder.Services.AddControllers();
+
+        // Adiciona o DbContext com MySQL
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                new MySqlServerVersion(new Version(8, 0, 23)) // Versão do seu MySQL
+            )
+        );
 
         var app = builder.Build();
 

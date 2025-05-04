@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using api.src.Models;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,12 @@ public class ApiController : ControllerBase {
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
 
-    public ApiController(IConfiguration configuration) {
+    private readonly AppDbContext _dbContext;
+
+    public ApiController(IConfiguration configuration, AppDbContext dbContext) {
         this.configuration = configuration;
         jwtSecret = this.configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret not found in configuration");
+        _dbContext = dbContext;
     }
 
     [HttpGet("health")]
@@ -70,8 +74,7 @@ public class ApiController : ControllerBase {
 
     [HttpPost("checkauth")] // Define the route and HTTP method
     [Authorize]             // Require a valid JWT (triggers authentication middleware)
-    public IActionResult CheckAuthStatus()
-    {
+    public IActionResult CheckAuthStatus() {
         // If the execution reaches this point, the [Authorize] attribute
         // has confirmed that the JWT presented by the client is valid
         // (signature, expiration, issuer, audience all checked by the middleware). 
