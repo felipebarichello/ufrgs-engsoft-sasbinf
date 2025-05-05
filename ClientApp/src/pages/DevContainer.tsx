@@ -1,20 +1,31 @@
-import PointerSvg from '#svgs/Pointer.svg'
+import Pointer from "../components/Pointer";
+import SimpleRoom from "../components/SimpleRoom";
 
 export default function DevContainer() {
-    return <Pointer roomNumber={200} />
+  return <RoomWithPointer roomNumber={201} selected={false} />;
 }
 
-function Pointer({ roomNumber }: { roomNumber: number }) {
-    if (roomNumber < 200 || roomNumber > 299) { return <>ERROR</> }
-    return (
-        <div style={{ position: "relative", textAlign: "center", color: "white", }}>
-            <img src={PointerSvg} alt="SimpleRoomImg" />
-            <div style={{
-                position: "absolute",
-                top: "35%",
-                left: "10%",
-            }}><h1>Sala {roomNumber}</h1></div>
-        </div>
-    )
+function RoomWithPointer({
+  roomNumber,
+  selected,
+}: {
+  roomNumber: number;
+  selected: boolean;
+}) {
+  return (
+    <div className="d-flex flex-row" style={{ width: "600px" }}>
+      <Pointer
+        enabled={true}
+        roomNumber={roomNumber}
+        props={{ style: { height: "70%" } }}
+      />
+      <SimpleRoom selected={selected} props={{ style: SimpleRoomStyle }} />
+    </div>
+  );
 }
 
+const SimpleRoomStyle = {
+  width: "40%",
+  borderRight: "3px solid black",
+  borderBottom: "3px solid black",
+};
