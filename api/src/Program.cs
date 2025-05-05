@@ -1,4 +1,6 @@
 using System.Text;
+using api.src.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 internal class Program {
@@ -10,8 +12,7 @@ internal class Program {
         builder.Services.AddAuthentication()
         .AddJwtBearer(options => // Configure the specifics for the JWT Bearer scheme
         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
+            options.TokenValidationParameters = new TokenValidationParameters {
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
@@ -27,12 +28,21 @@ internal class Program {
             // options.Events = new JwtBearerEvents { ... };
         });
 
+        // var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
+        // logger.LogInformation("Example: {Var}", 123);
+
         // --- Add Authorization Services ---
         // Ensures services needed by UseAuthorization() middleware are registered
         builder.Services.AddAuthorization();
         // ----------------------------------
 
         builder.Services.AddControllers();
+
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                new MySqlServerVersion(new Version(8, 0, 23)), mySqlOptions => mySqlOptions.EnableRetryOnFailure())
+        );
 
         var app = builder.Build();
 
@@ -46,7 +56,6 @@ internal class Program {
 
         // TODO: Configure 404 pages
         app.MapFallbackToFile("index.html"); // When endpoint not found, serve the index.html file for the SPA routing to handle
-
         app.Run();
     }
 }
