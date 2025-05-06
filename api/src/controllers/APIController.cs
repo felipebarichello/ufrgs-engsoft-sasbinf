@@ -36,7 +36,8 @@ public class ApiController : ControllerBase {
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
 
         var user = await _dbContext.Users
-        .Where(u => u.UserName == login.user && u.Password == login.password).FirstOrDefaultAsync();
+            .Where(u => u.UserName == login.user && u.Password == login.password)
+            .FirstOrDefaultAsync();
 
         if (user == null) {
             return Unauthorized(new { message = "user not found" });
