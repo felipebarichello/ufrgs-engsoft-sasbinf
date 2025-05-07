@@ -11,8 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 [ApiController]
 [Route("api")]
 public class ApiController : ControllerBase {
-    private const string STUB_USERNAME = "qualquercoisa"; // Stub username for testing
-    private const string STUB_PASSWORD = "vazia"; // Stub password for testing
     private const string STUB_UID = "stub-user-id-123"; // Stub user ID for testing
     private const double TOKEN_EXPIRATION_HOURS = 1; // Token expiration time in hours
     private const string STUB_LOGIN_KEY = "stub-login-key"; // Stub login key for testing
@@ -43,13 +41,11 @@ public class ApiController : ControllerBase {
             return Unauthorized(new { message = "user not found" });
         }
 
-        System.Console.WriteLine("user: " + user);
-
         var authClaims = new List<Claim>
         {
             // Standard claim types:
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique Token ID
-            new(ClaimTypes.Name, STUB_USERNAME), // TODO: Username
+            new(ClaimTypes.Name, login.user), // TODO: Username
             new(ClaimTypes.NameIdentifier, STUB_UID), // TODO: In a real app with Identity, we'd use user.Id from the database
 
             // You can add custom claims or a stub user ID if needed:
