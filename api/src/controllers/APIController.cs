@@ -34,7 +34,7 @@ public class ApiController : ControllerBase {
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
 
         var user = await _dbContext.Members
-            .Where(u => u.Username == login.user && u.Password == login.password)
+            .Where(u => u.Username == login.user && u.Password == login.password) // TODO: Password should be hashed
             .FirstOrDefaultAsync();
 
         if (user == null) {
