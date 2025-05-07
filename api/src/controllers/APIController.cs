@@ -32,6 +32,25 @@ public class ApiController : ControllerBase {
         return Ok(new { message = "api funcionando" });
     }
 
+    [HttpPost("availableRooms")]
+    public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search) {
+
+        var startDateTime = DateTime.Parse(search.day + " " + search.startTime);
+        var endDateTime = DateTime.Parse(search.day + " " + search.endTime);
+
+        var conflictingBookings = await _dbContext.Bookings
+            .Where(b => b.StartDate < endDateTime && b.EndDate > startDateTime)
+            .ToListAsync();
+
+        var conflictingRoomIds = conflictingBookings.Select(b => b.RoomId).ToList();
+
+        var availableRooms = await _dbContext.Rooms
+            .Where(r => !conflictingRoomIds.Contains(r.RoomId) && r.Capacity >= search.capacity)
+            .ToListAsync();
+
+        return Ok(new AvailableRoomsResponseDTO(availableRooms.Select(r => r.RoomId).ToList()));
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
 
