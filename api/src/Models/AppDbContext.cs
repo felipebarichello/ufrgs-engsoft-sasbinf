@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.src.Models {
     public class AppDbContext : DbContext {
-        public DbSet<Member> Users { get; set; }
+        public DbSet<Member> Members { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Room> Rooms { get; set; }
 
@@ -21,7 +21,7 @@ namespace api.src.Models {
                     .HasColumnType("bigint")
                     .IsRequired();
 
-                model.Property(u => u.UserName)
+                model.Property(u => u.Username)
                     .HasColumnName("username")
                     .HasColumnType("nvarchar(16)")
                     .HasMaxLength(50)

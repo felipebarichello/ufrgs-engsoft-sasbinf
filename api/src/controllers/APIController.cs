@@ -35,8 +35,8 @@ public class ApiController : ControllerBase {
     [HttpPost("login")]
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
 
-        var user = await _dbContext.Users
-            .Where(u => u.UserName == login.user && u.Password == login.password)
+        var user = await _dbContext.Members
+            .Where(u => u.Username == login.user && u.Password == login.password)
             .FirstOrDefaultAsync();
 
         if (user == null) {
