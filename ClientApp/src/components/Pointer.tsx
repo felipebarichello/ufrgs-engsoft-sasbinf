@@ -25,8 +25,10 @@ export default function Pointer({
     );
   }
 
+  const numToLetter = ["A", "B", "C", "D", "E", "F"];
+
   return (
-    <div >
+    <div>
       <div style={{ paddingTop: `${roomNumber * 70}px`, width: "1px" }} />
       <div
         {...props}
@@ -45,7 +47,7 @@ export default function Pointer({
             width: "60%",
           }}
         >
-          <p>Sala {200 + roomNumber}</p>
+          <p>Sala 104{numToLetter[6 - roomNumber]}</p>
         </div>
       </div>
     </div>
