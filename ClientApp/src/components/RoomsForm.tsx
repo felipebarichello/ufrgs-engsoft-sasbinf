@@ -40,7 +40,7 @@ function RoomsFormInputs({
   setInputs: React.Dispatch<React.SetStateAction<RoomFilters>>;
   setAvailable: (a: number[]) => void;
 }) {
-  const [triggerAvailableRoomsQuery, { error, isLoading, data }] =
+  const [triggerAvailableRoomsQuery, availableRoomsState] =
     useLazyPostAvailableRoomsSearchQuery();
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -64,7 +64,11 @@ function RoomsFormInputs({
 
       setAvailable(newAvailableState);
     } catch {
-      console.log(error, isLoading, data);
+      console.log(
+        availableRoomsState.error,
+        availableRoomsState.isLoading,
+        availableRoomsState.data
+      );
     }
   }
 
@@ -78,83 +82,91 @@ function RoomsFormInputs({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div
-        className="d-flex flex-column justify-content-between align-items-end"
-        style={{ height: "100%" }}
-      >
-        <div className="mb-3" style={inputDivStyle}>
-          <label htmlFor="day" className="form-label">
-            Dia
-          </label>
-          <input
-            className="form-control"
-            name="day"
-            id="day"
-            type="date"
-            onChange={handleChange}
-            value={inputs.day}
-          />
-        </div>
-        <br />
-        <div style={inputDivStyle}>
-          <label htmlFor="startTime" className="form-label">
-            Horário de Entrada
-          </label>
-
-          <input
-            className="form-control"
-            name="startTime"
-            id="startTime"
-            type="time"
-            defaultValue="00:00"
-            onChange={handleChange}
-            value={inputs.startTime}
-          />
-        </div>
-
-        <br />
-        <div style={inputDivStyle}>
-          <label htmlFor="endTime" className="form-label">
-            Horário de Saída
-          </label>
-          <input
-            className="form-control"
-            name="endTime"
-            id="endTime"
-            type="time"
-            defaultValue="00:00"
-            onChange={handleChange}
-            value={inputs.endTime}
-          />
-        </div>
-
-        <br />
-        <div style={inputDivStyle}>
-          <label htmlFor="capacity" className="form-label">
-            Capacidade requerida
-          </label>
-          <input
-            className="form-control"
-            name="capacity"
-            id="capacity"
-            onChange={handleChange}
-            value={inputs.capacity}
-          />
-        </div>
-      </div>
-
-      <br />
-      <div className="d-grid gap-2">
-        <button
-          className="btn btn-danger"
-          type="submit"
-          disabled={inputs.capacity < 1}
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div
+          className="d-flex flex-column justify-content-between align-items-end"
+          style={{ height: "100%" }}
         >
-          Pesquisar
-        </button>
-      </div>
-    </form>
+          <div className="mb-3" style={inputDivStyle}>
+            <label htmlFor="day" className="form-label">
+              Dia
+            </label>
+            <input
+              className="form-control"
+              name="day"
+              id="day"
+              type="date"
+              onChange={handleChange}
+              value={inputs.day}
+            />
+          </div>
+          <br />
+          <div style={inputDivStyle}>
+            <label htmlFor="startTime" className="form-label">
+              Horário de Entrada
+            </label>
+
+            <input
+              className="form-control"
+              name="startTime"
+              id="startTime"
+              type="time"
+              defaultValue="00:00"
+              onChange={handleChange}
+              value={inputs.startTime}
+            />
+          </div>
+
+          <br />
+          <div style={inputDivStyle}>
+            <label htmlFor="endTime" className="form-label">
+              Horário de Saída
+            </label>
+            <input
+              className="form-control"
+              name="endTime"
+              id="endTime"
+              type="time"
+              defaultValue="00:00"
+              onChange={handleChange}
+              value={inputs.endTime}
+            />
+          </div>
+
+          <br />
+          <div style={inputDivStyle}>
+            <label htmlFor="capacity" className="form-label">
+              Capacidade requerida
+            </label>
+            <input
+              className="form-control"
+              name="capacity"
+              id="capacity"
+              onChange={handleChange}
+              value={inputs.capacity}
+            />
+          </div>
+        </div>
+
+        <br />
+        <div className="d-grid gap-2">
+          <button
+            className="btn btn-danger"
+            type="submit"
+            disabled={inputs.capacity < 1}
+          >
+            Pesquisar
+          </button>
+        </div>
+      </form>
+
+      {availableRoomsState.isError && (
+        <div style={{ color: "red", padding: "8px", margin: "8px 0" }}>
+          erro ao procurar sala
+        </div>
+      )}
+    </div>
   );
 }
 

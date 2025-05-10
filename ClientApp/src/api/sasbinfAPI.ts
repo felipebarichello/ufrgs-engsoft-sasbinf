@@ -35,7 +35,6 @@ export const sasbinf = createApi({
         method: "POST",
         body: filters
       }),
-      transformErrorResponse: (e) => { console.error(e); return { message: "Failed to retrieve available rooms: " + e }; },
       transformResponse: (response) => {
         try {
           return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
