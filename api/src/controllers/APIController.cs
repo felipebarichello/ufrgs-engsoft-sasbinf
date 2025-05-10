@@ -118,6 +118,25 @@ public class ApiController : ControllerBase {
             return BadRequest("End time must be after start time.");
         }
 
+        var earliestStart = DateTime.Parse($"{search.day} 08:30");
+        var latestEnd = DateTime.Parse($"{search.day} 17:10");
+
+        if (startDateTime < earliestStart)
+        {
+            return BadRequest("Bookings must start at 08:30 or later.");
+        }            
+
+        if (endDateTime > latestEnd)
+        {
+            return BadRequest("Bookings must end by 17:10.");
+        }
+
+        var maxDuration = TimeSpan.FromHours(2);
+        if (endDateTime - startDateTime > maxDuration)
+        {
+            return BadRequest("Booking cannot exceed 2 hours.");
+        }
+
         var conflictingBookings = await _dbContext.Bookings
             .Where(b => b.StartDate < endDateTime && b.EndDate > startDateTime)
             .ToListAsync();
