@@ -96,38 +96,38 @@ public class ApiController : ControllerBase {
     public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search) {
         // Validate the search parameters
         if (search == null || search.capacity < 1) {
-            return BadRequest("Invalid search parameters.");
+            return BadRequest(new { message = "Invalid search parameters." });
         }
 
         // Parse the start and end date/time from the input
         if (!DateTime.TryParse($"{search.day} {search.startTime}", out var startDateTime) ||
             !DateTime.TryParse($"{search.day} {search.endTime}", out var endDateTime)) {
-            return BadRequest("Invalid date/time format.");
+            return BadRequest(new { message = "Invalid date/time format." });
         }
 
         var now = DateTime.Now;
         if (startDateTime < now || endDateTime < now) {
-            return BadRequest("Start and end time must be in the future.");
+            return BadRequest(new { message = "Start and end time must be in the future." });
         }
 
         if (endDateTime <= startDateTime) {
-            return BadRequest("End time must be after start time.");
+            return BadRequest(new { message = "End time must be after start time." });
         }
 
         var earliestStart = DateTime.Parse($"{search.day} 08:30");
         var latestEnd = DateTime.Parse($"{search.day} 17:10");
 
         if (startDateTime < earliestStart) {
-            return BadRequest("Bookings must start at 08:30 or later.");
+            return BadRequest(new { message = "Bookings must start at 08:30 or later." });
         }     
 
         if (endDateTime > latestEnd) {
-            return BadRequest("Bookings must end by 17:10.");
+            return BadRequest(new { message = "Bookings must end by 17:10." });
         }
 
         var maxDuration = TimeSpan.FromHours(2);
         if (endDateTime - startDateTime > maxDuration) {
-            return BadRequest("Booking cannot exceed 2 hours.");
+            return BadRequest(new { message = "Booking cannot exceed 2 hours." });
         }
 
         // Find bookings that conflict with the requested time range
