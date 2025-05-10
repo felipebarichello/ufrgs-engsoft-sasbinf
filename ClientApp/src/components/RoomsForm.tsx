@@ -62,8 +62,6 @@ function RoomsFormInputs({
       ).unwrap();
 
       setAvailable(newAvailableState);
-      console.clear();
-      console.log("Successfully set new state", newAvailableState);
     } catch {
       console.log(error, isLoading, data);
     }
@@ -152,7 +150,7 @@ function RoomsFormInputs({
           type="submit"
           disabled={inputs.capacity < 1}
         >
-          Submit
+          Pesquisar
         </button>
       </div>
     </form>

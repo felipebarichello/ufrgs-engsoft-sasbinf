@@ -48,6 +48,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
         style={{ margin: "10px" }}
         onClick={() => {
           handleBookPress();
+          setSelected(null);
         }}
       >
         Book

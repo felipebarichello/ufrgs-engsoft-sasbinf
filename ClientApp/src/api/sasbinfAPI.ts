@@ -35,7 +35,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: filters
       }),
-      transformErrorResponse: (e) => { console.log(e); return { message: "Failed to retrieve available rooms: " + e }; },
+      transformErrorResponse: (e) => { console.error(e); return { message: "Failed to retrieve available rooms: " + e }; },
       transformResponse: (response) => {
         try {
           return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
@@ -51,6 +51,8 @@ export const sasbinf = createApi({
         method: "POST",
         body: req
       }),
+      transformErrorResponse: (e) => { console.error(e); return { message: "Failed to book room: " + e }; },
+      transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* Return the parsed result? */ }
     })
   }
   ),
