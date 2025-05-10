@@ -1,31 +1,5 @@
-import Pointer from "../components/Pointer";
-import SimpleRoom from "../components/SimpleRoom";
+import NewPointer from "../components/NewPointer";
 
-export default function DevContainer() {
-  return <RoomWithPointer roomNumber={201} selected={false} />;
+export default function DevContainer( ){
+  return <NewPointer enabled={true} roomNumber={4} props={{style: {width: "40%"}}}/>
 }
-
-function RoomWithPointer({
-  roomNumber,
-  selected,
-}: {
-  roomNumber: number;
-  selected: boolean;
-}) {
-  return (
-    <div className="d-flex flex-row" style={{ width: "600px" }}>
-      <Pointer
-        enabled={true}
-        roomNumber={roomNumber}
-        props={{ style: { height: "70%" } }}
-      />
-      <SimpleRoom selected={selected} props={{ style: SimpleRoomStyle }} />
-    </div>
-  );
-}
-
-const SimpleRoomStyle = {
-  width: "40%",
-  borderRight: "3px solid black",
-  borderBottom: "3px solid black",
-};

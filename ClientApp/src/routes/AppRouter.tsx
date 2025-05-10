@@ -1,9 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'; // Import Routes and Route
+import { Routes, Route, Navigate } from "react-router-dom"; // Import Routes and Route
 
-import RoomsPage from '../pages/RoomsPage';
-import Error404Page from '../pages/errors/Error404';
-import ReactExamplePage from '../pages/ReactExample';
-import LoginPage from '../pages/LoginPage';
+import RoomsPage from "../pages/RoomsPage";
+import Error404Page from "../pages/errors/Error404";
+import ReactExamplePage from "../pages/ReactExample";
+import LoginPage from "../pages/LoginPage";
 import DevContainer from '../pages/DevContainer';
 
 function AppRouter() {

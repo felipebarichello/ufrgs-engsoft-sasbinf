@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path' // <--- Make sure path is imported
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path'; // <--- Make sure path is imported
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(),],
   server: {
     proxy: {
       '/api': {
@@ -21,4 +21,4 @@ export default defineConfig({
     // Ensure the output directory is emptied before building
     emptyOutDir: true,
   }
-})
+});

@@ -14,3 +14,4 @@
 # etc...
 
 /api/wwwroot/
+node_modules/
