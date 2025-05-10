@@ -24,7 +24,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
             backgroundColor: "#D9D9D9",
           }}
         >
-          <RoomSelector available={available} setSelected={setSelected} />
+          <RoomSelector available={available} setSelected={setSelected} selected={selected ?? -1} />
           <StandaloneTables />
         </div>
       </div>
@@ -51,9 +51,11 @@ const BigRoomStyle = { width: "40%", borderRight: "3px solid black" };
 
 function RoomSelector({
   available,
+  selected,
   setSelected,
 }: {
   available: number[];
+  selected: number;
   setSelected: (a: number) => void;
 }) {
   const simpleRooms = Object.freeze([0, 1, 2, 3, 4, 5]); // Trust me, I know what I'm doing
@@ -62,7 +64,8 @@ function RoomSelector({
       {simpleRooms.map((index) => {
         return (
           <SimpleRoom
-            selected={available.includes(index)}
+            available={available.includes(index)}
+            selected={selected === index}
             props={{
               style: SimpleRoomStyle,
               onClick: () => {
@@ -73,7 +76,8 @@ function RoomSelector({
         );
       })}
       <BigRoom
-        selected={available.includes(6)}
+        available={available.includes(6)}
+        selected={selected === 6}
         props={{
           style: BigRoomStyle,
           onClick: () => {
