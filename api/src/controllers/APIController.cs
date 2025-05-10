@@ -93,10 +93,30 @@ public class ApiController : ControllerBase {
     // ----------------------------------------------------
 
     [HttpPost("availableRooms")]
-    public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search) {
+    public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search)
+    {
+        if (search == null || search.capacity < 1)
+        {
+            return BadRequest("Invalid search parameters.");
+        }
 
-        var startDateTime = DateTime.Parse(search.day + " " + search.startTime);
-        var endDateTime = DateTime.Parse(search.day + " " + search.endTime);
+        if (!DateTime.TryParse($"{search.day} {search.startTime}", out var startDateTime) ||
+            !DateTime.TryParse($"{search.day} {search.endTime}", out var endDateTime))
+        {
+            return BadRequest("Invalid date/time format.");
+        }
+
+        var now = DateTime.Now;
+
+        if (startDateTime < now || endDateTime < now)
+        {
+            return BadRequest("Start and end time must be in the future.");
+        }
+
+        if (endDateTime <= startDateTime)
+        {
+            return BadRequest("End time must be after start time.");
+        }
 
         var conflictingBookings = await _dbContext.Bookings
             .Where(b => b.StartDate < endDateTime && b.EndDate > startDateTime)
@@ -104,10 +124,13 @@ public class ApiController : ControllerBase {
 
         var conflictingRoomIds = conflictingBookings.Select(b => b.RoomId).ToList();
 
+        // Find available rooms
         var availableRooms = await _dbContext.Rooms
             .Where(r => !conflictingRoomIds.Contains(r.RoomId) && r.Capacity >= search.capacity)
             .ToListAsync();
 
-        return Ok(new AvailableRoomsResponseDTO(availableRooms.Select(r => r.RoomId).ToList()));
+        return Ok(new AvailableRoomsResponseDTO(
+            availableRooms.Select(r => r.RoomId).ToList()
+        ));
     }
 }
