@@ -5,7 +5,7 @@ import { VerticalSpacer } from "./Spacer";
 import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
 
-export default function INFLibrary() {
+export default function INFLibrary({ available }: { available: number[] }) {
   const [selected, setSelected] = useState<number | null>(null);
   return (
     <div>
@@ -24,7 +24,7 @@ export default function INFLibrary() {
             backgroundColor: "#D9D9D9",
           }}
         >
-          <RoomSelector selected={selected} setSelected={setSelected} />
+          <RoomSelector available={available} setSelected={setSelected} />
           <StandaloneTables />
         </div>
       </div>
@@ -50,10 +50,10 @@ const SimpleRoomStyle = {
 const BigRoomStyle = { width: "40%", borderRight: "3px solid black" };
 
 function RoomSelector({
-  selected,
+  available,
   setSelected,
 }: {
-  selected: number | null;
+  available: number[];
   setSelected: (a: number) => void;
 }) {
   const simpleRooms = Object.freeze([0, 1, 2, 3, 4, 5]); // Trust me, I know what I'm doing
@@ -62,7 +62,7 @@ function RoomSelector({
       {simpleRooms.map((index) => {
         return (
           <SimpleRoom
-            selected={index === selected}
+            selected={available.includes(index)}
             props={{
               style: SimpleRoomStyle,
               onClick: () => {
@@ -73,7 +73,7 @@ function RoomSelector({
         );
       })}
       <BigRoom
-        selected={selected === 6}
+        selected={available.includes(6)}
         props={{
           style: BigRoomStyle,
           onClick: () => {

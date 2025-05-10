@@ -13,13 +13,6 @@ export const sasbinf = createApi({
       query: () => "health",
     }),
 
-    getRooms: build.query<{ rooms: number[]; }, RoomFilters>({
-      query: (filters: RoomFilters) => ({
-        url: 'rooms',
-        params: { ...filters }
-      })
-    }),
-
     postLogin: build.mutation({
       query: (login: Login) => ({
         url: "login",
@@ -36,18 +29,18 @@ export const sasbinf = createApi({
       }
     }),
 
-    postAvailableRoomsSearch: build.mutation({
-      query: (filter: RoomFilters) => ({
+    postAvailableRoomsSearch: build.query<number[], RoomFilters>({
+      query: (filters: RoomFilters) => ({
         url: "availableRooms",
         method: "POST",
-        body: filter
+        body: filters
       }),
-      transformErrorResponse: () => ({ message: "error message here" }),//TODO
+      transformErrorResponse: (e) => { console.log(e); return { message: "Failed to retrieve available rooms: " + e }; },
       transformResponse: (response) => {
         try {
-          return v.parse(AvailableRoomsSchema, response);
-        } catch {
-          throw new Error("Invalid credentials");
+          return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
+        } catch (e) {
+          throw new Error("Failed to parse response: " + e);
         }
       }
     })
@@ -57,4 +50,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useGetRoomsQuery, usePostLoginMutation, usePostAvailableRoomsSearchMutation } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation } = sasbinf;

@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { AvailableRooms } from "../schemas/rooms";
+import { useLazyPostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
 
 const Epoch = Object.freeze(new Date(0, 0, 0, 0, 0, 0));
 
@@ -10,11 +10,11 @@ const initialState: RoomFilters = {
   capacity: -1,
 };
 
-type RoomsFormProps = {
-  mutation: (arg: RoomFilters) => Promise<AvailableRooms>;
-};
-
-export default function RoomsForm(mutation: RoomsFormProps) {
+export default function RoomsForm({
+  setAvailableRooms,
+}: {
+  setAvailableRooms: (a: number[]) => void;
+}) {
   const [inputs, setInputs] = useState<RoomFilters>(initialState);
 
   return (
@@ -24,7 +24,7 @@ export default function RoomsForm(mutation: RoomsFormProps) {
         <RoomsFormInputs
           inputs={inputs}
           setInputs={setInputs}
-          mutation={mutation}
+          setAvailable={setAvailableRooms}
         />
       </div>
     </div>
@@ -34,26 +34,40 @@ export default function RoomsForm(mutation: RoomsFormProps) {
 function RoomsFormInputs({
   inputs,
   setInputs,
-  mutation,
+  setAvailable,
 }: {
   inputs: RoomFilters;
   setInputs: React.Dispatch<React.SetStateAction<RoomFilters>>;
-  mutation: RoomsFormProps;
+  setAvailable: (a: number[]) => void;
 }) {
+  const [triggerAvailableRoomsQuery, { error, isLoading, data }] =
+    useLazyPostAvailableRoomsSearchQuery();
+
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const label = event.target.name;
     const value = event.target.value;
     console.log(label, value);
-    setInputs((prevInput) => ({
-      ...prevInput,
+    setInputs({
+      ...inputs,
       [label]: value,
-    }));
+    });
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (anyInputIsEmpty(inputs)) return;
-    mutation.mutation(inputs);
+    try {
+      const newAvailableState = await triggerAvailableRoomsQuery(
+        inputs
+      ).unwrap();
+
+      setAvailable(newAvailableState);
+      console.clear();
+      console.log('Successfully set new state',newAvailableState);
+    } catch {
+      // console.clear();
+      console.log(error, isLoading, data);
+    }
   }
 
   const inputDivStyle = {
