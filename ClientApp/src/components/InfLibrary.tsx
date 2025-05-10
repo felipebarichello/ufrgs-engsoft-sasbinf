@@ -24,7 +24,11 @@ export default function INFLibrary({ available }: { available: number[] }) {
             backgroundColor: "#D9D9D9",
           }}
         >
-          <RoomSelector available={available} setSelected={setSelected} selected={selected ?? -1} />
+          <RoomSelector
+            available={available}
+            setSelected={setSelected}
+            selected={selected ?? -1}
+          />
           <StandaloneTables />
         </div>
       </div>
