@@ -20,7 +20,6 @@ CREATE DATABASE IF NOT EXISTS `sasbinf` /*!40100 DEFAULT CHARACTER SET utf8mb4 C
 USE `sasbinf`;
 
 -- Copiando estrutura para tabela sasbinf.bookings
-DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE IF NOT EXISTS `bookings` (
   `booking_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
@@ -35,12 +34,10 @@ CREATE TABLE IF NOT EXISTS `bookings` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Copiando dados para a tabela sasbinf.bookings: ~1 rows (aproximadamente)
-DELETE FROM `bookings`;
 INSERT INTO `bookings` (`booking_id`, `user_id`, `room_id`, `start_date`, `end_date`) VALUES
 	(1, 1, 6, '2025-05-14 15:00:00', '2025-05-14 16:00:00');
 
 -- Copiando estrutura para tabela sasbinf.members
-DROP TABLE IF EXISTS `members`;
 CREATE TABLE IF NOT EXISTS `members` (
   `uid` bigint(20) NOT NULL AUTO_INCREMENT,
   `username` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_uca1400_ai_ci NOT NULL,
@@ -51,12 +48,10 @@ CREATE TABLE IF NOT EXISTS `members` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Copiando dados para a tabela sasbinf.members: ~1 rows (aproximadamente)
-DELETE FROM `members`;
 INSERT INTO `members` (`uid`, `username`, `passwd_hash`, `timedout_until`, `created_at`) VALUES
-	(1, 'fabricio', 'senha', NULL, '2025-05-06 01:49:19');
+	(1, 'user', 'pass', NULL, '2025-05-06 01:49:19');
 
 -- Copiando estrutura para tabela sasbinf.rooms
-DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE IF NOT EXISTS `rooms` (
   `room_id` int(11) NOT NULL AUTO_INCREMENT,
   `capacity` int(11) NOT NULL,
@@ -64,7 +59,6 @@ CREATE TABLE IF NOT EXISTS `rooms` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Copiando dados para a tabela sasbinf.rooms: ~7 rows (aproximadamente)
-DELETE FROM `rooms`;
 INSERT INTO `rooms` (`room_id`, `capacity`) VALUES
 	(0, 6),
 	(1, 6),
@@ -75,7 +69,6 @@ INSERT INTO `rooms` (`room_id`, `capacity`) VALUES
 	(6, 8);
 
 -- Copiando estrutura para tabela sasbinf.__efmigrationshistory
-DROP TABLE IF EXISTS `__efmigrationshistory`;
 CREATE TABLE IF NOT EXISTS `__efmigrationshistory` (
   `MigrationId` varchar(150) NOT NULL,
   `ProductVersion` varchar(32) NOT NULL,
@@ -83,7 +76,6 @@ CREATE TABLE IF NOT EXISTS `__efmigrationshistory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Copiando dados para a tabela sasbinf.__efmigrationshistory: ~1 rows (aproximadamente)
-DELETE FROM `__efmigrationshistory`;
 INSERT INTO `__efmigrationshistory` (`MigrationId`, `ProductVersion`) VALUES
 	('20250505012455_sasbinf', '8.0.13');
 
