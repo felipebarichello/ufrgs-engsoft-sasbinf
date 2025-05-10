@@ -161,6 +161,7 @@ function RoomsFormInputs({
         </div>
       </form>
 
+      {/* TODO tratar erro melhor */}
       {availableRoomsState.isError && (
         <div style={{ color: "red", padding: "8px", margin: "8px 0" }}>
           erro ao procurar sala
