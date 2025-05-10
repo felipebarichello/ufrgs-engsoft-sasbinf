@@ -15,15 +15,15 @@ export default function RoomsForm({
 }: {
   setAvailableRooms: (a: number[]) => void;
 }) {
-  const [inputs, setInputs] = useState<RoomFilters>(initialState);
+  const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
 
   return (
     <div>
       <h2>Filtrar Sala</h2>
       <div className="d-flex">
         <RoomsFormInputs
-          inputs={inputs}
-          setInputs={setInputs}
+          inputs={filtersState}
+          setInputs={setFiltersState}
           setAvailable={setAvailableRooms}
         />
       </div>
@@ -63,9 +63,8 @@ function RoomsFormInputs({
 
       setAvailable(newAvailableState);
       console.clear();
-      console.log('Successfully set new state',newAvailableState);
+      console.log("Successfully set new state", newAvailableState);
     } catch {
-      // console.clear();
       console.log(error, isLoading, data);
     }
   }

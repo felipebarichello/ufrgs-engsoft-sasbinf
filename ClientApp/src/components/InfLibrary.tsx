@@ -7,6 +7,15 @@ import SimpleRoom from "./SimpleRoom";
 
 export default function INFLibrary({ available }: { available: number[] }) {
   const [selected, setSelected] = useState<number | null>(null);
+
+  function handleBookPress() {
+    if (selected === null) {
+      alert("You must select a room in order to book it.");
+      return;
+    }
+    console.log("Trying to book room", selected);
+  }
+
   return (
     <div>
       <h5>Salas Disponíveis</h5>
@@ -32,6 +41,18 @@ export default function INFLibrary({ available }: { available: number[] }) {
           <StandaloneTables />
         </div>
       </div>
+
+      <button
+        type="button"
+        className="btn btn-primary"
+        style={{ margin: "10px" }}
+        onClick={() => {
+          handleBookPress();
+        }}
+      >
+        Book
+      </button>
+
       <button
         type="button"
         className="btn btn-primary"

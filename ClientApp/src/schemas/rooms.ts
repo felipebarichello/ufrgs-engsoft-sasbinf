@@ -7,3 +7,9 @@ export const AvailableRoomsSchema =
 
 export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>
 
+export type BookRequest = {
+  day: string,
+  startTime: string,
+  endTime: string,
+  
+}

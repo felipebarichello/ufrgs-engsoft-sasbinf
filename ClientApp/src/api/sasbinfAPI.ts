@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Login, LoginResponseSchema } from '../schemas/login';
 import { RoomFilters } from '../components/RoomsForm';
-import { AvailableRoomsSchema } from '../schemas/rooms';
+import { AvailableRoomsSchema, BookRequest } from '../schemas/rooms';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -43,6 +43,14 @@ export const sasbinf = createApi({
           throw new Error("Failed to parse response: " + e);
         }
       }
+    }),
+
+    postRoomBookRequest: build.mutation({
+      query: (req: BookRequest) => ({
+        url: "book",
+        method: "POST",
+        body: req
+      }),
     })
   }
   ),
