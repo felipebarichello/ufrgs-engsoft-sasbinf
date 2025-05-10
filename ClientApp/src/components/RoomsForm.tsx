@@ -7,7 +7,7 @@ const initialState: RoomFilters = {
   day: Epoch.toLocaleDateString(),
   startTime: Epoch.toLocaleTimeString(),
   endTime: Epoch.toLocaleTimeString(),
-  capacity: -1,
+  capacity: 1,
 };
 
 export default function RoomsForm({
@@ -134,13 +134,12 @@ function RoomsFormInputs({
         <br />
         <div style={inputDivStyle}>
           <label htmlFor="capacity" className="form-label">
-            Capacidade
+            Capacidade requerida
           </label>
           <input
             className="form-control"
             name="capacity"
             id="capacity"
-            defaultValue={0}
             onChange={handleChange}
             value={inputs.capacity}
           />
@@ -152,7 +151,7 @@ function RoomsFormInputs({
         <button
           className="btn btn-danger"
           type="submit"
-          disabled={inputs.capacity === -1}
+          disabled={inputs.capacity < 1}
         >
           Submit
         </button>
@@ -175,6 +174,7 @@ export type RoomFiltersDTO = {
   capacity: number;
 };
 
+// TODO: Show error to the user
 function anyInputIsEmpty({
   capacity,
   day,
