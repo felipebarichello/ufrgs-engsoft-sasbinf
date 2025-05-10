@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
+import { AvailableRooms } from "../schemas/rooms";
 
 const Epoch = Object.freeze(new Date(0, 0, 0, 0, 0, 0));
 
@@ -9,14 +10,22 @@ const initialState: RoomFilters = {
   capacity: -1,
 };
 
-export default function RoomsForm() {
+type RoomsFormProps = {
+  mutation: (arg: RoomFilters) => Promise<AvailableRooms>;
+};
+
+export default function RoomsForm(mutation: RoomsFormProps) {
   const [inputs, setInputs] = useState<RoomFilters>(initialState);
 
   return (
     <div>
       <h2>Filtrar Sala</h2>
       <div className="d-flex">
-        <RoomsFormInputs inputs={inputs} setInputs={setInputs} />
+        <RoomsFormInputs
+          inputs={inputs}
+          setInputs={setInputs}
+          mutation={mutation}
+        />
       </div>
     </div>
   );
@@ -25,9 +34,11 @@ export default function RoomsForm() {
 function RoomsFormInputs({
   inputs,
   setInputs,
+  mutation,
 }: {
   inputs: RoomFilters;
   setInputs: React.Dispatch<React.SetStateAction<RoomFilters>>;
+  mutation: RoomsFormProps;
 }) {
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const label = event.target.name;
@@ -39,8 +50,10 @@ function RoomsFormInputs({
     }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    console.log(event);
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (anyInputIsEmpty(inputs)) return;
+    mutation.mutation(inputs);
   }
 
   const inputDivStyle = {
@@ -147,3 +160,12 @@ export type RoomFiltersDTO = {
   endTime: Date;
   capacity: number;
 };
+
+function anyInputIsEmpty({
+  capacity,
+  day,
+  endTime,
+  startTime,
+}: RoomFilters): boolean {
+  return capacity < 1 || day === "" || endTime === "" || startTime === "";
+}

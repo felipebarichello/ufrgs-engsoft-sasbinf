@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Login, LoginResponseSchema } from '../schemas/login';
 import { RoomFilters } from '../components/RoomsForm';
+import { AvailableRoomsSchema } from '../schemas/rooms';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -33,6 +34,22 @@ export const sasbinf = createApi({
           throw new Error("Invalid credentials");
         }
       }
+    }),
+
+    postAvailableRoomsSearch: build.mutation({
+      query: (filter: RoomFilters) => ({
+        url: "availableRooms",
+        method: "POST",
+        body: filter
+      }),
+      transformErrorResponse: () => ({ message: "error message here" }),//TODO
+      transformResponse: (response) => {
+        try {
+          return v.parse(AvailableRoomsSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      }
     })
   }
   ),
@@ -40,4 +57,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useGetRoomsQuery, usePostLoginMutation } = sasbinf;
+export const { useGetHealthQuery, useGetRoomsQuery, usePostLoginMutation, usePostAvailableRoomsSearchMutation } = sasbinf;
