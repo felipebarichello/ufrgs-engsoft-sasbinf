@@ -54,6 +54,7 @@ function RoomsFormInputs({
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    setAvailable([]);
     e.preventDefault();
     if (anyInputIsEmpty(inputs)) return;
     try {
