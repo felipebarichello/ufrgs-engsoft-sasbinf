@@ -51,7 +51,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: req
       }),
-      transformErrorResponse: (e) => { console.error(e); return { message: "Failed to book room: " + e }; },
+      transformErrorResponse: (e) => { alert('Failed to book room: ' + e); return { message: "Failed to book room: " + e }; },
       transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* Return the parsed result? */ }
     })
   }
