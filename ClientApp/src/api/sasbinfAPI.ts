@@ -15,7 +15,7 @@ export const sasbinf = createApi({
 
     postLogin: build.mutation({
       query: (login: Login) => ({
-        url: "login",
+        url: "auth/login",
         method: "POST",
         body: login
       }),
@@ -31,7 +31,7 @@ export const sasbinf = createApi({
 
     postAvailableRoomsSearch: build.query<number[], RoomFilters>({
       query: (filters: RoomFilters) => ({
-        url: "availableRooms",
+        url: "rooms/available-rooms-search",
         method: "POST",
         body: filters
       }),
