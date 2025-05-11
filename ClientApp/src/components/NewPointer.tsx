@@ -7,12 +7,11 @@ export default function NewPointer({
   props,
 }: {
   enabled: boolean;
-  roomNumber: number;
+  roomNumber: { index: number; name: string };
   props?: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
     ImgHTMLAttributes<HTMLImageElement>;
 }) {
-  const numToAscii = ["A", "B", "C", "D", "E", "F", "G"];
   if (enabled) {
     return (
       <div
@@ -21,7 +20,7 @@ export default function NewPointer({
           height: "fit-content",
           position: "relative",
           justifyContent: "flex-end",
-          paddingTop: `${22 + 86 * roomNumber}px`, // DO NOT TOUCH
+          paddingTop: `${22 + 86 * roomNumber.index}px`, // DO NOT TOUCH
         }}
       >
         <img src={Pointer} alt="NewPointer" style={{ width: "100%" }} />
@@ -31,9 +30,9 @@ export default function NewPointer({
             top: "25%",
             left: "10%",
             color: "#FFFFFF",
-            paddingTop: `${18 + 64 * roomNumber}px`, // DO NOT TOUCH
+            paddingTop: `${18 + 64 * roomNumber.index}px`, // DO NOT TOUCH
           }}
-        >{`Sala 104${numToAscii[6 - roomNumber]}`}</h5>
+        >{`Sala ${roomNumber.name}`}</h5>
       </div>
     );
   }

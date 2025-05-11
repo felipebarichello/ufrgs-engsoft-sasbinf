@@ -6,7 +6,10 @@ import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
 
 export default function INFLibrary({ available }: { available: number[] }) {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<{
+    index: number;
+    name: string;
+  } | null>(null);
 
   function handleBookPress() {
     if (selected === null) {
@@ -22,7 +25,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
       <div className="d-flex justify-content-end">
         <NewPointer
           enabled={selected !== null}
-          roomNumber={selected ?? 0}
+          roomNumber={selected ?? { index: 0, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
         <div
@@ -36,7 +39,8 @@ export default function INFLibrary({ available }: { available: number[] }) {
           <RoomSelector
             available={available}
             setSelected={setSelected}
-            selected={selected ?? -1}
+            //TODO remover esse -1
+            selected={selected ?? { index: -1, name: "" }}
           />
           <StandaloneTables />
         </div>
@@ -81,21 +85,29 @@ function RoomSelector({
   setSelected,
 }: {
   available: number[];
-  selected: number;
-  setSelected: (a: number) => void;
+  selected: { index: number; name: string };
+  setSelected: (a: { index: number; name: string }) => void;
 }) {
-  const simpleRooms = Object.freeze([0, 1, 2, 3, 4, 5]); // Trust me, I know what I'm doing
+  // TODOç Retrieve this from the database
+  const simpleRooms = Object.freeze([
+    { index: 0, name: "104G" },
+    { index: 1, name: "104F" },
+    { index: 2, name: "104E" },
+    { index: 3, name: "104D" },
+    { index: 4, name: "104C" },
+    { index: 5, name: "104B" },
+  ]); // Trust me, I know what I'm doing
   return (
     <div>
-      {simpleRooms.map((index) => {
+      {simpleRooms.map((room) => {
         return (
           <SimpleRoom
-            available={available.includes(index)}
-            selected={selected === index}
+            available={available.includes(room.index)}
+            selected={selected.index === room.index}
             props={{
               style: SimpleRoomStyle,
               onClick: () => {
-                setSelected(index);
+                setSelected(room);
               },
             }}
           />
@@ -103,11 +115,12 @@ function RoomSelector({
       })}
       <BigRoom
         available={available.includes(6)}
-        selected={selected === 6}
+        selected={selected.index === 6}
         props={{
           style: BigRoomStyle,
           onClick: () => {
-            setSelected(6);
+            // TODO: Retrieve this from the database
+            setSelected({ index: 6, name: "104A" });
           },
         }}
       />
