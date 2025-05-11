@@ -51,7 +51,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
           setSelected(null);
         }}
       >
-        Book
+        Reservar
       </button>
 
       <button
@@ -62,7 +62,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
           setSelected(null);
         }}
       >
-        Clear Selection
+        Limpar Seleção
       </button>
     </div>
   );

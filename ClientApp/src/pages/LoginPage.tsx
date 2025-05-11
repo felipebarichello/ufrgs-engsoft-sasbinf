@@ -23,11 +23,11 @@ function LoginPage() {
   useEffect(() => {
     if (loginState.isSuccess) {
       console.log("Login successful!");
-  
+
       sessionStorage.setItem("authToken", loginState.data.token); // Store token
       sessionStorage.setItem("authTokenExpiration", loginState.data.expiration); // Store expiration
-  
-      navigate("/rooms")
+
+      navigate("/rooms");
     }
   }, [loginState, navigate]); // Dependencies for the effect
 
@@ -42,7 +42,7 @@ function LoginPage() {
       <form onSubmit={handleSubmit} method="POST">
         {/* User input */}
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">Usuário:</label>
           <input
             type="text"
             id="username"
@@ -56,7 +56,7 @@ function LoginPage() {
         </div>
         {/* Password input */}
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Senha:</label>
           <input
             type="password"
             id="password"
@@ -69,13 +69,18 @@ function LoginPage() {
           />
         </div>
         {/* Submit button */}
-        <button type="submit" disabled={anyInputIsEmpty(formState) || loginState.isLoading}>
+        <button
+          type="submit"
+          disabled={anyInputIsEmpty(formState) || loginState.isLoading}
+        >
           {loginState.isLoading ? "Logging in..." : "Log In"}
         </button>
       </form>
 
       {/* Display error message if the mutation fails */}
-      {loginState.isError && <p style={{ color: "red" }}>Login failed, please try again.</p>}
+      {loginState.isError && (
+        <p style={{ color: "red" }}>Login failed, please try again.</p>
+      )}
     </div>
   );
 }
