@@ -12,6 +12,7 @@ export default function NewPointer({
     ClassAttributes<HTMLImageElement> &
     ImgHTMLAttributes<HTMLImageElement>;
 }) {
+  const numToAscii = ["A", "B", "C", "D", "E", "F", "G"];
   if (enabled) {
     return (
       <div
@@ -32,7 +33,7 @@ export default function NewPointer({
             color: "#FFFFFF",
             paddingTop: `${18 + 64 * roomNumber}px`, // DO NOT TOUCH
           }}
-        >{`Sala ${roomNumber + 200}`}</h5>
+        >{`Sala 104${numToAscii[6 - roomNumber]}`}</h5>
       </div>
     );
   }
