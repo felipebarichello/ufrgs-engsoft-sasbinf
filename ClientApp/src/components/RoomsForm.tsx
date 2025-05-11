@@ -57,7 +57,6 @@ function RoomsFormInputs({
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     setAvailable([]);
     e.preventDefault();
-    if (anyInputIsEmpty(inputs)) return;
     try {
       const newAvailableState = await triggerAvailableRoomsQuery(
         inputs
@@ -155,14 +154,13 @@ function RoomsFormInputs({
           <button
             className="btn btn-danger"
             type="submit"
-            disabled={inputs.capacity < 1}
+            disabled={anyInputIsEmpty(inputs)}
           >
             Pesquisar
           </button>
         </div>
       </form>
 
-      {/* TODO tratar erro melhor */}
       {availableRoomsState.isError &&
         Erroralert({ error: availableRoomsState.error })}
     </div>
@@ -183,12 +181,17 @@ export type RoomFiltersDTO = {
   capacity: number;
 };
 
-// TODO: Show error to the user
 function anyInputIsEmpty({
   capacity,
   day,
   endTime,
   startTime,
 }: RoomFilters): boolean {
-  return capacity < 1 || day === "" || endTime === "" || startTime === "";
+  return (
+    capacity < 1 ||
+    day === "" ||
+    day === Epoch.toLocaleDateString() ||
+    startTime === Epoch.toLocaleTimeString() ||
+    endTime === Epoch.toLocaleTimeString()
+  );
 }
