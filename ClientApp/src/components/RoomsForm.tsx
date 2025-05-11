@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useLazyPostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
+import { Erroralert } from "./ErrorAlert";
 
 const Epoch = Object.freeze(new Date(0, 0, 0, 0, 0, 0));
 
@@ -162,11 +163,8 @@ function RoomsFormInputs({
       </form>
 
       {/* TODO tratar erro melhor */}
-      {availableRoomsState.isError && (
-        <div style={{ color: "red", padding: "8px", margin: "8px 0" }}>
-          erro ao procurar sala
-        </div>
-      )}
+      {availableRoomsState.isError &&
+        Erroralert({ error: availableRoomsState.error })}
     </div>
   );
 }
