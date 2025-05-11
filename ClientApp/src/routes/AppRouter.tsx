@@ -4,6 +4,7 @@ import RoomsPage from "../pages/RoomsPage";
 import Error404Page from "../pages/errors/Error404";
 import ReactExamplePage from "../pages/ReactExample";
 import LoginPage from "../pages/LoginPage";
+import DoomPage from "../pages/DoomPage";
 
 function AppRouter() {
   return (
@@ -13,6 +14,8 @@ function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/rooms" element={<RoomsPage />} />
+
+      <Route path="/doom" element={<DoomPage />} />
 
       <Route path="/react" element={<ReactExamplePage />} />
 
