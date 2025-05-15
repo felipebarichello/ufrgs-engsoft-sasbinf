@@ -46,7 +46,6 @@ internal class Program {
 
         var app = builder.Build();
 
-        app.UseHttpsRedirection(); // Use HTTPS redirection
         app.UseStaticFiles(); // Serve static files from wwwroot (standard location). This MUST come before UseRouting and MapFallbackToFile.
         app.UseRouting(); // Enable routing (needed for MapFallbackToFile and API endpoints)
         app.MapControllers(); // Map the controllers
