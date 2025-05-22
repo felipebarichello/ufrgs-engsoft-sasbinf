@@ -83,8 +83,9 @@ namespace api.src.Models {
                     .HasForeignKey<Booking>(b => b.UserId);
 
                 model.HasOne(b => b.Room)
-                    .WithOne(r => r.Booking)
-                    .HasForeignKey<Booking>(b => b.RoomId);
+                    .WithMany(r => r.Bookings)
+                    .HasForeignKey(b => b.RoomId);
+
             });
 
             modelBuilder.Entity<Room>(model => {
@@ -94,17 +95,22 @@ namespace api.src.Models {
                 model.Property(r => r.RoomId)
                     .HasColumnName("room_id")
                     .HasColumnType("int")
-                    .IsRequired();
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                model.Property(r => r.Name)
+                    .HasColumnName("name");
 
                 model.Property(r => r.Capacity)
                     .HasColumnName("capacity")
                     .HasColumnType("int")
                     .IsRequired();
 
-                model.HasOne(r => r.Booking)
-                    .WithOne(b => b.Room)
-                    .HasForeignKey<Booking>(b => b.RoomId)
-                    .IsRequired(false);
+                model.Property(r => r.IsBooked)
+                    .HasColumnName("is_booked")
+                    .HasColumnType("bit")
+                    .IsRequired(true);
+
             });
         }
     }
