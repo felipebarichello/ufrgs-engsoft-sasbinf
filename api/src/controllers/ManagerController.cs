@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
-[Route("api/manager")]
+[Route("api-manager")]
 public class ManagerController : ControllerBase {
     private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
@@ -24,7 +24,7 @@ public class ManagerController : ControllerBase {
         _dbContext = dbContext;
     }
 
-    [HttpPost("login-manager")]
+    [HttpPost("login")]
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
         var user = await _dbContext.Members
             .Where(u => u.Username == login.user && u.Password == login.password)
@@ -60,6 +60,11 @@ public class ManagerController : ControllerBase {
     [HttpPost("create-room")]
     [Authorize(Roles = "manager")]
     public async Task<IActionResult> CreateRoomPost([FromBody] RoomDto roomDto) {
+        var alreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
+        if (alreadyExists) {
+            return BadRequest(new { message = "nome já existe" });
+        }
+
         Room room = new Room {
             Capacity = roomDto.capacity,
             Name = roomDto.name
@@ -68,7 +73,9 @@ public class ManagerController : ControllerBase {
         await _dbContext.Rooms.AddAsync(room);
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { message = "deu certo" });
+        var roomId = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).Select(r => r.RoomId).FirstOrDefaultAsync();
+
+        return Ok(new { roomId = roomId });
 
     }
 
