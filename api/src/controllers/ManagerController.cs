@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
-[Route("api-manager")]
+[Route("api/manager")]
 public class ManagerController : ControllerBase {
     private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
