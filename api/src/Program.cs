@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using api.src.Models;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ internal class Program {
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = configuration["JWT:ValidIssuer"],
                 ValidAudience = configuration["JWT:ValidAudience"],
+                RoleClaimType = ClaimTypes.Role,
                 // Ensure your secret retrieval handles potential nulls safely
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     configuration["JWT:Secret"] ?? throw new InvalidOperationException("JWT:Secret not found in configuration")

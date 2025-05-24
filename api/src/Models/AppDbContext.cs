@@ -5,6 +5,7 @@ namespace api.src.Models {
         public DbSet<Member> Members { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<Manager> Managers { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -83,8 +84,9 @@ namespace api.src.Models {
                     .HasForeignKey<Booking>(b => b.UserId);
 
                 model.HasOne(b => b.Room)
-                    .WithOne(r => r.Booking)
-                    .HasForeignKey<Booking>(b => b.RoomId);
+                    .WithMany(r => r.Bookings)
+                    .HasForeignKey(b => b.RoomId);
+
             });
 
             modelBuilder.Entity<Room>(model => {
@@ -94,17 +96,51 @@ namespace api.src.Models {
                 model.Property(r => r.RoomId)
                     .HasColumnName("room_id")
                     .HasColumnType("int")
-                    .IsRequired();
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                model.Property(r => r.Name)
+                    .HasColumnName("name");
 
                 model.Property(r => r.Capacity)
                     .HasColumnName("capacity")
                     .HasColumnType("int")
                     .IsRequired();
 
-                model.HasOne(r => r.Booking)
-                    .WithOne(b => b.Room)
-                    .HasForeignKey<Booking>(b => b.RoomId)
-                    .IsRequired(false);
+                model.Property(r => r.IsBooked)
+                    .HasColumnName("is_booked")
+                    .HasColumnType("bit")
+                    .IsRequired(true);
+
+            });
+
+            modelBuilder.Entity<Manager>(model => {
+                model.ToTable("manager");
+                model.HasKey(m => m.UId);
+
+                model.Property(m => m.UId)
+                    .HasColumnName("uid")
+                    .HasColumnType("bigint")
+                    .IsRequired();
+
+                model.Property(m => m.Username)
+                    .HasColumnName("username")
+                    .HasColumnType("nvarchar(16)")
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                model.Property(m => m.Password)
+                    .HasColumnName("passwd_hash")
+                    .HasColumnType("nvarchar(256)")
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                model.Property(m => m.CreatedAt)
+                    .HasColumnName("created_at")
+                    .HasColumnType("timestamp")
+                    .IsRequired()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
             });
         }
     }
