@@ -107,8 +107,8 @@ namespace api.src.Models {
                     .HasColumnType("int")
                     .IsRequired();
 
-                model.Property(r => r.IsBooked)
-                    .HasColumnName("is_booked")
+                model.Property(r => r.IsActive)
+                    .HasColumnName("is_active")
                     .HasColumnType("bit")
                     .IsRequired(true);
 

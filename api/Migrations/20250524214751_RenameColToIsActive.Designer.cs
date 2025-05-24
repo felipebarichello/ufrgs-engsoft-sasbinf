@@ -12,8 +12,8 @@ using api.src.Models;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250523010511_NomeDaMigração")]
-    partial class NomeDaMigração
+    [Migration("20250524214751_RenameColToIsActive")]
+    partial class RenameColToIsActive
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,9 +141,9 @@ namespace api.Migrations
                         .HasColumnType("int")
                         .HasColumnName("capacity");
 
-                    b.Property<ulong>("IsBooked")
+                    b.Property<ulong>("IsActive")
                         .HasColumnType("bit")
-                        .HasColumnName("is_booked");
+                        .HasColumnName("is_active");
 
                     b.Property<string>("Name")
                         .IsRequired()
