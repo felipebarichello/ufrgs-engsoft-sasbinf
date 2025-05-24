@@ -13,7 +13,7 @@ namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250523010511_NomeDaMigração")]
-    partial class NomeDaMigração
+    partial class CreateManagerTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

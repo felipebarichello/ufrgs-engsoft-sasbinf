@@ -13,7 +13,7 @@ namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250505012455_sasbinf")]
-    partial class sasbinf
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
