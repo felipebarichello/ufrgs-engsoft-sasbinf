@@ -25,7 +25,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Invalid server response for login");
         }
       }
     }),
@@ -34,7 +34,8 @@ export const sasbinf = createApi({
       query: (filters: RoomFilters) => ({
         url: "rooms/available-rooms-search",
         method: "POST",
-        body: filters
+        body: filters,
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
       }),
       transformResponse: (response) => {
         try {
@@ -47,9 +48,10 @@ export const sasbinf = createApi({
 
     postRoomBookRequest: build.mutation({
       query: (req: BookRequest) => ({
-        url: "book",
+        url: "rooms/book",
         method: "POST",
-        body: req
+        body: req,
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
       }),
       transformErrorResponse: (e) => { alert('Failed to book room: ' + e); return { message: "Failed to book room: " + e }; },
       transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* Return the parsed result? */ }
@@ -130,4 +132,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, usePostRoomActivationMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostRoomBookRequestMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, usePostRoomActivationMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;

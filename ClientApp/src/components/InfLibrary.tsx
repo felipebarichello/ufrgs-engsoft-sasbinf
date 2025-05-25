@@ -4,6 +4,16 @@ import SimpleTable from "./TableSeats";
 import { VerticalSpacer } from "./Spacer";
 import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
+import { usePostRoomBookRequestMutation } from "../api/sasbinfAPI";
+
+const simpleRooms = Object.freeze([
+  { index: 1, name: "104G" },
+  { index: 2, name: "104F" },
+  { index: 3, name: "104E" },
+  { index: 4, name: "104D" },
+  { index: 5, name: "104C" },
+  { index: 6, name: "104B" },
+]); // Trust me, I know what I'm doing
 
 export default function INFLibrary({ available }: { available: number[] }) {
   const [selected, setSelected] = useState<{
@@ -11,12 +21,21 @@ export default function INFLibrary({ available }: { available: number[] }) {
     name: string;
   } | null>(null);
 
+  const [triggerBookRequest, requestMetadata] =
+    usePostRoomBookRequestMutation();
+
   function handleBookPress() {
     if (selected === null) {
       alert("You must select a room in order to book it.");
       return;
     }
     console.log("Trying to book room", selected);
+    triggerBookRequest({
+      day: "2025-06-15",
+      startTime: "16:00:00.000",
+      endTime: "17:00:00.000",
+      roomId: 4,
+    });
   }
 
   return (
@@ -25,7 +44,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
       <div className="d-flex justify-content-end">
         <NewPointer
           enabled={selected !== null}
-          roomNumber={selected ?? { index: 0, name: "104G" }}
+          roomNumber={selected ?? { index: 1, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
         <div
@@ -88,15 +107,8 @@ function RoomSelector({
   selected: { index: number; name: string };
   setSelected: (a: { index: number; name: string }) => void;
 }) {
-  // TODOç Retrieve this from the database
-  const simpleRooms = Object.freeze([
-    { index: 0, name: "104G" },
-    { index: 1, name: "104F" },
-    { index: 2, name: "104E" },
-    { index: 3, name: "104D" },
-    { index: 4, name: "104C" },
-    { index: 5, name: "104B" },
-  ]); // Trust me, I know what I'm doing
+  // TODO Retrieve this from the database
+
   return (
     <div>
       {simpleRooms.map((room) => {
@@ -114,13 +126,13 @@ function RoomSelector({
         );
       })}
       <BigRoom
-        available={available.includes(6)}
-        selected={selected.index === 6}
+        available={available.includes(7)}
+        selected={selected.index === 7}
         props={{
           style: BigRoomStyle,
           onClick: () => {
             // TODO: Retrieve this from the database
-            setSelected({ index: 6, name: "104A" });
+            setSelected({ index: 7, name: "104A" });
           },
         }}
       />

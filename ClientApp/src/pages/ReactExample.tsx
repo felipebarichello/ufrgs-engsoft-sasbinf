@@ -1,11 +1,11 @@
 import { useState } from "react";
 import reactLogo from "#svgs/react.svg";
 import viteLogo from "/vite.svg";
-import { useGetHealthQuery } from "../api/sasbinfAPI";
+import { useAuthCheckQuery } from "../api/sasbinfAPI";
 
 function ReactExamplePage() {
   // Chama a query do RTK
-  const getHealth = useGetHealthQuery();
+  const getHealth = useAuthCheckQuery();
 
   // State para o contador
   const [count, setCount] = useState(0);

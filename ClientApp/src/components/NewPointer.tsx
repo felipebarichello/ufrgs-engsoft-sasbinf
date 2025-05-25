@@ -20,7 +20,7 @@ export default function NewPointer({
           height: "fit-content",
           position: "relative",
           justifyContent: "flex-end",
-          paddingTop: `${22 + 86 * roomNumber.index}px`, // DO NOT TOUCH
+          paddingTop: `${22 + 86 * (roomNumber.index - 1)}px`, // DO NOT TOUCH
         }}
       >
         <img src={Pointer} alt="NewPointer" style={{ width: "100%" }} />
@@ -30,7 +30,7 @@ export default function NewPointer({
             top: "25%",
             left: "10%",
             color: "#FFFFFF",
-            paddingTop: `${18 + 64 * roomNumber.index}px`, // DO NOT TOUCH
+            paddingTop: `${18 + 64 * (roomNumber.index - 1)}px`, // DO NOT TOUCH
           }}
         >{`Sala ${roomNumber.name}`}</h5>
       </div>

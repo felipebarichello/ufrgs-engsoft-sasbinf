@@ -5,6 +5,7 @@ import RoomsForm from "../components/RoomsForm";
 
 function RoomsPage() {
   const [availableRooms, setAvailableRooms] = useState<number[]>([]);
+
   return (
     <Restricted>
       <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
