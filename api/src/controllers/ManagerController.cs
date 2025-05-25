@@ -59,7 +59,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("create-room")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> CreateRoomPost([FromBody] RoomDto roomDto) {
+    public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
             return BadRequest(new { message = $"já existe uma sala com o nome {roomDto.name}" });
@@ -94,7 +94,23 @@ public class ManagerController : ControllerBase {
 
     }
 
-    public class RoomDto {
+    [HttpPost("activation-room/{roomId}/{isActive}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = $"sala não existe" });
+        }
+
+        room.IsActive = isActive;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { name = room.Name, isCative = room.IsActive });
+
+    }
+
+    public class CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = default!;
     }
