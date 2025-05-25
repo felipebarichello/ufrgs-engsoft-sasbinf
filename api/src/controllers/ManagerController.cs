@@ -60,9 +60,9 @@ public class ManagerController : ControllerBase {
     [HttpPost("create-room")]
     [Authorize(Roles = "manager")]
     public async Task<IActionResult> CreateRoomPost([FromBody] RoomDto roomDto) {
-        var alreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
-        if (alreadyExists) {
-            return BadRequest(new { message = "nome já existe" });
+        var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
+        if (roolAlreadyExists) {
+            return BadRequest(new { message = $"já existe uma sala com o nome {roomDto.name}" });
         }
 
         Room room = new Room {
@@ -76,6 +76,21 @@ public class ManagerController : ControllerBase {
         var roomId = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).Select(r => r.RoomId).FirstOrDefaultAsync();
 
         return Ok(new { roomId = roomId });
+
+    }
+
+    [HttpDelete("delete-room/{roomId}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> Delete([FromRoute] int roomId) {
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = "sala não existente" });
+        }
+
+        _dbContext.Rooms.Remove(room);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { roomName = room.Name });
 
     }
 
