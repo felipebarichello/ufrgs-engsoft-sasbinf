@@ -115,7 +115,7 @@ namespace api.src.Models {
             });
 
             modelBuilder.Entity<Manager>(model => {
-                model.ToTable("manager");
+                model.ToTable("managers");
                 model.HasKey(m => m.UId);
 
                 model.Property(m => m.UId)
