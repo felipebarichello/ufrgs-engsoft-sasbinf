@@ -52,11 +52,28 @@ export const sasbinf = createApi({
       }),
       transformErrorResponse: (e) => { alert('Failed to book room: ' + e); return { message: "Failed to book room: " + e }; },
       transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* Return the parsed result? */ }
-    })
+    }),
+
+    postLoginManager: build.mutation({
+    query: (login: Login) => ({
+      url: "manager/login",
+      method: "POST",
+      body: login
+    }),
+    transformErrorResponse: () => ({ message: "Invalid credentials" }),
+    transformResponse: (response) => {
+      try {
+        return v.parse(LoginResponseSchema, response);
+      } catch {
+        throw new Error("Invalid credentials");
+      }
+    }
+  }),
   }
-  ),
+  )
+
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation } = sasbinf;

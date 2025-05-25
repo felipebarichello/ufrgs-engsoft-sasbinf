@@ -1,20 +1,23 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 interface RestrictedProps {
   children: React.ReactNode;
 }
 
 function Restricted({ children }: RestrictedProps) {
+  const location = useLocation();
   const tokenExpiration = sessionStorage.getItem("authTokenExpiration");
-  const isTokenValid = tokenExpiration ? new Date(tokenExpiration) > new Date() : false;
+  const isTokenValid = tokenExpiration
+    ? new Date(tokenExpiration) > new Date()
+    : false;
 
   if (isTokenValid) {
-    // If logged in, render the children components
     return <>{children}</>;
   } else {
-    // If not logged in, redirect to the login page
-    return <Navigate to="/login" replace />;
+    const isManagerRoute = location.pathname.includes("/manager");
+    const redirectPath = isManagerRoute ? "/manager/login" : "/login";
+
+    return <Navigate to={redirectPath} replace />;
   }
 }
 
