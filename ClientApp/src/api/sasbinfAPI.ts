@@ -69,6 +69,23 @@ export const sasbinf = createApi({
       }
     }
   }),
+  
+
+  postCreateRoom: build.mutation({
+    query: ({ name, capacity, token }: { name: string; capacity: number; token: string }) => ({
+      url: "manager/create-room",
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        name,
+        capacity,
+      },
+    }),
+  }),
+
+
   }
   )
 
@@ -76,4 +93,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation, usePostCreateRoomMutation } = sasbinf;
