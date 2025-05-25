@@ -4,9 +4,6 @@ using DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using DotNext;
-using DotNext.Collections.Generic;
-using Microsoft.AspNetCore.SignalR;
 
 [ApiController]
 [Route("api/rooms")]
