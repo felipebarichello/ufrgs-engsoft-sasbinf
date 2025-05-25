@@ -52,7 +52,7 @@ public class AvailableRoomsController : ControllerBase {
             StartDate = request.day.ToDateTime(request.startTime),
             EndDate = request.day.ToDateTime(request.endTime),
         });
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = $"Room (RoomId: {request.roomId}) successfully booked!" });
     }

@@ -27,8 +27,6 @@ function LoginPage() {
       sessionStorage.setItem("authToken", loginState.data.token); // Store token
       sessionStorage.setItem("authTokenExpiration", loginState.data.expiration); // Store expiration
 
-      console.log(`${loginState.data.token} -- ${loginState.data.expiration}`);
-
       navigate("/rooms");
     }
   }, [loginState, navigate]); // Dependencies for the effect
