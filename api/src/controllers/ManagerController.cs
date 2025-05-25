@@ -26,12 +26,12 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
-        var user = await _dbContext.Members
-            .Where(u => u.Username == login.user && u.Password == login.password)
+        var user = await _dbContext.Managers
+            .Where(m => m.Username == login.user && m.Password == login.password)
             .FirstOrDefaultAsync();
 
         if (user == null) {
-            return Unauthorized(new { message = "user not found" });
+            return Unauthorized(new { message = "manager not found" });
         }
 
         var authClaims = new List<Claim> {
