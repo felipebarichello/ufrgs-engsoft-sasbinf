@@ -59,10 +59,10 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("create-room")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> CreateRoomPost([FromBody] RoomDto roomDto) {
-        var alreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
-        if (alreadyExists) {
-            return BadRequest(new { message = "nome já existe" });
+    public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
+        var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
+        if (roolAlreadyExists) {
+            return BadRequest(new { message = $"já existe uma sala com o nome {roomDto.name}" });
         }
 
         Room room = new Room {
@@ -79,7 +79,55 @@ public class ManagerController : ControllerBase {
 
     }
 
-    public class RoomDto {
+    [HttpDelete("delete-room/{roomId}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> Delete([FromRoute] int roomId) {
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = "sala não existente" });
+        }
+
+        _dbContext.Rooms.Remove(room);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { roomName = room.Name });
+
+    }
+
+    [HttpPost("activation-room/{roomId}/{isActive}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = $"sala não existe" });
+        }
+
+        room.IsActive = isActive;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { name = room.Name, isCative = room.IsActive });
+
+    }
+
+    [HttpGet("room-history/{roomId}/{numberOfBooks}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> GetRoomHistory([FromRoute] int roomId, [FromRoute] int numberOfBooks) {
+
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = $"sala não existe" });
+        }
+
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => b).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(books);
+
+    }
+
+    public class CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = default!;
     }
