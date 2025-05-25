@@ -110,6 +110,23 @@ public class ManagerController : ControllerBase {
 
     }
 
+    [HttpGet("room-history/{roomId}/{numberOfBooks}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> GetRoomHistory([FromRoute] int roomId, [FromRoute] int numberOfBooks) {
+
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = $"sala não existe" });
+        }
+
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => b).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(books);
+
+    }
+
     public class CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = default!;
