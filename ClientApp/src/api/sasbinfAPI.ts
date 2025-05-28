@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Login, LoginResponseSchema } from '../schemas/login';
 import { RoomFilters } from '../components/RoomsForm';
 import { AvailableRoomsSchema, BookRequest } from '../schemas/rooms';
+import { BookingArraySchema } from '../schemas/booking';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -103,8 +104,14 @@ export const sasbinf = createApi({
         Authorization: `Bearer ${token}`,
       }
       }),
+      transformResponse: (response) => {
+      try {
+        return v.parse(BookingArraySchema, response);
+      } catch {
+        throw new Error("Invalid credentials");
+      }
+    }
     }),
-
 
   }
   )

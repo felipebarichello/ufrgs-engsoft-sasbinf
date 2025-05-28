@@ -52,12 +52,16 @@ function ManageMainrPageRestricted() {
     e.preventDefault();
     if (roomId === null || roomId === "") return;
 
-    getHistory({
+    const history = await getHistory({
       roomId: roomId!,
       numberOfBooks: "5",
       token: sessionStorage.getItem("authToken")!,
     });
+
+    console.log("dados" + history.data);
   };
+
+  console.log(getHistory);
 
   return (
     <div>
@@ -119,6 +123,9 @@ function ManageMainrPageRestricted() {
           {" "}
           histórico da sala
         </button>
+        {getHistoryState.d && (
+          <Erroralert error={getHistoryState.error}></Erroralert>
+        )}
         {getHistoryState.isError && (
           <Erroralert error={getHistoryState.error}></Erroralert>
         )}
