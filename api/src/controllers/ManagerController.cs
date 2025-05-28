@@ -123,7 +123,7 @@ public class ManagerController : ControllerBase {
 
         await _dbContext.SaveChangesAsync();
 
-        return Ok(books);
+        return Ok(new { history = books });
 
     }
 
