@@ -14,6 +14,7 @@ function Restricted({ children }: RestrictedProps) {
   if (isTokenValid) {
     return <>{children}</>;
   } else {
+    // FIXME: This smells. We should definitely redirect by role, not by path name.
     const isManagerRoute = location.pathname.includes("/manager");
     const redirectPath = isManagerRoute ? "/manager/login" : "/login";
 
