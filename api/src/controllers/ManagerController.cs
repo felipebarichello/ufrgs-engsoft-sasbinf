@@ -67,7 +67,8 @@ public class ManagerController : ControllerBase {
 
         Room room = new Room {
             Capacity = roomDto.capacity,
-            Name = roomDto.name
+            Name = roomDto.name,
+            IsActive = true,
         };
 
         await _dbContext.Rooms.AddAsync(room);
@@ -119,16 +120,23 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"sala não existe" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => b).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { bookingId = b.BookingId, userId = b.UserId, startDate = b.StartDate, endDate = b.EndDate }).OrderBy(b => b.startDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
-        return Ok(books);
+        return Ok(new { history = books });
 
     }
 
-    public class CreateRoomDto {
+    public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = default!;
+    }
+
+    public record BookingDto {
+        public int bookingId { get; set; }
+        public int userId { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
     }
 }

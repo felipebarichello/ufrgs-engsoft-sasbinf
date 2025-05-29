@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Login, LoginResponseSchema } from '../schemas/login';
 import { RoomFilters } from '../components/RoomsForm';
 import { AvailableRoomsSchema, BookRequest } from '../schemas/rooms';
+import { BookingArraySchema } from '../schemas/booking';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -69,6 +70,59 @@ export const sasbinf = createApi({
       }
     }
   }),
+  
+
+  postCreateRoom: build.mutation({
+    query: ({ name, capacity, token }: { name: string; capacity: number; token: string }) => ({
+      url: "manager/create-room",
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        name,
+        capacity,
+      },
+    }),
+  }),
+
+  deleteRoom: build.mutation({
+    query: ({ roomId, token }: { roomId: string; token: string }) => ({
+      url: `manager/delete-room/${roomId}` ,
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }),
+  }),
+
+    postRoomActivation: build.mutation({
+    query: ({ roomId,isActive, token }: { roomId: string; isActive: boolean; token: string }) => ({
+      url: `manager/activation-room/${roomId}/${isActive}` ,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }),
+  }),
+
+  getRoomsHistorySearch: build.query({
+      query: ({roomId, numberOfBooks, token}: {roomId : string, numberOfBooks: string, token: string}) => ({
+        url: `manager/room-history/${roomId}/${numberOfBooks}`,
+        method: "GET",
+        headers: {
+        Authorization: `Bearer ${token}`,
+      }
+      }),
+      transformResponse: (response) => {
+      try {
+        return v.parse(BookingArraySchema, response);
+      } catch {
+        throw new Error("Invalid credentials");
+      }
+    }
+    }),
+
   }
   )
 
@@ -76,4 +130,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, usePostRoomActivationMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;
