@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 [ApiController]
 [Route("api/manager")]
 public class ManagerController : ControllerBase {
-    private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
@@ -36,7 +35,7 @@ public class ManagerController : ControllerBase {
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, STUB_UID),
+            new(ClaimTypes.NameIdentifier, user.UId.ToString()),
             new(ClaimTypes.Role, "manager")
         };
 
