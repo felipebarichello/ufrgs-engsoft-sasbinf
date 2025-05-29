@@ -37,6 +37,7 @@ public class AuthController : ControllerBase {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
             new(ClaimTypes.NameIdentifier, user.UId.ToString()),
+            new(ClaimTypes.Role, "member")
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
