@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase {
-    private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
 
     private readonly IConfiguration configuration;
@@ -37,7 +36,7 @@ public class AuthController : ControllerBase {
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, STUB_UID),
+            new(ClaimTypes.NameIdentifier, user.UId.ToString()),
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
