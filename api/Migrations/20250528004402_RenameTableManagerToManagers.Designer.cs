@@ -12,8 +12,8 @@ using api.src.Models;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250525193040_managers")]
-    partial class managers
+    [Migration("20250528004402_RenameTableManagerToManagers")]
+    partial class RenameTableManagerToManagers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
