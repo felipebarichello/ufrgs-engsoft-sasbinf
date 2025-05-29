@@ -96,6 +96,16 @@ export const sasbinf = createApi({
     }),
   }),
 
+    postRoomActivation: build.mutation({
+    query: ({ roomId,isActive, token }: { roomId: string; isActive: boolean; token: string }) => ({
+      url: `manager/activation-room/${roomId}/${isActive}` ,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }),
+  }),
+
   getRoomsHistorySearch: build.query({
       query: ({roomId, numberOfBooks, token}: {roomId : string, numberOfBooks: string, token: string}) => ({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
@@ -120,4 +130,4 @@ export const sasbinf = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;
+export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, usePostRoomActivationMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;

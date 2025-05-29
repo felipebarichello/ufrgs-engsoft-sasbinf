@@ -5,6 +5,7 @@ import {
   useDeleteRoomMutation,
   useLazyGetRoomsHistorySearchQuery,
   usePostCreateRoomMutation,
+  usePostRoomActivationMutation,
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
 
@@ -22,6 +23,7 @@ export default ManageMainrPage;
 
 function ManageMainrPageRestricted() {
   const [createRoom, createRoomState] = usePostCreateRoomMutation();
+  const [roomActivation, roomActivationState] = usePostRoomActivationMutation();
   const [deleteRoom, deleteRoomState] = useDeleteRoomMutation();
   const [getHistory, getHistoryState] = useLazyGetRoomsHistorySearchQuery();
   const [formState, setFormState] = useState<string | null>();
@@ -61,10 +63,23 @@ function ManageMainrPageRestricted() {
     console.log("dados" + history.data);
   };
 
+  const handleAvailable = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (roomId === null || roomId === "") return;
+
+    const history = await roomActivation({
+      roomId: 5,
+      isActive: false,
+      token: sessionStorage.getItem("authToken")!,
+    });
+
+    console.log("history" + history.data);
+  };
+
   console.log(getHistory);
 
   return (
-    <div>
+    <div style={{ margin: "10px" }}>
       <img
         src={logoImg}
         alt="SasbINF"
@@ -72,7 +87,8 @@ function ManageMainrPageRestricted() {
       />
       <h2>Foobar</h2>
 
-      <form onSubmit={handleSubmit} method="POST">
+      {/* User input */}
+      <form onSubmit={handleSubmit} method="POST" style={{ margin: "10px" }}>
         {/* User input */}
         <div>
           <label htmlFor="room">Usuário:</label>
@@ -95,8 +111,9 @@ function ManageMainrPageRestricted() {
         )}
       </form>
 
-      <form onSubmit={handleDelete} method="DELETE">
-        {/* User input */}
+      <div />
+
+      <form onSubmit={handleDelete} method="DELETE" style={{ margin: "10px" }}>
         <div>
           <label htmlFor="room">room:</label>
           <input
@@ -113,21 +130,33 @@ function ManageMainrPageRestricted() {
           {" "}
           deletar sala
         </button>
+
         {deleteRoomState.isError && (
           <Erroralert error={deleteRoomState.error}></Erroralert>
         )}
       </form>
 
-      <form onSubmit={handleHistory} method="GET">
+      <div />
+
+      <form onSubmit={handleHistory} method="GET" style={{ margin: "10px" }}>
         <button type="submit" disabled={roomId === null || roomId === ""}>
           {" "}
           histórico da sala
         </button>
-        {getHistoryState.d && (
+        {getHistoryState.is && (
           <Erroralert error={getHistoryState.error}></Erroralert>
         )}
-        {getHistoryState.isError && (
-          <Erroralert error={getHistoryState.error}></Erroralert>
+      </form>
+
+      <div />
+
+      <form onSubmit={handleAvailable} method="POST" style={{ margin: "10px" }}>
+        <button type="submit" disabled={formState === null || formState === ""}>
+          {" "}
+          available sala 5
+        </button>
+        {roomActivationState.isError && (
+          <Erroralert error={roomActivationState.error}></Erroralert>
         )}
       </form>
     </div>
