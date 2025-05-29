@@ -127,12 +127,12 @@ public class ManagerController : ControllerBase {
 
     }
 
-    public class CreateRoomDto {
+    public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = default!;
     }
 
-    public class BookingDto {
+    public record BookingDto {
         public int bookingId { get; set; }
         public int userId { get; set; }
         public DateTime startDate { get; set; }

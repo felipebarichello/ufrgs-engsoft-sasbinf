@@ -9,7 +9,7 @@ import {
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
 
-function ManageMainrPage() {
+function ManagerMainPage() {
   return (
     <Restricted>
       <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
@@ -19,7 +19,7 @@ function ManageMainrPage() {
   );
 }
 
-export default ManageMainrPage;
+export default ManagerMainPage;
 
 function ManageMainrPageRestricted() {
   const [createRoom, createRoomState] = usePostCreateRoomMutation();
