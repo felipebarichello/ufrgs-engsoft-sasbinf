@@ -6,7 +6,7 @@ import ReactExamplePage from "../pages/ReactExample";
 import LoginPage from "../pages/LoginPage";
 import DoomPage from "../pages/DoomPage";
 import LoginManagerPage from "../pages/manager/ManagerLoginPage";
-import ManagerMainPage from "../pages/manager/ManagarMainPage";
+import ManagerMainPage from "../pages/manager/ManagerMainPage";
 
 function AppRouter() {
   return (

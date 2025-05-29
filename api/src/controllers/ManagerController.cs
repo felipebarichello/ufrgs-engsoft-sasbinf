@@ -130,7 +130,7 @@ public class ManagerController : ControllerBase {
 
     public record CreateRoomDto {
         public int capacity { get; set; }
-        public string name { get; set; } = default!;
+        public string name { get; set; } = null!;
     }
 
     public record BookingDto {
