@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 public class AuthController : ControllerBase {
     private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
-    private const string STUB_LOGIN_KEY = "stub-login-key";
 
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
@@ -39,7 +38,6 @@ public class AuthController : ControllerBase {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
             new(ClaimTypes.NameIdentifier, STUB_UID),
-            new("login_key", STUB_LOGIN_KEY),
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
