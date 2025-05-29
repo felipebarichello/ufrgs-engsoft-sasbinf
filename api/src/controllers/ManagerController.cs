@@ -67,7 +67,8 @@ public class ManagerController : ControllerBase {
 
         Room room = new Room {
             Capacity = roomDto.capacity,
-            Name = roomDto.name
+            Name = roomDto.name,
+            IsActive = true,
         };
 
         await _dbContext.Rooms.AddAsync(room);
