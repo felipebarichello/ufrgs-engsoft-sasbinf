@@ -36,7 +36,7 @@ public class ManagerController : ControllerBase {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
             new(ClaimTypes.NameIdentifier, user.UId.ToString()),
-            new(ClaimTypes.Role, "manager")
+            new(ClaimTypes.Role, Roles.Manager)
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
@@ -55,7 +55,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("create-room")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
