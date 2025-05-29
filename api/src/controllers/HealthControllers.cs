@@ -5,6 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 public class HealthController : ControllerBase {
     [HttpGet]
     public IActionResult HealthCheck() {
-        return Ok(new { message = "api funcionando" });
+        return Ok(new { message = "API is up and running!" });
     }
 }
