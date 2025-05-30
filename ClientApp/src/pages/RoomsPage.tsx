@@ -2,9 +2,10 @@ import Restricted from "../components/Restricted";
 import { useState } from "react";
 import INFLibrary from "../components/InfLibrary";
 import RoomsForm from "../components/RoomsForm";
+import { Room } from "../schemas/rooms";
 
 function RoomsPage() {
-  const [availableRooms, setAvailableRooms] = useState<number[]>([]);
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   return (
     <Restricted>
       <div className="d-flex justify-content-around" style={{ width: "75vw" }}>

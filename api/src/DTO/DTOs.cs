@@ -4,5 +4,5 @@ namespace DTO {
     public record LoginResponseDTO(string token, string expiration);
 
     public record AvailableRoomsSearchDTO(string day, string startTime, string endTime, int capacity); // search available rooms
-    public record AvailableRoomsResponseDTO(List<int> availableRoomsIDs); // available rooms id list
+    public record AvailableRoomsResponseDTO(List<(int, string)> availableRooms); // available rooms list; (id, name)
 }

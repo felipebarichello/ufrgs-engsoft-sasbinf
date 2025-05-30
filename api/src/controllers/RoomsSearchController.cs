@@ -39,7 +39,7 @@ public class AvailableRoomsSearchController : ControllerBase {
 
         if (startDateTime < earliestStart) {
             return BadRequest(new { message = "As reservas devem começar às 08:30 ou mais tarde." });
-        }     
+        }
 
         if (endDateTime > latestEnd) {
             return BadRequest(new { message = "As reservas devem terminar até às 17:10." });
@@ -64,7 +64,7 @@ public class AvailableRoomsSearchController : ControllerBase {
             .ToListAsync();
 
         return Ok(new AvailableRoomsResponseDTO(
-            availableRooms.Select(r => r.RoomId).ToList()
+            availableRooms.Select(r => (r.RoomId, r.Name)).ToList()
         ));
     }
 }
