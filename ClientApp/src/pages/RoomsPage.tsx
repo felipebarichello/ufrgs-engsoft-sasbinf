@@ -7,7 +7,7 @@ function RoomsPage() {
   const [availableRooms, setAvailableRooms] = useState<number[]>([]);
   return (
     <MemberWrapper>
-      <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
+      <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
         <RoomsForm setAvailableRooms={setAvailableRooms} />
         <INFLibrary available={availableRooms} />
       </div>
