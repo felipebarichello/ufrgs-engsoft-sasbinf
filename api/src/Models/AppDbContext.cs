@@ -43,11 +43,6 @@ namespace api.src.Models {
                     .HasColumnType("timestamp")
                     .IsRequired()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                model.HasOne(u => u.Booking) // TODO: has many 
-                    .WithOne(b => b.User)
-                    .HasForeignKey<Booking>(b => b.UserId)
-                    .IsRequired(false);
             });
 
             modelBuilder.Entity<Booking>(model => {
@@ -79,9 +74,14 @@ namespace api.src.Models {
                     .HasColumnType("timestamp")
                     .IsRequired();
 
+                model.Property(b => b.Status)
+                    .HasColumnName("status")
+                    .HasColumnType("nvarchar(20)")
+                    .IsRequired();
+
                 model.HasOne(b => b.User)
-                    .WithOne(u => u.Booking)
-                    .HasForeignKey<Booking>(b => b.UserId);
+                    .WithMany(u => u.Bookings)
+                    .HasForeignKey(b => b.UserId);
 
                 model.HasOne(b => b.Room)
                     .WithMany(r => r.Bookings)
