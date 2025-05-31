@@ -25,7 +25,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error("Invalid server response for login");
+          throw new Error("Oops. Something went wrong while dealing with your login request.");
         }
       }
     }),
