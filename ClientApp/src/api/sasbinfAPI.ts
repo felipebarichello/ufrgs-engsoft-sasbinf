@@ -54,7 +54,7 @@ export const sasbinf = createApi({
         headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
       }),
       transformErrorResponse: (e) => { alert('Failed to book room: ' + e); return { message: "Failed to book room: " + e }; },
-      transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* Return the parsed result? */ }
+      transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* TODO: Return the parsed result? */ }
     }),
 
     postLoginManager: build.mutation({
