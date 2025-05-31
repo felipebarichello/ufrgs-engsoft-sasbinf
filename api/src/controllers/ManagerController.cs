@@ -31,7 +31,7 @@ public class ManagerController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (user == null) {
-            return Unauthorized(new { message = "manager not found" });
+            return Unauthorized(new { message = "Manager Not Found" });
         }
 
         var authClaims = new List<Claim> {
@@ -62,7 +62,7 @@ public class ManagerController : ControllerBase {
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
-            return BadRequest(new { message = $"já existe uma sala com o nome {roomDto.name}" });
+            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome" });
         }
 
         Room room = new Room {
@@ -85,7 +85,7 @@ public class ManagerController : ControllerBase {
     public async Task<IActionResult> Delete([FromRoute] int roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
-            return BadRequest(new { message = "sala não existente" });
+            return BadRequest(new { message = $"Não é possível deletar uma sala inexistente - {roomId}" });
         }
 
         _dbContext.Rooms.Remove(room);
@@ -100,7 +100,7 @@ public class ManagerController : ControllerBase {
     public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
-            return BadRequest(new { message = $"sala não existe" });
+            return BadRequest(new { message = $"Sala Inexistente - {roomId}" });
         }
 
         room.IsActive = isActive;
@@ -117,7 +117,7 @@ public class ManagerController : ControllerBase {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
-            return BadRequest(new { message = $"sala não existe" });
+            return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
         var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { bookingId = b.BookingId, userId = b.UserId, startDate = b.StartDate, endDate = b.EndDate }).OrderBy(b => b.startDate).Reverse().Take(numberOfBooks);
