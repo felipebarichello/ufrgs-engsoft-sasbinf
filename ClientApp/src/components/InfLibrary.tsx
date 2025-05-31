@@ -21,7 +21,7 @@ export default function INFLibrary({ available }: { available: number[] }) {
     name: string;
   } | null>(null);
 
-  const [triggerBookRequest, requestMetadata] =
+  const [triggerBookRequest] =
     usePostRoomBookRequestMutation();
 
   function handleBookPress() {
