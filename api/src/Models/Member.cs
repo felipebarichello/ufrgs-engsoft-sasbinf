@@ -3,7 +3,7 @@ namespace api.src.Models {
         public int UId { get; set; } = default!;
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public Booking? Booking { get; set; }
+        public List<Booking>? Bookings { get; set; }
         public DateTime? TimedOutUntil { get; set; }
         public DateTime CreatedAt { get; set; } = default!;
 
