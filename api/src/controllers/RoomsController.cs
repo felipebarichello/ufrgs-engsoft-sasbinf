@@ -101,9 +101,6 @@ public class AvailableRoomsController : ControllerBase {
         // Extract the IDs of rooms that are already booked
         var conflictingRoomIds = conflictingBookings.Select(b => b.RoomId).ToList();
 
-        Console.Clear();
-        Console.WriteLine($"Already booked rooms: {(conflictingRoomIds.Count() != 0 ? string.Join(", ", conflictingRoomIds) : "None")}");
-
         // Find rooms that are not booked during the requested time and meet the capacity requirement
         var availableRooms = await _dbContext.Rooms
             .Where(r => !conflictingRoomIds.Contains(r.RoomId) && r.Capacity >= search.capacity)
