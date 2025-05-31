@@ -128,6 +128,26 @@ public class ManagerController : ControllerBase {
 
     }
 
+    [HttpPost("bookings/change-status/{bookingId}/{status}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> ChangeBookingSatus([FromRoute] int bookingId, [FromRoute] string status) {
+        var validStatuses = new[] { "pending", "confirmed", "cancelled", "completed" };
+
+        if (!validStatuses.Contains(status)) {
+            return BadRequest(new { message = $"estado inválido. Valores possíveis: pending, confirmed, cancelled, completed" });
+        }
+
+        var booking = await _dbContext.Bookings.Where(r => r.BookingId == bookingId).FirstOrDefaultAsync();
+        if (booking == null) {
+            return BadRequest(new { message = $"booking não existe" });
+        }
+
+        booking.Status = status;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
     public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = null!;
