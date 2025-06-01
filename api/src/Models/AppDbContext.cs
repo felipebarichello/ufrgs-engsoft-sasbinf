@@ -6,6 +6,7 @@ namespace api.src.Models {
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Manager> Managers { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -141,6 +142,30 @@ namespace api.src.Models {
                     .IsRequired()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+            });
+
+            modelBuilder.Entity<Notification>(model => {
+                model.ToTable("notifications");
+                model.HasKey(m => m.NotificationId);
+
+                model.Property(m => m.NotificationId)
+                    .HasColumnName("notification_id")
+                    .HasColumnType("bigint")
+                    .IsRequired();
+
+                model.Property(m => m.UserId)
+                    .HasColumnName("user_id")
+                    .HasColumnType("bigint")
+                    .IsRequired();
+
+                model.Property(m => m.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("nvarchar(512)")
+                    .IsRequired(true);
+
+                model.HasOne(m => m.User)
+                    .WithMany(u => u.Notifications)
+                    .HasForeignKey(m => m.UserId);
             });
         }
     }

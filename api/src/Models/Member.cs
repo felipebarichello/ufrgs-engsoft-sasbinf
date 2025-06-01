@@ -6,6 +6,7 @@ namespace api.src.Models {
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public DateTime? TimedOutUntil { get; set; }
         public DateTime CreatedAt { get; set; } = default!;
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     }
 }
