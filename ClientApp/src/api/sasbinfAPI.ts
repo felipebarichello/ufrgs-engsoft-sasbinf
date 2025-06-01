@@ -53,7 +53,7 @@ export const sasbinf = createApi({
         body: req,
         headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
       }),
-      transformResponse: (e) => { console.log(e); alert('Room successfully booked!');/* TODO: Return the parsed result? */ }
+      transformResponse: (e) => { console.log(e); alert('A sala foi reservada com sucesso.');/* TODO: Return the parsed result? */ }
     }),
 
     postLoginManager: build.mutation({
