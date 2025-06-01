@@ -30,7 +30,7 @@ public class AuthController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (user == null) {
-            return Unauthorized(new { message = "user not found" });
+            return Unauthorized(new { message = "User Not Found" });
         }
 
         var authClaims = new List<Claim> {
