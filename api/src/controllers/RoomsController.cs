@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 [ApiController]
 [Route("api/rooms")]
-[Authorize]
+[Authorize(Roles = Roles.Member)]
 public class AvailableRoomsController : ControllerBase {
     private readonly AppDbContext _dbContext;
 
