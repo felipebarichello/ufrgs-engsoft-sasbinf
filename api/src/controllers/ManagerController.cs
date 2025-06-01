@@ -11,9 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 [ApiController]
 [Route("api/manager")]
 public class ManagerController : ControllerBase {
-    private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
-    private const string STUB_LOGIN_KEY = "stub-login-manager-key";
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
     private readonly AppDbContext _dbContext;
@@ -31,15 +29,14 @@ public class ManagerController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (user == null) {
-            return Unauthorized(new { message = "manager not found" });
+            return Unauthorized(new { message = "Manager Not Found" });
         }
 
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, STUB_UID),
-            new("login_key", STUB_LOGIN_KEY),
-            new(ClaimTypes.Role, "manager")
+            new(ClaimTypes.NameIdentifier, user.ManagerId.ToString()),
+            new(ClaimTypes.Role, Roles.Manager)
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
@@ -58,11 +55,11 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("create-room")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
-            return BadRequest(new { message = $"já existe uma sala com o nome {roomDto.name}" });
+            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome" });
         }
 
         Room room = new Room {
@@ -81,11 +78,11 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpDelete("delete-room/{roomId}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> Delete([FromRoute] long roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
-            return BadRequest(new { message = "sala não existente" });
+            return BadRequest(new { message = $"Não é possível deletar uma sala inexistente - {roomId}" });
         }
 
         _dbContext.Rooms.Remove(room);
@@ -96,8 +93,8 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    [Authorize(Roles = "manager")]
-    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) {
+    [Authorize(Roles = Roles.Manager)]
+    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
 
         return await executionStrategy.ExecuteAsync(async () => {
@@ -144,7 +141,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
@@ -160,12 +157,12 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
-            return BadRequest(new { message = $"sala não existe" });
+            return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
         var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { bookingId = b.BookingId, userId = b.UserId, startDate = b.StartDate, endDate = b.EndDate }).OrderBy(b => b.startDate).Reverse().Take(numberOfBooks);

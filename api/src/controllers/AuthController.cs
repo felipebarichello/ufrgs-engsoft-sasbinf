@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase {
-    private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
-    private const string STUB_LOGIN_KEY = "stub-login-key";
 
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
@@ -32,14 +30,14 @@ public class AuthController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (user == null) {
-            return Unauthorized(new { message = "user not found" });
+            return Unauthorized(new { message = "User Not Found" });
         }
 
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, STUB_UID),
-            new("login_key", STUB_LOGIN_KEY),
+            new(ClaimTypes.NameIdentifier, user.MemberId.ToString()),
+            new(ClaimTypes.Role, Roles.Member)
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));

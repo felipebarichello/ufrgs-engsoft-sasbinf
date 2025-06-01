@@ -13,7 +13,7 @@ namespace api.src.Models {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração da tabela Users (members)
+            // Configuração da tabela `members`
             modelBuilder.Entity<Member>(model => {
                 model.ToTable("members");
                 model.HasKey(u => u.MemberId);

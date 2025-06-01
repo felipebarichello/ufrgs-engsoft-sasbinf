@@ -5,11 +5,11 @@ export const AvailableRoomsSchema =
     availableRoomsIDs: v.array(v.pipe(v.number(), v.integer()))
   });
 
-export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>
+export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>;
 
 export type BookRequest = {
   day: string,
   startTime: string,
   endTime: string,
-  
-}
+  roomId: number;
+};

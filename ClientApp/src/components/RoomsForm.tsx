@@ -1,22 +1,18 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent } from "react";
 import { useLazyPostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
 import { Erroralert } from "./ErrorAlert";
-
-const Epoch = Object.freeze(new Date(0, 0, 0, 0, 0, 0));
-
-const initialState: RoomFilters = {
-  day: Epoch.toLocaleDateString(),
-  startTime: Epoch.toLocaleTimeString(),
-  endTime: Epoch.toLocaleTimeString(),
-  capacity: 1,
-};
+import { Epoch, RoomFilters } from "../pages/RoomsPage";
 
 export default function RoomsForm({
   setAvailableRooms,
+  filtersState,
+  setFiltersState,
 }: {
   setAvailableRooms: (a: number[]) => void;
+  filtersState: RoomFilters;
+  setFiltersState: (a: RoomFilters) => void;
 }) {
-  const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
+  // const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
 
   return (
     <div>
@@ -38,7 +34,7 @@ function RoomsFormInputs({
   setAvailable,
 }: {
   inputs: RoomFilters;
-  setInputs: React.Dispatch<React.SetStateAction<RoomFilters>>;
+  setInputs: (a: RoomFilters) => void;
   setAvailable: (a: number[]) => void;
 }) {
   const [triggerAvailableRoomsQuery, availableRoomsState] =
@@ -167,13 +163,6 @@ function RoomsFormInputs({
   );
 }
 
-export type RoomFilters = {
-  day: string;
-  startTime: string;
-  endTime: string;
-  capacity: number;
-};
-
 export type RoomFiltersDTO = {
   day: Date;
   startTime: Date;
@@ -191,7 +180,7 @@ function anyInputIsEmpty({
     capacity < 1 ||
     day === "" ||
     day === Epoch.toLocaleDateString() ||
-    startTime === Epoch.toLocaleTimeString() ||
+    startTime === Epoch.toLocaleDateString() ||
     endTime === Epoch.toLocaleTimeString()
   );
 }
