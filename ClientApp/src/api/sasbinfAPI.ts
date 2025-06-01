@@ -7,13 +7,9 @@ import {
   RoomsSchema,
 } from "../schemas/rooms";
 import { BookingArraySchema } from "../schemas/booking";
-
-// <<<<<<< HEAD
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
-// =======
-// import { RoomFilters } from "../components/RoomsForm";
-// >>>>>>> 9d8fcad (web: ban member and checkin queries)
+import { MemberBookingResponseSchema } from '../schemas/memberBooking';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -189,6 +185,23 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`,
         },
       }),
+    }),
+
+    getMemberBookings: build.query({
+      query: ({ memberId, token }: { memberId: string; token: string }) => ({
+        url: `bookings-to/${memberId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MemberBookingResponseSchema, response);
+        } catch (e) {
+          throw new Error("Falha ao obter as reservas do usuário: " + e);
+        }
+      },
     }),
 
     postBanMember: build.mutation({
