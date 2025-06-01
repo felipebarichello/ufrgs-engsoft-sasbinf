@@ -78,7 +78,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpDelete("delete-room/{roomId}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> Delete([FromRoute] int roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -93,7 +93,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -109,7 +109,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetRoomHistory([FromRoute] int roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
