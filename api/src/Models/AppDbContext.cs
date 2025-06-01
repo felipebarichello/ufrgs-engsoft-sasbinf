@@ -61,7 +61,7 @@ namespace api.src.Models {
 
                 model.Property(b => b.RoomId)
                     .HasColumnName("room_id")
-                    .HasColumnType("int")
+                    .HasColumnType("bigint")
                     .IsRequired();
 
                 model.Property(b => b.StartDate)
@@ -83,19 +83,19 @@ namespace api.src.Models {
                     .WithMany(u => u.Bookings)
                     .HasForeignKey(b => b.UserId);
 
-                model.HasOne(b => b.Room)
-                    .WithMany(r => r.Bookings)
-                    .HasForeignKey(b => b.RoomId);
+                // model.HasOne(b => b.Room)
+                //     .WithMany(r => r.Bookings)
+                //     .HasForeignKey(b => b.RoomId);
 
             });
 
             modelBuilder.Entity<Room>(model => {
                 model.ToTable("rooms");
-                model.HasKey(r => r.RoomId);
+                // model.HasKey(r => r.RoomId);
 
                 model.Property(r => r.RoomId)
                     .HasColumnName("room_id")
-                    .HasColumnType("int")
+                    .HasColumnType("bigint")
                     .IsRequired()
                     .ValueGeneratedOnAdd();
 
