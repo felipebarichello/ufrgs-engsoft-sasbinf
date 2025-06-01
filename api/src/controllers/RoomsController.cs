@@ -32,12 +32,7 @@ public class AvailableRoomsController : ControllerBase {
         if (username == null) {
             return Unauthorized($"Failed to find user for provided bearer token");
         }
-
-        var hasBooking = await UserHasBooking();
-        if (hasBooking) {
-            return BadRequest(new { message = "O usuário já alugou uma sala" });
-        }
-
+        
         var userId = await _dbContext.Members
             .Where(m => m.Username == username)
             .Select(m => m.UId)
@@ -113,26 +108,6 @@ public class AvailableRoomsController : ControllerBase {
             .ToListAsync();
 
         return availableRooms.Select(r => r.RoomId).ToList();
-    }
-
-    private async Task<bool> UserHasBooking() {
-        var username = User.FindFirstValue(ClaimTypes.Name);
-
-        var userId = await _dbContext.Members
-            .Where(m => m.Username == username)
-            .Select(m => m.UId)
-            .FirstOrDefaultAsync();
-
-        var bookings = await _dbContext.Bookings
-            .Where(b => b.UserId == userId)
-            .Select(b => b.BookingId)
-            .ToListAsync();
-
-        if (bookings.Count == 0) {
-            return false;
-        }
-
-        return true;
     }
 }
 
