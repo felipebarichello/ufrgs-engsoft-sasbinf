@@ -98,17 +98,49 @@ public class ManagerController : ControllerBase {
     [HttpPost("activation-room/{roomId}/{isActive}")]
     [Authorize(Roles = "manager")]
     public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) {
-        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
-        if (room == null) {
-            return BadRequest(new { message = $"sala não existe" });
-        }
+        var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
 
-        room.IsActive = isActive;
+        return await executionStrategy.ExecuteAsync(async () => {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync()) {
+                try {
+                    var room = await _dbContext.Rooms
+                        .FirstOrDefaultAsync(r => r.RoomId == roomId);
 
-        await _dbContext.SaveChangesAsync();
+                    if (room == null) {
+                        return BadRequest(new { message = "Sala não existe." });
+                    }
 
-        return Ok(new { name = room.Name, isCative = room.IsActive });
+                    room.IsActive = isActive;
 
+                    var bookingsToNotify = await _dbContext.Bookings
+                        .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId)
+                        .ToListAsync();
+
+                    if (bookingsToNotify.Any()) {
+                        var notifications = bookingsToNotify.Select(b => new Notification {
+                            UserId = b.UserId,
+                            Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
+                        }).ToList();
+
+                        bookingsToNotify.ForEach(b => b.Status = "CANCELLED");
+                        await _dbContext.Notifications.AddRangeAsync(notifications);
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Ok(new {
+                        name = room.Name,
+                        isActive = room.IsActive,
+                        cancelledBookings = bookingsToNotify.Count
+                    });
+                }
+                catch (Exception ex) {
+                    await transaction.RollbackAsync();
+                    return StatusCode(500, new { message = "Erro ao atualizar a sala.", error = ex.Message });
+                }
+            }
+        });
     }
 
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
@@ -147,7 +179,7 @@ public class ManagerController : ControllerBase {
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     [Authorize(Roles = "manager")]
     public async Task<IActionResult> ChangeBookingSatus([FromRoute] long bookingId, [FromRoute] string status) {
-        var validStatuses = new[] { "pending", "confirmed", "cancelled", "completed" };
+        var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
         if (!validStatuses.Contains(status)) {
             return BadRequest(new { message = $"estado inválido. Valores possíveis: pending, confirmed, cancelled, completed" });
