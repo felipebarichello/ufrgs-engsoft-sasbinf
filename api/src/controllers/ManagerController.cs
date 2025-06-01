@@ -193,6 +193,20 @@ public class ManagerController : ControllerBase {
         return Ok();
     }
 
+    [HttpPost("ban-member/{memberId}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> BanMember([FromRoute] long memberId) {
+        var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
+        if (member == null) {
+            return BadRequest(new { message = $"membro não existe" });
+        }
+
+        member.TimedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
     public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = null!;
