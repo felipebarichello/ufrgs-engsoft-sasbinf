@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MemberWrapper from "../components/MemberWrapper";
-import MemberBookingsTable from "../components/MemberBookingsTable";
+import MemberBookingsList from "../components/MemberBookingsList";
 
 export type LogFilters = {
   memberId: string;
@@ -47,7 +47,7 @@ function MemberBookingsPage() {
   return (
     <MemberWrapper>
       <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
-        <MemberBookingsTable bookingsList={logs} />
+        <MemberBookingsList bookingsList={logs} />
       </div>
     </MemberWrapper>
   );
