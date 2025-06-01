@@ -7,6 +7,7 @@ import DoomPage from "../pages/DoomPage";
 import LoginManagerPage from "../pages/manager/ManagerLoginPage";
 import ManagerMainPage from "../pages/manager/ManagerMainPage";
 import ManagerRoomsPage from "../pages/manager/RoomsPage";
+import MemberBookingsPage from "../pages/MemberBookingsPage";
 
 function AppRouter() {
   return (
@@ -16,6 +17,8 @@ function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/rooms" element={<RoomsPage />} />
+
+      <Route path="/bookings" element={<MemberBookingsPage />} />
 
       <Route path="/doom" element={<DoomPage />} />
 
