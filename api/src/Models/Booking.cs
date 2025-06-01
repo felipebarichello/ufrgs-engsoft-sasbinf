@@ -1,8 +1,8 @@
 namespace api.src.Models {
     public class Booking {
-        public int BookingId { get; set; }
-        public int UserId { get; set; }
-        public int RoomId { get; set; }
+        public long BookingId { get; set; }
+        public long UserId { get; set; }
+        public long RoomId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = default!;

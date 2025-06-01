@@ -82,7 +82,7 @@ public class ManagerController : ControllerBase {
 
     [HttpDelete("delete-room/{roomId}")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> Delete([FromRoute] int roomId) {
+    public async Task<IActionResult> Delete([FromRoute] long roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
             return BadRequest(new { message = "sala não existente" });
@@ -97,7 +97,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
+    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
             return BadRequest(new { message = $"sala não existe" });
@@ -113,9 +113,9 @@ public class ManagerController : ControllerBase {
 
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> GetMemberHistory([FromRoute] int memberId, [FromRoute] int numberOfBooks) {
+    public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
 
-        var room = await _dbContext.Members.Where(r => r.UId == memberId).FirstOrDefaultAsync();
+        var room = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
         if (room == null) {
             return BadRequest(new { message = $"membro não existe" });
         }
@@ -129,7 +129,7 @@ public class ManagerController : ControllerBase {
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> GetRoomHistory([FromRoute] int roomId, [FromRoute] int numberOfBooks) {
+    public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -146,7 +146,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     [Authorize(Roles = "manager")]
-    public async Task<IActionResult> ChangeBookingSatus([FromRoute] int bookingId, [FromRoute] string status) {
+    public async Task<IActionResult> ChangeBookingSatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "completed" };
 
         if (!validStatuses.Contains(status)) {
@@ -170,8 +170,8 @@ public class ManagerController : ControllerBase {
     }
 
     public record BookingDto {
-        public int bookingId { get; set; }
-        public int userId { get; set; }
+        public long bookingId { get; set; }
+        public long userId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
     }

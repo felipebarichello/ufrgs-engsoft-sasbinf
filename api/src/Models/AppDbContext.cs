@@ -15,10 +15,10 @@ namespace api.src.Models {
             // Configuração da tabela Users (members)
             modelBuilder.Entity<Member>(model => {
                 model.ToTable("members");
-                model.HasKey(u => u.UId);
+                model.HasKey(u => u.MemberId);
 
-                model.Property(u => u.UId)
-                    .HasColumnName("uid")
+                model.Property(u => u.MemberId)
+                    .HasColumnName("member_id")
                     .HasColumnType("bigint")
                     .IsRequired();
 
@@ -83,15 +83,15 @@ namespace api.src.Models {
                     .WithMany(u => u.Bookings)
                     .HasForeignKey(b => b.UserId);
 
-                // model.HasOne(b => b.Room)
-                //     .WithMany(r => r.Bookings)
-                //     .HasForeignKey(b => b.RoomId);
+                model.HasOne(b => b.Room)
+                    .WithMany(r => r.Bookings)
+                    .HasForeignKey(b => b.RoomId);
 
             });
 
             modelBuilder.Entity<Room>(model => {
                 model.ToTable("rooms");
-                // model.HasKey(r => r.RoomId);
+                model.HasKey(r => r.RoomId);
 
                 model.Property(r => r.RoomId)
                     .HasColumnName("room_id")
@@ -116,10 +116,10 @@ namespace api.src.Models {
 
             modelBuilder.Entity<Manager>(model => {
                 model.ToTable("managers");
-                model.HasKey(m => m.UId);
+                model.HasKey(m => m.ManagerId);
 
-                model.Property(m => m.UId)
-                    .HasColumnName("uid")
+                model.Property(m => m.ManagerId)
+                    .HasColumnName("manager_id")
                     .HasColumnType("bigint")
                     .IsRequired();
 
