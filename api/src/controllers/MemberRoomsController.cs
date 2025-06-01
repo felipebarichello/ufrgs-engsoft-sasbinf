@@ -8,10 +8,10 @@ using System.Security.Claims;
 [ApiController]
 [Route("api/rooms")]
 [Authorize(Roles = Roles.Member)]
-public class RoomsController : ControllerBase {
+public class MemberRoomsController : ControllerBase {
     private readonly AppDbContext _dbContext;
 
-    public RoomsController(AppDbContext dbContext) {
+    public MemberRoomsController(AppDbContext dbContext) {
         _dbContext = dbContext;
     }
 
