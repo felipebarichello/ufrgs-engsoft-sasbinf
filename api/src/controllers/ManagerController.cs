@@ -119,8 +119,10 @@ public class ManagerController : ControllerBase {
                             Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
                         }).ToList();
 
-                        bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
-                        await _dbContext.Notifications.AddRangeAsync(notifications);
+                        bookingsToNotify.ForEach(b => b.Status = "CANCELLED");
+                        if (notifications != null) {
+                            await NotifyMembers(notifications);
+                        }
                     }
 
                     await _dbContext.SaveChangesAsync();
@@ -202,9 +204,22 @@ public class ManagerController : ControllerBase {
         }
 
         member.TimedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
+        var notification = new Notification { UserId = memberId, Description = $"Você está banido até {member.TimedOutUntil}" };
+        if (notification != null) {
+            await NotifyMembers(notification);
+        }
+
         await _dbContext.SaveChangesAsync();
 
         return Ok();
+    }
+
+    public async Task NotifyMembers(IList<Notification> notifications) {
+        await _dbContext.Notifications.AddRangeAsync(notifications);
+    }
+
+    public async Task NotifyMembers(Notification notification) {
+        await _dbContext.Notifications.AddAsync(notification);
     }
 
     public record CreateRoomDto {
