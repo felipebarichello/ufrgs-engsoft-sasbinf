@@ -30,17 +30,17 @@ export default function MemberBookingsList({ bookingsList }: MemberBookingsListP
                     <div
                         key={booking.bookingId}
                         style={{
+                            background: "#e5e7eb", // Lighter gray card
+                            borderRadius: "16px",   // More rounded
+                            padding: "1.5rem 2rem",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                             display: "flex",
                             flexDirection: "row",
                             alignItems: "center",
-                            background: "#f3f4f6",
-                            borderRadius: "12px",
-                            padding: "1.25rem 2rem",
-                            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
                             gap: "2rem",
                         }}
                     >
-                        <div style={{ minWidth: "90px", fontWeight: 600 }}>#{booking.bookingId}</div>
+                        <div style={{ minWidth: "5em", fontWeight: 600 }}>#{booking.bookingId}</div>
                         <div style={{ flex: 1 }}>
                             <div style={{ fontWeight: 500 }}>{booking.roomName}</div>
                             <div style={{ fontSize: "0.95em", color: "#666" }}>
@@ -49,13 +49,14 @@ export default function MemberBookingsList({ bookingsList }: MemberBookingsListP
                         </div>
                         <div
                             style={{
-                                padding: "0.4em 1em",
-                                borderRadius: "8px",
-                                background: "#e5e7eb",
+                                padding: "0.4em 0.5em",
+                                borderRadius: "8%",
+                                background: "#f3f4f6",
                                 fontWeight: 500,
                                 color: "#444",
                                 minWidth: "80px",
                                 textAlign: "center",
+                                border: "1px solid #ababab",
                             }}
                         >
                             {booking.status}
