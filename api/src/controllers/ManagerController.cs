@@ -119,7 +119,7 @@ public class ManagerController : ControllerBase {
                             Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
                         }).ToList();
 
-                        bookingsToNotify.ForEach(b => b.Status = "CANCELLED");
+                        bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
                         await _dbContext.Notifications.AddRangeAsync(notifications);
                     }
 

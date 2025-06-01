@@ -48,6 +48,7 @@ public class MemberRoomsController : ControllerBase {
             RoomId = request.roomId,
             StartDate = request.day.ToDateTime(request.startTime),
             EndDate = request.day.ToDateTime(request.endTime),
+            Status = BookingStatus.Booked,
         });
         await _dbContext.SaveChangesAsync();
 
