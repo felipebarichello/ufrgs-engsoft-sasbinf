@@ -31,7 +31,7 @@ internal class Program {
         });
 
         // var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
-        // logger.LogInformation("Example: {Var}", 123);
+        // logger.LogInformation("Hash {}", Sasbinf.Auth.PasswordHash.Hash("pass"));
 
         // --- Add Authorization Services ---
         // Ensures services needed by UseAuthorization() middleware are registered

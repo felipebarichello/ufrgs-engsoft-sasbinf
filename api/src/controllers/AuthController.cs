@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Sasbinf.Auth;
 
 [ApiController]
 [Route("api/auth")]
@@ -26,7 +27,7 @@ public class AuthController : ControllerBase {
     [HttpPost("login")]
     public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
         var user = await _dbContext.Members
-            .Where(u => u.Username == login.user && u.Password == login.password)
+            .Where(u => u.Username == login.user && u.PasswdHash == PasswordHash.Hash(login.password))
             .FirstOrDefaultAsync();
 
         if (user == null) {

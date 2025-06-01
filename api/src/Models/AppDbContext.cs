@@ -28,7 +28,7 @@ namespace api.src.Models {
                     .HasMaxLength(50)
                     .IsRequired();
 
-                model.Property(u => u.Password)
+                model.Property(u => u.PasswdHash)
                     .HasColumnName("passwd_hash")
                     .HasColumnType("nvarchar(256)")
                     .HasMaxLength(256)
