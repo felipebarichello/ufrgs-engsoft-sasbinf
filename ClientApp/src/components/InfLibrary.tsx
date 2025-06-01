@@ -6,6 +6,7 @@ import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
 import { usePostRoomBookRequestMutation } from "../api/sasbinfAPI";
 import { RoomFilters } from "../pages/RoomsPage";
+import { Erroralert } from "./ErrorAlert";
 
 const simpleRooms = Object.freeze([
   { index: 1, name: "104G" },
@@ -28,7 +29,7 @@ export default function INFLibrary({
     name: string;
   } | null>(null);
 
-  const [triggerBookRequest] = usePostRoomBookRequestMutation();
+  const [triggerBookRequest, metadata] = usePostRoomBookRequestMutation();
 
   function handleBookPress() {
     if (selected === null) {
@@ -104,6 +105,7 @@ export default function INFLibrary({
       >
         Limpar Seleção
       </button>
+      {metadata.isError && Erroralert({ error: metadata.error })}
     </div>
   );
 }

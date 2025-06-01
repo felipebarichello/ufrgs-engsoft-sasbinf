@@ -35,7 +35,7 @@ public class AvailableRoomsController : ControllerBase {
 
         var hasBooking = await UserHasBooking();
         if (hasBooking) {
-            return BadRequest("User already has a booking");
+            return BadRequest(new { message = "O usuário já alugou uma sala" });
         }
 
         var userId = await _dbContext.Members
