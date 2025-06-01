@@ -5,6 +5,7 @@ import { VerticalSpacer } from "./Spacer";
 import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
 import { usePostRoomBookRequestMutation } from "../api/sasbinfAPI";
+import { RoomFilters } from "../pages/RoomsPage";
 
 const simpleRooms = Object.freeze([
   { index: 1, name: "104G" },
@@ -15,27 +16,43 @@ const simpleRooms = Object.freeze([
   { index: 6, name: "104B" },
 ]); // Trust me, I know what I'm doing
 
-export default function INFLibrary({ available }: { available: number[] }) {
+export default function INFLibrary({
+  available,
+  filtersState,
+}: {
+  available: number[];
+  filtersState: RoomFilters;
+}) {
   const [selected, setSelected] = useState<{
     index: number;
     name: string;
   } | null>(null);
 
-  const [triggerBookRequest] =
-    usePostRoomBookRequestMutation();
+  const [triggerBookRequest] = usePostRoomBookRequestMutation();
 
   function handleBookPress() {
     if (selected === null) {
       alert("You must select a room in order to book it.");
       return;
     }
-    console.log("Trying to book room", selected);
-    triggerBookRequest({
-      day: "2025-06-15",
-      startTime: "16:00:00.000",
-      endTime: "17:00:00.000",
-      roomId: 4,
-    });
+
+    const bookRequest = {
+      day: filtersState.day,
+
+      startTime: `${new Date(filtersState.day + " " + filtersState.startTime)
+        .toTimeString()
+        .slice(0, 8)}.000`,
+
+      endTime: `${new Date(filtersState.day + " " + filtersState.endTime)
+        .toTimeString()
+        .slice(0, 8)}.000`,
+
+      roomId: selected.index,
+    };
+
+    console.log(bookRequest);
+
+    triggerBookRequest(bookRequest);
   }
 
   return (

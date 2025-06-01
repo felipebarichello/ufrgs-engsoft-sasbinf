@@ -33,6 +33,11 @@ public class AvailableRoomsController : ControllerBase {
             return Unauthorized($"Failed to find user for provided bearer token");
         }
 
+        var hasBooking = await UserHasBooking();
+        if (hasBooking) {
+            return BadRequest("User already has a booking");
+        }
+
         var userId = await _dbContext.Members
             .Where(m => m.Username == username)
             .Select(m => m.UId)
@@ -92,10 +97,11 @@ public class AvailableRoomsController : ControllerBase {
         }
 
         // Find bookings that conflict with the requested time range
-        // b: booking 1
-        // unnamed: booking 2
+        // (StartA <= EndB) && (EndA >= StartB)
+        // A: b
+        // B: unnamed
         var conflictingBookings = await _dbContext.Bookings
-            .Where(b => b.StartDate > endDateTime || b.EndDate < startDateTime)
+            .Where(b => b.StartDate <= endDateTime && b.EndDate >= startDateTime)
             .ToListAsync();
 
         // Extract the IDs of rooms that are already booked
@@ -107,6 +113,26 @@ public class AvailableRoomsController : ControllerBase {
             .ToListAsync();
 
         return availableRooms.Select(r => r.RoomId).ToList();
+    }
+
+    private async Task<bool> UserHasBooking() {
+        var username = User.FindFirstValue(ClaimTypes.Name);
+
+        var userId = await _dbContext.Members
+            .Where(m => m.Username == username)
+            .Select(m => m.UId)
+            .FirstOrDefaultAsync();
+
+        var bookings = await _dbContext.Bookings
+            .Where(b => b.UserId == userId)
+            .Select(b => b.BookingId)
+            .ToListAsync();
+
+        if (bookings.Count == 0) {
+            return false;
+        }
+
+        return true;
     }
 }
 
