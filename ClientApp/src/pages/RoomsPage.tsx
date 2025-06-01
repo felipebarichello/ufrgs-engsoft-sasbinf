@@ -1,7 +1,7 @@
-import Restricted from "../components/Restricted";
 import { useState } from "react";
 import INFLibrary from "../components/InfLibrary";
 import RoomsForm from "../components/RoomsForm";
+import MemberWrapper from "../components/MemberWrapper";
 
 export const Epoch = Object.freeze(new Date(0, 0, 0, 0, 0, 0));
 
@@ -24,8 +24,8 @@ function RoomsPage() {
   const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
 
   return (
-    <Restricted>
-      <div className="d-flex justify-content-around" style={{ width: "75vw" }}>
+    <MemberWrapper>
+      <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
         <RoomsForm
           setAvailableRooms={setAvailableRooms}
           filtersState={filtersState}
@@ -33,7 +33,7 @@ function RoomsPage() {
         />
         <INFLibrary available={availableRooms} filtersState={filtersState} />
       </div>
-    </Restricted>
+    </MemberWrapper>
   );
 }
 

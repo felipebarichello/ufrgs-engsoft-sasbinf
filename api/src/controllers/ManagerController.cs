@@ -11,9 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 [ApiController]
 [Route("api/manager")]
 public class ManagerController : ControllerBase {
-    private const string STUB_UID = "stub-user-id-123";
     private const double TOKEN_EXPIRATION_HOURS = 1;
-    private const string STUB_LOGIN_KEY = "stub-login-manager-key";
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
     private readonly AppDbContext _dbContext;
@@ -37,9 +35,8 @@ public class ManagerController : ControllerBase {
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, STUB_UID),
-            new("login_key", STUB_LOGIN_KEY),
-            new(ClaimTypes.Role, "manager")
+            new(ClaimTypes.NameIdentifier, user.UId.ToString()),
+            new(ClaimTypes.Role, Roles.Manager)
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
@@ -58,7 +55,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("create-room")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
@@ -81,7 +78,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpDelete("delete-room/{roomId}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> Delete([FromRoute] int roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -96,7 +93,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] int roomId, [FromRoute] bool isActive) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -112,7 +109,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetRoomHistory([FromRoute] int roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
