@@ -1,16 +1,22 @@
-import * as v from 'valibot';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Login, LoginResponseSchema } from '../schemas/login';
-import { AvailableRoomsSchema, BookRequest } from '../schemas/rooms';
-import { BookingArraySchema } from '../schemas/booking';
-import { RoomFilters } from '../pages/RoomsPage';
+import * as v from "valibot";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Login, LoginResponseSchema } from "../schemas/login";
+import { AvailableRoomsSchema, BookRequest } from "../schemas/rooms";
+import { BookingArraySchema } from "../schemas/booking";
+
+// <<<<<<< HEAD
+import { RoomFilters } from "../pages/RoomsPage";
+// =======
+// import { RoomFilters } from "../components/RoomsForm";
+// >>>>>>> 9d8fcad (web: ban member and checkin queries)
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
-  reducerPath: 'sasbinfAPI',
+  reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string; }, void>({  // Espera um objeto com a chave message
+    getHealth: build.query<{ message: string }, void>({
+      // Espera um objeto com a chave message
       query: () => "health",
     }),
 
@@ -18,7 +24,7 @@ export const sasbinf = createApi({
       query: (login: Login) => ({
         url: "auth/login",
         method: "POST",
-        body: login
+        body: login,
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
@@ -27,7 +33,7 @@ export const sasbinf = createApi({
         } catch {
           throw new Error("Oops. Something went wrong while dealing with your login request.");
         }
-      }
+      },
     }),
 
     postAvailableRoomsSearch: build.query<number[], RoomFilters>({
@@ -43,7 +49,7 @@ export const sasbinf = createApi({
         } catch (e) {
           throw new Error("Failed to parse response: " + e);
         }
-      }
+      },
     }),
 
     postRoomBookRequest: build.mutation({
@@ -53,14 +59,21 @@ export const sasbinf = createApi({
         body: req,
         headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
       }),
-      transformResponse: (e) => { console.log(e); alert('A sala foi reservada com sucesso.');/* TODO: Return the parsed result? */ }
+      transformErrorResponse: (e) => {
+        alert("Falha ao alugar sala" + e);
+        return { message: "Falha ao alugar sala: " + e };
+      },
+      transformResponse: (e) => {
+        console.log(e);
+        alert("A sala foi reservada com sucesso."); /* Return the parsed result? */
+      },
     }),
 
     postLoginManager: build.mutation({
       query: (login: Login) => ({
         url: "manager/login",
         method: "POST",
-        body: login
+        body: login,
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
@@ -69,12 +82,19 @@ export const sasbinf = createApi({
         } catch {
           throw new Error("Invalid credentials");
         }
-      }
+      },
     }),
 
-
     postCreateRoom: build.mutation({
-      query: ({ name, capacity, token }: { name: string; capacity: number; token: string; }) => ({
+      query: ({
+        name,
+        capacity,
+        token,
+      }: {
+        name: string;
+        capacity: number;
+        token: string;
+      }) => ({
         url: "manager/create-room",
         method: "POST",
         headers: {
@@ -88,32 +108,48 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: string; token: string; }) => ({
+      query: ({ roomId, token }: { roomId: string; token: string }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }),
     }),
 
     postRoomActivation: build.mutation({
-      query: ({ roomId, isActive, token }: { roomId: string; isActive: boolean; token: string; }) => ({
+      query: ({
+        roomId,
+        isActive,
+        token,
+      }: {
+        roomId: string;
+        isActive: boolean;
+        token: string;
+      }) => ({
         url: `manager/activation-room/${roomId}/${isActive}`,
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }),
     }),
 
     getRoomsHistorySearch: build.query({
-      query: ({ roomId, numberOfBooks, token }: { roomId: string, numberOfBooks: string, token: string; }) => ({
+      query: ({
+        roomId,
+        numberOfBooks,
+        token,
+      }: {
+        roomId: string;
+        numberOfBooks: string;
+        token: string;
+      }) => ({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }),
       transformResponse: (response) => {
         try {
@@ -121,14 +157,51 @@ export const sasbinf = createApi({
         } catch {
           throw new Error("Invalid credentials");
         }
-      }
+      },
     }),
 
-  }
-  )
+    postCheckinOut: build.mutation({
+      query: ({
+        bookingId,
+        status,
+        token,
+      }: {
+        bookingId: number;
+        status: boolean;
+        token: string;
+      }) => ({
+        url: `manager/bookings/change-status/${bookingId}/${status}`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
 
+    postBanMember: build.mutation({
+      query: ({ memberId, token }: { memberId: number; token: string }) => ({
+        url: `manager/ban-member/${memberId}`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+  }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetHealthQuery, useLazyPostAvailableRoomsSearchQuery, usePostLoginMutation, usePostRoomBookRequestMutation, usePostLoginManagerMutation, usePostCreateRoomMutation, useDeleteRoomMutation, usePostRoomActivationMutation, useLazyGetRoomsHistorySearchQuery } = sasbinf;
+export const {
+  useGetHealthQuery,
+  useLazyPostAvailableRoomsSearchQuery,
+  usePostLoginMutation,
+  usePostRoomBookRequestMutation,
+  usePostLoginManagerMutation,
+  usePostCreateRoomMutation,
+  useDeleteRoomMutation,
+  usePostRoomActivationMutation,
+  useLazyGetRoomsHistorySearchQuery,
+  usePostCheckinOutMutation,
+  usePostBanMemberMutation,
+} = sasbinf;
