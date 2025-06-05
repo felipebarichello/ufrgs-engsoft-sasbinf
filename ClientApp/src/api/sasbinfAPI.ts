@@ -121,7 +121,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: string; token: string }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -136,7 +136,7 @@ export const sasbinf = createApi({
         isActive,
         token,
       }: {
-        roomId: string;
+        roomId: number;
         isActive: boolean;
         token: string;
       }) => ({

@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
 import Restricted from "../../components/Restricted";
 import {
+  useDeleteRoomMutation,
+  useLazyGetRoomsHistorySearchQuery,
   usePostCreateRoomMutation,
-  //   useDeleteRoomMutation,
-  //   useLazyGetRoomsHistorySearchQuery,
-  //   usePostCreateRoomMutation,
-  //   usePostRoomActivationMutation,
+  usePostRoomActivationMutation,
   usePostRoomsMutation,
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
@@ -27,16 +26,21 @@ export default ManagerRoomsPage;
 function ManagerRoomsPageRestricted() {
   const [createRoom, createRoomState] = usePostCreateRoomMutation();
   const [searchRooms, searchRoomsState] = usePostRoomsMutation();
-  //   const [roomActivation, roomActivationState] = usePostRoomActivationMutation();
-  //   const [deleteRoom, deleteRoomState] = useDeleteRoomMutation();
-  //   const [getHistory, getHistoryState] = useLazyGetRoomsHistorySearchQuery();
-  const [formState, setFormState] = useState<string | null>();
-  //   const [roomId, setRoomId] = useState<string | null>();
+  const [roomActivation] = usePostRoomActivationMutation();
+  const [deleteRoom] = useDeleteRoomMutation();
+  const [getHistory] = useLazyGetRoomsHistorySearchQuery();
+  const [formState, setFormState] = useState<string | null>("");
+  const [selectedRoom, setSelectedRoom] = useState<null | number>(null);
+  const [historyData, setHistoryData] = useState<Record<number, any[]>>({});
 
   const token = sessionStorage.getItem("authToken")!;
 
-  useEffect(() => {
+  const fetchRooms = () => {
     searchRooms({ roomName: null, token });
+  };
+
+  useEffect(() => {
+    fetchRooms();
   }, []);
 
   const handleSearchRoom = (e: React.FormEvent) => {
@@ -45,34 +49,50 @@ function ManagerRoomsPageRestricted() {
     searchRooms({ roomName: formState, token });
   };
 
-  const handleCreateRoom = (e: React.FormEvent) => {
+  const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formState) return;
-    createRoom({ name: formState, capacity: 8, token });
+    await createRoom({ name: formState, capacity: 8, token });
+    setFormState("");
+    fetchRooms();
   };
 
-  //   const handleDeleteRoom = (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     if (!roomId) return;
-  //     deleteRoom({ roomId, token });
-  //   };
+  const handleToggleRoomActivation = async (
+    roomId: number,
+    isActive: boolean
+  ) => {
+    await roomActivation({ roomId, isActive: !isActive, token });
+    setSelectedRoom(null);
+    fetchRooms();
+  };
 
-  //   const handleRoomHistory = async (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     if (!roomId) return;
-  //     const history = await getHistory({ roomId, numberOfBooks: "5", token });
-  //     console.log("Histórico:", history.data);
-  //   };
+  const handleDeleteRoom = async (roomId: number) => {
+    await deleteRoom({ roomId, token });
+    setSelectedRoom(null);
+    fetchRooms();
+  };
 
-  //   const handleRoomAvailable = async (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     const result = await roomActivation({
-  //       roomId: roomId || "0",
-  //       isActive: false,
-  //       token,
-  //     });
-  //     console.log("Ativação:", result.data);
-  //   };
+  const handleShowHistory = async (roomId: number) => {
+    if (historyData[roomId]) {
+      setHistoryData((prev) => {
+        const newData = { ...prev };
+        delete newData[roomId];
+        return newData;
+      });
+    } else {
+      const response = await getHistory({ roomId, numberOfBooks: "5", token });
+      if ("data" in response) {
+        setHistoryData((prev) => ({
+          ...prev,
+          [roomId]: response.data.history,
+        }));
+      }
+    }
+  };
+
+  const toggleSelectedRoom = (roomId: number) => {
+    setSelectedRoom((prev) => (prev === roomId ? null : roomId));
+  };
 
   return (
     <div className="manager-card">
@@ -82,7 +102,6 @@ function ManagerRoomsPageRestricted() {
 
       <h2 className="title">Gerenciamento de Salas</h2>
 
-      {/* Criar Sala */}
       <form onSubmit={handleCreateRoom} className="form-section">
         <label>Nome da sala</label>
         <input
@@ -91,10 +110,12 @@ function ManagerRoomsPageRestricted() {
           value={formState || ""}
           onChange={(e) => setFormState(e.target.value)}
         />
-        <button type="submit" disabled={!formState}>
-          Criar Sala
-        </button>
-        <button onClick={handleSearchRoom}>Buscar Salas</button>
+        <div className="form-buttons">
+          <button type="submit" disabled={!formState}>
+            Criar Sala
+          </button>
+          <button onClick={handleSearchRoom}>Buscar Salas</button>
+        </div>
         {createRoomState.isError && (
           <Erroralert error={createRoomState.error} />
         )}
@@ -105,48 +126,67 @@ function ManagerRoomsPageRestricted() {
           <h3 className="room-list-title">Salas</h3>
           <ul className="room-list">
             {searchRoomsState.data?.map((r, index) => (
-              <li key={index}>{r.name}</li>
+              <li
+                key={index}
+                className={selectedRoom === r.roomId ? "selected" : ""}
+                onClick={() => toggleSelectedRoom(r.roomId)}
+              >
+                <div className="room-name">{r.name}</div>
+                {selectedRoom === r.roomId && (
+                  <div
+                    className="room-options"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <p>
+                      Estado:{" "}
+                      <strong>
+                        {r.isActive ? "Disponível" : "Indisponível"}
+                      </strong>
+                    </p>
+                    <p>
+                      Capacidade: <strong>{r.capacity}</strong>
+                    </p>
+                    <div className="room-buttons">
+                      <button
+                        onClick={() =>
+                          handleToggleRoomActivation(r.roomId, r.isActive)
+                        }
+                      >
+                        Mudar Disponibilidade
+                      </button>
+                      <button onClick={() => handleDeleteRoom(r.roomId)}>
+                        Deletar
+                      </button>
+                      <button onClick={() => handleShowHistory(r.roomId)}>
+                        {historyData[r.roomId]
+                          ? "Ocultar Histórico"
+                          : "Ver Histórico"}
+                      </button>
+                    </div>
+                    {historyData[r.roomId] && (
+                      <ul className="history-list">
+                        {historyData[r.roomId].map((h, idx) => (
+                          <li key={idx}>
+                            <p>
+                              <strong>Usuário:</strong> {h.userId}
+                            </p>
+                            <p>
+                              <strong>Início:</strong> {h.startDate}
+                            </p>
+                            <p>
+                              <strong>Fim:</strong> {h.endDate}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </li>
             ))}
           </ul>
         </>
       )}
-
-      {/* Deletar Sala
-      <form onSubmit={handleDeleteRoom} className="form-section">
-        <label>ID da sala</label>
-        <input
-          type="text"
-          placeholder="Digite o ID da sala"
-          value={roomId || ""}
-          onChange={(e) => setRoomId(e.target.value)}
-        />
-        <button type="submit" disabled={!roomId}>
-          Deletar Sala
-        </button>
-        {deleteRoomState.isError && (
-          <Erroralert error={deleteRoomState.error} />
-        )}
-      </form> */}
-
-      {/* Histórico */}
-      {/* <form onSubmit={handleRoomHistory} className="form-section">
-        <button type="submit" disabled={!roomId}>
-          Ver Histórico da Sala
-        </button>
-        {getHistoryState.isError && (
-          <Erroralert error={getHistoryState.error} />
-        )}
-      </form> */}
-
-      {/* Ativação */}
-      {/* <form onSubmit={handleRoomAvailable} className="form-section">
-        <button type="submit">
-          Alterar Acessibilidade da Sala para Falso{" "}
-        </button>
-        {roomActivationState.isError && (
-          <Erroralert error={roomActivationState.error} />
-        )}
-      </form> */}
     </div>
   );
 }
