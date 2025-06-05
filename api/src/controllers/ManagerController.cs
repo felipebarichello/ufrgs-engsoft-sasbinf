@@ -227,7 +227,7 @@ public class ManagerController : ControllerBase {
             members = _dbContext.Members.Where(m => m.Username.Contains(search.name)).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
         }
 
-        return Ok(new { members });
+        return Ok(members);
     }
 
     [HttpPost("rooms")]
@@ -244,7 +244,7 @@ public class ManagerController : ControllerBase {
             rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name)).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
         }
 
-        return Ok(new { rooms });
+        return Ok(rooms);
     }
 
     public async Task NotifyMembers(IList<Notification> notifications) {
