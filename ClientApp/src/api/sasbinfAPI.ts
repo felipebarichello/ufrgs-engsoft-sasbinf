@@ -10,7 +10,7 @@ import { BookingArraySchema } from "../schemas/booking";
 
 // <<<<<<< HEAD
 import { RoomFilters } from "../pages/RoomsPage";
-import { MemberSchema } from "../schemas/member";
+import { MembersSchema } from "../schemas/member";
 // =======
 // import { RoomFilters } from "../components/RoomsForm";
 // >>>>>>> 9d8fcad (web: ban member and checkin queries)
@@ -206,7 +206,7 @@ export const sasbinf = createApi({
         studentName,
         token,
       }: {
-        studentName: string;
+        studentName: string | null;
         token: string;
       }) => ({
         url: "manager/students",
@@ -219,7 +219,7 @@ export const sasbinf = createApi({
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
         try {
-          return v.parse(MemberSchema, response);
+          return v.parse(MembersSchema, response);
         } catch {
           throw new Error("Invalid credentials");
         }
@@ -227,7 +227,13 @@ export const sasbinf = createApi({
     }),
 
     postRooms: build.mutation({
-      query: ({ roomName, token }: { roomName: string; token: string }) => ({
+      query: ({
+        roomName,
+        token,
+      }: {
+        roomName: string | null;
+        token: string;
+      }) => ({
         url: "manager/rooms",
         method: "POST",
         body: { name: roomName },

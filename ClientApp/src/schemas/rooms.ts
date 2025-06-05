@@ -13,10 +13,12 @@ export type BookRequest = {
   roomId: number;
 };
 
-export type Room = v.InferInput<typeof RoomsSchema>;
-export const RoomsSchema = v.object({
-  roomId: v.number(),
-  capacity: v.number(),
-  isActive: v.boolean(),
-  name: v.string(),
-});
+export type Rooms = v.InferInput<typeof RoomsSchema>;
+export const RoomsSchema = v.array(
+  v.object({
+    roomId: v.number(),
+    capacity: v.number(),
+    isActive: v.boolean(),
+    name: v.string(),
+  })
+);
