@@ -1,11 +1,16 @@
 import * as v from "valibot";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Login, LoginResponseSchema } from "../schemas/login";
-import { AvailableRoomsSchema, BookRequest } from "../schemas/rooms";
+import {
+  AvailableRoomsSchema,
+  BookRequest,
+  RoomsSchema,
+} from "../schemas/rooms";
 import { BookingArraySchema } from "../schemas/booking";
 
 // <<<<<<< HEAD
 import { RoomFilters } from "../pages/RoomsPage";
+import { MemberSchema } from "../schemas/member";
 // =======
 // import { RoomFilters } from "../components/RoomsForm";
 // >>>>>>> 9d8fcad (web: ban member and checkin queries)
@@ -31,7 +36,9 @@ export const sasbinf = createApi({
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error("Oops. Something went wrong while dealing with your login request.");
+          throw new Error(
+            "Oops. Something went wrong while dealing with your login request."
+          );
         }
       },
     }),
@@ -41,7 +48,9 @@ export const sasbinf = createApi({
         url: "rooms/available-rooms-search",
         method: "POST",
         body: filters,
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+        },
       }),
       transformResponse: (response) => {
         try {
@@ -57,7 +66,9 @@ export const sasbinf = createApi({
         url: "rooms/book",
         method: "POST",
         body: req,
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` }
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+        },
       }),
       transformErrorResponse: (e) => {
         alert("Falha ao alugar sala" + e);
@@ -65,7 +76,9 @@ export const sasbinf = createApi({
       },
       transformResponse: (e) => {
         console.log(e);
-        alert("A sala foi reservada com sucesso."); /* Return the parsed result? */
+        alert(
+          "A sala foi reservada com sucesso."
+        ); /* Return the parsed result? */
       },
     }),
 
@@ -141,8 +154,8 @@ export const sasbinf = createApi({
         numberOfBooks,
         token,
       }: {
-        roomId: string;
-        numberOfBooks: string;
+        roomId: number;
+        numberOfBooks: number;
         token: string;
       }) => ({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
@@ -187,6 +200,50 @@ export const sasbinf = createApi({
         },
       }),
     }),
+
+    postMembers: build.mutation({
+      query: ({
+        studentName,
+        token,
+      }: {
+        studentName: string;
+        token: string;
+      }) => ({
+        url: "manager/students",
+        method: "POST",
+        body: { name: studentName },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MemberSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+
+    postRooms: build.mutation({
+      query: ({ roomName, token }: { roomName: string; token: string }) => ({
+        url: "manager/rooms",
+        method: "POST",
+        body: { name: roomName },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(RoomsSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
   }),
 });
 
@@ -204,4 +261,6 @@ export const {
   useLazyGetRoomsHistorySearchQuery,
   usePostCheckinOutMutation,
   usePostBanMemberMutation,
+  usePostMembersMutation,
+  usePostRoomsMutation,
 } = sasbinf;
