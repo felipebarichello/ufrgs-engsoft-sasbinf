@@ -16,6 +16,7 @@ public class MemberRoomsController : ControllerBase {
     }
 
     [HttpPost("available-rooms-search")]
+    [Authorize(Roles = Roles.Member)]
     public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search) {
         try {
             return Ok(new AvailableRoomsResponseDTO(await GetAvailableRooms(search)));
