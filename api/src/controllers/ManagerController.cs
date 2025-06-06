@@ -176,7 +176,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> ChangeBookingSatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
@@ -196,7 +196,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("ban-member/{memberId}")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> BanMember([FromRoute] long memberId) {
         var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
         if (member == null) {
