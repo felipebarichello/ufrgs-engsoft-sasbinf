@@ -197,7 +197,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(MemberBookingResponseSchema, response);
         } catch (e) {
-          throw new Error("Falha ao obter as reservas do usuário: " + e);
+          throw new Error("Falha ao obter as reservas do usuário. Erro: " + e);
         }
       },
     }),
