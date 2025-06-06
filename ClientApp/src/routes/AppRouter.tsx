@@ -6,6 +6,7 @@ import LoginPage from "../pages/LoginPage";
 import DoomPage from "../pages/DoomPage";
 import LoginManagerPage from "../pages/manager/ManagerLoginPage";
 import ManagerMainPage from "../pages/manager/ManagerMainPage";
+import ManagerRoomsPage from "../pages/manager/RoomsPage";
 
 function AppRouter() {
   return (
@@ -21,6 +22,7 @@ function AppRouter() {
       <Route path="/manager/login" element={<LoginManagerPage />} />
 
       <Route path="/manager/main-page" element={<ManagerMainPage />} />
+      <Route path="/manager/room-page" element={<ManagerRoomsPage />} />
 
       {/* Catch-all for 404 */}
       <Route path="*" element={<Error404Page />} />

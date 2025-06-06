@@ -214,6 +214,39 @@ public class ManagerController : ControllerBase {
         return Ok();
     }
 
+    [HttpPost("students")]
+    [Authorize(Roles = Roles.Manager)]
+    public IActionResult
+     GetStudents([FromBody] Search search) {
+
+        List<MemberDto> members;
+        if (search.name == null) {
+            members = _dbContext.Members.Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
+        }
+        else {
+            members = _dbContext.Members.Where(m => m.Username.Contains(search.name)).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
+        }
+
+        return Ok(members);
+    }
+
+    [HttpPost("rooms")]
+    [Authorize(Roles = Roles.Manager)]
+    public IActionResult
+
+    GetRooms([FromBody] Search search) {
+        var capacity = search.capacity ?? 1;
+        List<RoomDto>? rooms;
+        if (search.name == null) {
+            rooms = _dbContext.Rooms.Where(r => r.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+        }
+        else {
+            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name) && m.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+        }
+
+        return Ok(rooms);
+    }
+
     public async Task NotifyMembers(IList<Notification> notifications) {
         await _dbContext.Notifications.AddRangeAsync(notifications);
     }
@@ -222,9 +255,28 @@ public class ManagerController : ControllerBase {
         await _dbContext.Notifications.AddAsync(notification);
     }
 
+    public record Search {
+        public string? name { get; set; }
+        public int? capacity { get; set; }
+
+    }
+
     public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = null!;
+    }
+
+    public record MemberDto {
+        public string Username { get; set; } = default!;
+        public long MemberId { get; set; } = default!;
+        public DateTime? TimedOutUntil { get; set; }
+    }
+
+    public record RoomDto {
+        public long RoomId { get; set; }
+        public int Capacity { get; set; }
+        public bool IsActive { get; set; }
+        public string Name { get; set; } = null!;
     }
 
     public record BookingDto {
