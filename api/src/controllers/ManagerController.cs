@@ -59,7 +59,7 @@ public class ManagerController : ControllerBase {
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
         if (roolAlreadyExists) {
-            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome" });
+            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome." });
         }
 
         Room room = new Room {
