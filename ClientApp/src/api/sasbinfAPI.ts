@@ -9,7 +9,7 @@ import {
 import { BookingArraySchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
-import { MemberBookingResponseSchema } from '../schemas/memberBooking';
+import { MyBookingsResponseSchema } from '../schemas/myBookings';
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -185,7 +185,7 @@ export const sasbinf = createApi({
       }),
     }),
 
-    getMemberBookings: build.query({
+    getMyBookings: build.query({
       query: ({ token }: { memberId: string; token: string }) => ({
         url: `my-bookings`,
         method: "GET",
@@ -195,7 +195,7 @@ export const sasbinf = createApi({
       }),
       transformResponse: (response) => {
         try {
-          return v.parse(MemberBookingResponseSchema, response);
+          return v.parse(MyBookingsResponseSchema, response);
         } catch (e) {
           throw new Error("Falha ao obter as reservas do usuário. Erro: " + e);
         }

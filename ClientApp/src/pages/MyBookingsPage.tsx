@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MemberWrapper from "../components/MemberWrapper";
-import MemberBookingsList from "../components/MemberBookingsList";
+import MyBookingsList from "../components/MyBookingsList";
 
 export type LogFilters = {
   memberId: string;
@@ -8,7 +8,7 @@ export type LogFilters = {
   toDate: string;
 };
 
-export type MemberBooking = {
+export type MyBooking = {
   bookingId: number;
   roomName: string;
   startTime: string;
@@ -16,15 +16,15 @@ export type MemberBooking = {
   status: string;
 };
 
-function MemberBookingsPage() {
-  const [logs, setLogs] = useState<MemberBooking[]>([]);
+function MyBookingsPage() {
+  const [logs, setLogs] = useState<MyBooking[]>([]);
 
   // Fetch logs for the current member (simulate fetching booked rooms)
   // Replace this with actual API call as needed
   // For demonstration, we'll use a mock memberId and mock data
   useState(() => {
     // Mock data: list of rooms booked by the member
-    const mockLogs: MemberBooking[] = [
+    const mockLogs: MyBooking[] = [
       {
         bookingId: 1,
         roomName: "Room A",
@@ -47,10 +47,10 @@ function MemberBookingsPage() {
   return (
     <MemberWrapper>
       <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
-        <MemberBookingsList bookingsList={logs} />
+        <MyBookingsList bookingsList={logs} />
       </div>
     </MemberWrapper>
   );
 }
 
-export default MemberBookingsPage;
+export default MyBookingsPage;

@@ -1,4 +1,4 @@
-interface MemberBooking {
+interface MyBooking {
     bookingId: number;
     roomName: string;
     startTime: string;
@@ -6,11 +6,11 @@ interface MemberBooking {
     status: string;
 }
 
-interface MemberBookingsListProps {
-    bookingsList: MemberBooking[];
+interface MyBookingsListProps {
+    bookingsList: MyBooking[];
 }
 
-export default function MemberBookingsList({ bookingsList }: MemberBookingsListProps) {
+export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
     return (
         <div className="member-bookings-list" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {bookingsList.length === 0 ? (
