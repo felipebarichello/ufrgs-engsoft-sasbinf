@@ -38,6 +38,13 @@
   margin-bottom: 25px;
 }
 
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
 .form-section label {
   font-weight: 600;
 }
@@ -161,7 +168,32 @@
   font-size: 14px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+.booking-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.booking-actions button {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff; /* Azul padrão do layout */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.booking-actions button:hover {
+  background-color: #0056b3;
+}
+
+.booking-actions button:last-child {
+  background-color: #6c757d; /* Cinza suave usado no layout */
+}
+
+.booking-actions button:last-child:hover {
+  background-color: #5a6268;
 }

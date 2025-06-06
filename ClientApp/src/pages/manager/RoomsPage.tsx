@@ -35,6 +35,7 @@ function ManagerRoomsPageRestricted() {
   }>({ roomName: null, capacity: 1 });
   const [selectedRoom, setSelectedRoom] = useState<null | number>(null);
   const [historyData, setHistoryData] = useState<Record<number, any[]>>({});
+  const [selectedBooking, setSelectedBooking] = useState<number | null>();
   const inicialFormState = { roomName: null, capacity: 1 };
   const token = sessionStorage.getItem("authToken")!;
 
@@ -100,8 +101,20 @@ function ManagerRoomsPageRestricted() {
     }
   };
 
+  const toggleHistory = (bookingId: number) => {
+    setSelectedBooking((prev) => (prev === bookingId ? null : bookingId));
+  };
+
   const toggleSelectedRoom = (roomId: number) => {
     setSelectedRoom((prev) => (prev === roomId ? null : roomId));
+  };
+
+  const handleCheckIn = async (bookingId: number) => {
+    console.log("Check-in para bookingId:", bookingId);
+  };
+
+  const handleAbsence = async (bookingId: number) => {
+    console.log("Ausência registrada para bookingId:", bookingId);
   };
 
   return (
@@ -113,31 +126,36 @@ function ManagerRoomsPageRestricted() {
       <h2 className="title">Gerenciamento de Salas</h2>
 
       <form onSubmit={handleCreateRoom} className="form-section">
-        <label>Nome da sala</label>
-        <input
-          type="text"
-          placeholder="Digite o nome da sala"
-          value={formState?.roomName || ""}
-          onChange={(e) =>
-            setFormState({ ...formState, roomName: e.target.value })
-          }
-        />
-        <label>Capacidade da sala</label>
-        <input
-          type="number"
-          min={1}
-          placeholder="Digite o nome da sala"
-          value={formState?.capacity || 1}
-          onChange={(e) =>
-            setFormState({ ...formState, capacity: e.target.value })
-          }
-        />
+        <div className="form-fields">
+          <label>Nome da sala</label>
+          <input
+            type="text"
+            placeholder="Digite o nome da sala"
+            value={formState?.roomName || ""}
+            onChange={(e) =>
+              setFormState({ ...formState, roomName: e.target.value })
+            }
+          />
+
+          <label>Capacidade da sala</label>
+          <input
+            type="number"
+            min="1"
+            placeholder="Digite a capacidade da sala"
+            value={formState?.capacity || 1}
+            onChange={(e) =>
+              setFormState({ ...formState, capacity: Number(e.target.value) })
+            }
+          />
+        </div>
+
         <div className="form-buttons">
           <button type="submit" disabled={!formState}>
             Criar Sala
           </button>
           <button onClick={handleSearchRoom}>Buscar Salas</button>
         </div>
+
         {createRoomState.isError && (
           <Erroralert error={createRoomState.error} />
         )}
@@ -188,7 +206,10 @@ function ManagerRoomsPageRestricted() {
                     {historyData[r.roomId] && (
                       <ul className="history-list">
                         {historyData[r.roomId].map((h, idx) => (
-                          <li key={idx}>
+                          <li
+                            key={idx}
+                            onClick={() => toggleHistory(h.bookingId)}
+                          >
                             <p>
                               <strong>Usuário:</strong> {h.userId}
                             </p>
@@ -198,6 +219,20 @@ function ManagerRoomsPageRestricted() {
                             <p>
                               <strong>Fim:</strong> {h.endDate}
                             </p>
+                            {selectedBooking === h.bookingId && (
+                              <div className="booking-actions">
+                                <button
+                                  onClick={() => handleCheckIn(h.bookingId)}
+                                >
+                                  Check-in
+                                </button>
+                                <button
+                                  onClick={() => handleAbsence(h.bookingId)}
+                                >
+                                  Ausência
+                                </button>
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ul>
