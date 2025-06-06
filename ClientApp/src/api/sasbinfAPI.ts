@@ -27,14 +27,12 @@ export const sasbinf = createApi({
         method: "POST",
         body: login,
       }),
-      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformErrorResponse: () => ({ message: "Credenciais inválidas" }),
       transformResponse: (response) => {
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error(
-            "Oops. Something went wrong while dealing with your login request."
-          );
+          throw new Error("Ops. Algo deu errado com o seu login.");
         }
       },
     }),
@@ -52,7 +50,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
         } catch (e) {
-          throw new Error("Failed to parse response: " + e);
+          throw new Error("Algo deu errado com a sua pesquisa. Erro: " + e);
         }
       },
     }),
@@ -84,12 +82,12 @@ export const sasbinf = createApi({
         method: "POST",
         body: login,
       }),
-      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformErrorResponse: () => ({ message: "Credenciais inválidas" }),
       transformResponse: (response) => {
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Algo deu errado com o seu login");
         }
       },
     }),
@@ -164,7 +162,7 @@ export const sasbinf = createApi({
         try {
           return v.parse(BookingArraySchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Falha ao obter histórico de salas");
         }
       },
     }),
