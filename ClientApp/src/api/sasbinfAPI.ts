@@ -229,14 +229,16 @@ export const sasbinf = createApi({
     postRooms: build.mutation({
       query: ({
         roomName,
+        capacity,
         token,
       }: {
         roomName: string | null;
+        capacity: number | null;
         token: string;
       }) => ({
         url: "manager/rooms",
         method: "POST",
-        body: { name: roomName },
+        body: { name: roomName, capacity: capacity },
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -235,13 +235,13 @@ public class ManagerController : ControllerBase {
     public IActionResult
 
     GetRooms([FromBody] Search search) {
-
+        var capacity = search.capacity ?? 1;
         List<RoomDto>? rooms;
         if (search.name == null) {
-            rooms = _dbContext.Rooms.Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+            rooms = _dbContext.Rooms.Where(r => r.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
         }
         else {
-            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name)).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name) && m.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
         }
 
         return Ok(rooms);
@@ -257,6 +257,8 @@ public class ManagerController : ControllerBase {
 
     public record Search {
         public string? name { get; set; }
+        public int? capacity { get; set; }
+
     }
 
     public record CreateRoomDto {

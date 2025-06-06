@@ -29,14 +29,17 @@ function ManagerRoomsPageRestricted() {
   const [roomActivation] = usePostRoomActivationMutation();
   const [deleteRoom] = useDeleteRoomMutation();
   const [getHistory] = useLazyGetRoomsHistorySearchQuery();
-  const [formState, setFormState] = useState<string | null>("");
+  const [formState, setFormState] = useState<{
+    roomName: string | null;
+    capacity: number | 1;
+  }>({ roomName: null, capacity: 1 });
   const [selectedRoom, setSelectedRoom] = useState<null | number>(null);
   const [historyData, setHistoryData] = useState<Record<number, any[]>>({});
-
+  const inicialFormState = { roomName: null, capacity: 1 };
   const token = sessionStorage.getItem("authToken")!;
 
   const fetchRooms = () => {
-    searchRooms({ roomName: null, token });
+    searchRooms({ roomName: null, capacity: 1, token });
   };
 
   useEffect(() => {
@@ -46,14 +49,22 @@ function ManagerRoomsPageRestricted() {
   const handleSearchRoom = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formState) return;
-    searchRooms({ roomName: formState, token });
+    searchRooms({
+      roomName: formState.roomName,
+      capacity: formState.capacity,
+      token,
+    });
   };
 
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formState) return;
-    await createRoom({ name: formState, capacity: 8, token });
-    setFormState("");
+    await createRoom({
+      name: formState.roomName!,
+      capacity: formState.capacity,
+      token,
+    });
+    setFormState(inicialFormState);
     fetchRooms();
   };
 
@@ -62,7 +73,6 @@ function ManagerRoomsPageRestricted() {
     isActive: boolean
   ) => {
     await roomActivation({ roomId, isActive: !isActive, token });
-    setSelectedRoom(null);
     fetchRooms();
   };
 
@@ -107,8 +117,20 @@ function ManagerRoomsPageRestricted() {
         <input
           type="text"
           placeholder="Digite o nome da sala"
-          value={formState || ""}
-          onChange={(e) => setFormState(e.target.value)}
+          value={formState?.roomName || ""}
+          onChange={(e) =>
+            setFormState({ ...formState, roomName: e.target.value })
+          }
+        />
+        <label>Capacidade da sala</label>
+        <input
+          type="number"
+          min={1}
+          placeholder="Digite o nome da sala"
+          value={formState?.capacity || 1}
+          onChange={(e) =>
+            setFormState({ ...formState, capacity: e.target.value })
+          }
         />
         <div className="form-buttons">
           <button type="submit" disabled={!formState}>
