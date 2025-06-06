@@ -55,6 +55,40 @@ public class MemberRoomsController : ControllerBase {
         return Ok(new { message = $"Room (RoomId: {request.roomId}) successfully booked!" });
     }
 
+    [HttpGet("my-bookings")]
+    public async Task<IActionResult> GetMyBookings() {
+        var username = User.FindFirstValue(ClaimTypes.Name);
+
+        if (username == null) {
+            return Unauthorized("Failed to find user for provided bearer token");
+        }
+
+        var userId = await _dbContext.Members
+            .Where(m => m.Username == username)
+            .Select(m => m.MemberId)
+            .FirstOrDefaultAsync();
+
+        if (userId == 0) {
+            return NotFound("User not found");
+        }
+
+        var bookings = await _dbContext.Bookings
+            .Where(b => b.UserId == userId)
+            .Include(b => b.Room)
+            .OrderByDescending(b => b.StartDate)
+            .ToListAsync();
+
+        var bookingDtos = bookings.Select(b => new {
+            bookingId = b.BookingId,
+            roomName = b.Room?.Name ?? "",
+            startTime = b.StartDate.ToString("o"),
+            endTime = b.EndDate.ToString("o"),
+            status = b.Status.ToString()
+        }).ToList();
+
+        return Ok(bookingDtos);
+    }
+
     private async Task<List<long>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
         // Validate the search parameters
         if (search == null || search.capacity < 1) {
