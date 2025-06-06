@@ -186,8 +186,8 @@ export const sasbinf = createApi({
     }),
 
     getMemberBookings: build.query({
-      query: ({ memberId, token }: { memberId: string; token: string }) => ({
-        url: `bookings-to/${memberId}`,
+      query: ({ token }: { memberId: string; token: string }) => ({
+        url: `my-bookings`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
