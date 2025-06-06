@@ -222,11 +222,13 @@ function ManagerRoomsPageRestricted() {
                             {selectedBooking === h.bookingId && (
                               <div className="booking-actions">
                                 <button
+                                  className="checkin"
                                   onClick={() => handleCheckIn(h.bookingId)}
                                 >
                                   Check-in
                                 </button>
                                 <button
+                                  className="absence"
                                   onClick={() => handleAbsence(h.bookingId)}
                                 >
                                   Ausência

@@ -144,16 +144,17 @@
   font-size: 14px;
   border: none;
   border-radius: 6px;
-  background-color: #6c757d;
+  background-color: #007bff;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .room-buttons button:hover {
-  background-color: #5a6268;
+  background-color: #0056b3;
 }
 
+/* Estilo para a lista de histórico */
 .history-list {
   margin-top: 12px;
   padding-left: 16px;
@@ -168,11 +169,51 @@
   font-size: 14px;
 }
 
+/* Estilos dos botões de ações (check-in e ausência) */
 .booking-actions {
   margin-top: 8px;
-  display: flex;
   justify-content: center;
-  gap: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.booking-actions button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Botão de check-in (verde suave) */
+.booking-actions .checkin {
+  background-color: #265f28;
+}
+
+.booking-actions .checkin:hover {
+  background-color: #449d48;
+}
+
+/* Botão de ausência (vermelho suave) */
+.booking-actions .absence {
+  background-color: #8a251d;
+}
+
+.booking-actions .absence:hover {
+  background-color: #e53935;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .booking-actions button {
@@ -184,16 +225,4 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-.booking-actions button:hover {
-  background-color: #0056b3;
-}
-
-.booking-actions button:last-child {
-  background-color: #6c757d; /* Cinza suave usado no layout */
-}
-
-.booking-actions button:last-child:hover {
-  background-color: #5a6268;
 }
