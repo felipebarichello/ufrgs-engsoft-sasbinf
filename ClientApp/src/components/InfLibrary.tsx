@@ -33,7 +33,7 @@ export default function INFLibrary({
 
   function handleBookPress() {
     if (selected === null) {
-      alert("You must select a room in order to book it.");
+      alert("Nenhuma sala está selecionada. Clique na sala para selecioná-la.");
       return;
     }
 
