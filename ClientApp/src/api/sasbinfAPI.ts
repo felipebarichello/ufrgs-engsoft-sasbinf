@@ -272,6 +272,19 @@ export const sasbinf = createApi({
         }
       },
     }),
+
+    postCancelBooking: build.mutation({
+      query: ({ bookingId }: { bookingId: number }) => ({
+        url: `rooms/cancel-booking`,
+        method: "POST",
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
+        body: { bookingId },
+      }),
+      transformResponse: () => ({ success: true }),
+      transformErrorResponse: () => ({ success: false }),
+    }),
   }),
 });
 
@@ -292,4 +305,5 @@ export const {
   usePostBanMemberMutation,
   usePostMembersMutation,
   usePostRoomsMutation,
+  usePostCancelBookingMutation,
 } = sasbinf;

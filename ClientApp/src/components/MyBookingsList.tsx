@@ -1,3 +1,4 @@
+import { usePostCancelBookingMutation } from "../api/sasbinfAPI";
 import { MyBooking } from "../schemas/myBookings";
 
 interface MyBookingsListProps {
@@ -16,8 +17,19 @@ const bookingCardStyle: React.CSSProperties = {
 };
 
 export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
+    const [cancelBooking] = usePostCancelBookingMutation();
+
     function handleCancelBooking(bookingId: number) {
-        alert(`Cancel booking #${bookingId}`);
+        cancelBooking({ bookingId }).then((response) => {
+            if (response.data && response.data.success === true) {
+                alert(`Reserva #${bookingId} cancelada com sucesso!`);
+                window.location.reload();
+                return;
+            } else {
+                alert(`Falha ao cancelar reserva #${bookingId}`);
+                return;
+            }
+        });
     }
 
     return (
