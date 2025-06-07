@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("api/manager")]
+[Authorize(Roles = Roles.Manager)]
 public class ManagerController : ControllerBase {
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
@@ -17,7 +18,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("create-room")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roomAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
 
@@ -41,7 +41,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpDelete("delete-room/{roomId}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> Delete([FromRoute] long roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -56,7 +55,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
 
@@ -106,7 +104,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
@@ -122,7 +119,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
@@ -139,7 +135,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
@@ -159,7 +154,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("ban-member/{memberId}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> BanMember([FromRoute] long memberId) {
         var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
         if (member == null) {
@@ -178,7 +172,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("students")]
-    [Authorize(Roles = Roles.Manager)]
     public IActionResult GetStudents([FromBody] Search search) {
 
         List<MemberDto> members;
@@ -193,7 +186,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("rooms")]
-    [Authorize(Roles = Roles.Manager)]
     public IActionResult GetRooms([FromBody] Search search) {
         var capacity = search.capacity ?? 1;
         List<RoomDto>? rooms;
