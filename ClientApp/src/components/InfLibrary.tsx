@@ -66,7 +66,7 @@ export default function INFLibrary({
       <div className="d-flex justify-content-end">
         <NewPointer
           enabled={selected !== null}
-          roomNumber={selected ?? { id: 1, name: "104G" }}
+          room={selected ?? { id: 1, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
         <div
