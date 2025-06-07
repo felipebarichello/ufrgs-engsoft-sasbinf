@@ -1,32 +1,8 @@
 import { useState, useEffect } from "react";
 import MemberWrapper from "../components/MemberWrapper";
 import MyBookingsList from "../components/MyBookingsList";
-import * as v from "valibot";
 import { useGetMyBookingsQuery } from "../api/sasbinfAPI";
-
-export type LogFilters = {
-  memberId: string;
-  fromDate: string;
-  toDate: string;
-};
-
-export type MyBooking = {
-  bookingId: number;
-  roomName: string;
-  startTime: string;
-  endTime: string;
-  status: string;
-};
-
-export const MyBookingSchema = v.object({
-  bookingId: v.number(),
-  roomName: v.string(),
-  startTime: v.string(),
-  endTime: v.string(),
-  status: v.string(),
-});
-
-export const MyBookingsResponseSchema = v.array(MyBookingSchema);
+import { MyBooking } from "../schemas/myBookings";
 
 function MyBookingsPage() {
   const [myBookings, setMyBookings] = useState<MyBooking[]>([]);
