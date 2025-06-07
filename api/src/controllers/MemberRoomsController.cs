@@ -99,6 +99,7 @@ public class MemberRoomsController : ControllerBase {
 
         var booking = await _dbContext.Bookings
             .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.Status == BookingStatus.Booked)
+            .OrderByDescending(b => b.StartDate)
             .FirstOrDefaultAsync();
 
         if (booking == null) {
