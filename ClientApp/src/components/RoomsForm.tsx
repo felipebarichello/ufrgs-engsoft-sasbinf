@@ -8,7 +8,7 @@ export default function RoomsForm({
   filtersState,
   setFiltersState,
 }: {
-  setAvailableRooms: (a: number[]) => void;
+  setAvailableRooms: (a: {name: string, id: number}[]) => void;
   filtersState: RoomFilters;
   setFiltersState: (a: RoomFilters) => void;
 }) {
@@ -35,7 +35,7 @@ function RoomsFormInputs({
 }: {
   inputs: RoomFilters;
   setInputs: (a: RoomFilters) => void;
-  setAvailable: (a: number[]) => void;
+  setAvailable: (a: { name: string; id: number }[]) => void;
 }) {
   const [triggerAvailableRoomsQuery, availableRoomsState] =
     useLazyPostAvailableRoomsSearchQuery();

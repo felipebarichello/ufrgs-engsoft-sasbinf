@@ -41,7 +41,7 @@ export const sasbinf = createApi({
       },
     }),
 
-    postAvailableRoomsSearch: build.query<number[], RoomFilters>({
+    postAvailableRoomsSearch: build.query<{ name: string, id: number; }[], RoomFilters>({
       query: (filters: RoomFilters) => ({
         url: "rooms/available-rooms-search",
         method: "POST",
@@ -52,7 +52,7 @@ export const sasbinf = createApi({
       }),
       transformResponse: (response) => {
         try {
-          return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
+          return v.parse(AvailableRoomsSchema, response).availableRooms;
         } catch (e) {
           throw new Error("Algo deu errado com a sua pesquisa. Erro: " + e);
         }

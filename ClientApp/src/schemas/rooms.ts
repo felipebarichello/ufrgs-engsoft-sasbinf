@@ -1,7 +1,10 @@
 import * as v from "valibot";
 
 export const AvailableRoomsSchema = v.object({
-  availableRoomsIDs: v.array(v.pipe(v.number(), v.integer())),
+  availableRooms: v.array(v.object({
+    id: v.pipe(v.number(), v.integer()),
+    name: v.string()
+  })),
 });
 
 export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>;

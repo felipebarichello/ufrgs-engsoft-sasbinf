@@ -20,18 +20,32 @@ const initialState: RoomFilters = {
 };
 
 function RoomsPage() {
-  const [availableRooms, setAvailableRooms] = useState<number[]>([]);
+  const [availableRooms, setAvailableRooms] = useState<
+    { name: string; id: number }[]
+  >([]);
   const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
+  const [selected, setSelected] = useState<{
+    index: number;
+    name: string;
+  } | null>(null);
 
   return (
     <MemberWrapper>
-      <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
+      <div
+        className="d-flex justify-content-around pt-5"
+        style={{ width: "75vw" }}
+      >
         <RoomsForm
           setAvailableRooms={setAvailableRooms}
           filtersState={filtersState}
           setFiltersState={setFiltersState}
         />
-        <INFLibrary available={availableRooms} filtersState={filtersState} />
+        <INFLibrary
+          available={availableRooms}
+          filtersState={filtersState}
+          selected={selected}
+          setSelected={setSelected}
+        />
       </div>
     </MemberWrapper>
   );

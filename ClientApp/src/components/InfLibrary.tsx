@@ -1,4 +1,3 @@
-import { useState } from "react";
 import NewPointer from "./NewPointer";
 import SimpleTable from "./TableSeats";
 import { VerticalSpacer } from "./Spacer";
@@ -7,6 +6,7 @@ import SimpleRoom from "./SimpleRoom";
 import { usePostRoomBookRequestMutation } from "../api/sasbinfAPI";
 import { RoomFilters } from "../pages/RoomsPage";
 import { Erroralert } from "./ErrorAlert";
+import RoomsDropdown from "./RoomsDropdown";
 
 const simpleRooms = Object.freeze([
   { index: 1, name: "104G" },
@@ -20,15 +20,14 @@ const simpleRooms = Object.freeze([
 export default function INFLibrary({
   available,
   filtersState,
+  selected,
+  setSelected,
 }: {
-  available: number[];
+  available: { name: string; id: number }[];
   filtersState: RoomFilters;
+  selected: { index: number; name: string } | null;
+  setSelected: (a: { index: number; name: string } | null) => void;
 }) {
-  const [selected, setSelected] = useState<{
-    index: number;
-    name: string;
-  } | null>(null);
-
   const [triggerBookRequest, metadata] = usePostRoomBookRequestMutation();
 
   function handleBookPress() {
@@ -58,7 +57,12 @@ export default function INFLibrary({
 
   return (
     <div>
-      <h5>Salas Disponíveis</h5>
+      <div className="d-flex flex-row justify-content-center">
+        <h5 style={{ marginRight: "10px", marginLeft: "100px" }}>
+          Salas Disponíveis
+        </h5>
+        <RoomsDropdown availableRooms={available} />
+      </div>
       <div className="d-flex justify-content-end">
         <NewPointer
           enabled={selected !== null}
@@ -122,7 +126,7 @@ function RoomSelector({
   selected,
   setSelected,
 }: {
-  available: number[];
+  available: { id: number; name: string }[];
   selected: { index: number; name: string };
   setSelected: (a: { index: number; name: string }) => void;
 }) {
@@ -133,7 +137,7 @@ function RoomSelector({
       {simpleRooms.map((room) => {
         return (
           <SimpleRoom
-            available={available.includes(room.index)}
+            available={available.map((r) => r.id).includes(room.index)}
             selected={selected.index === room.index}
             props={{
               style: SimpleRoomStyle,
@@ -145,7 +149,7 @@ function RoomSelector({
         );
       })}
       <BigRoom
-        available={available.includes(7)}
+        available={available.map((r) => r.id).includes(7)}
         selected={selected.index === 7}
         props={{
           style: BigRoomStyle,

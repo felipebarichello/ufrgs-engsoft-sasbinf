@@ -32,14 +32,14 @@ public class MemberRoomsController : ControllerBase {
         if (username == null) {
             return Unauthorized($"Failed to find user for provided bearer token");
         }
-        
+
         var userId = await _dbContext.Members
             .Where(m => m.Username == username)
             .Select(m => m.MemberId)
             .FirstOrDefaultAsync();
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
-        if (!availableRoomIds.Contains(request.roomId)) {
+        if (!availableRoomIds.Select(a => a.id).Contains(request.roomId)) {
             return BadRequest("Room is not available at requested time frame");
         }
 
@@ -89,7 +89,7 @@ public class MemberRoomsController : ControllerBase {
         return Ok(bookingDtos);
     }
 
-    private async Task<List<long>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
+    private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
         // Validate the search parameters
         if (search == null || search.capacity < 1) {
             throw new InvalidSearchParamsException("Parâmetros de busca inválidos.");
@@ -142,7 +142,7 @@ public class MemberRoomsController : ControllerBase {
             .Where(r => !conflictingRoomIds.Contains(r.RoomId) && r.Capacity >= search.capacity)
             .ToListAsync();
 
-        return availableRooms.Select(r => r.RoomId).ToList();
+        return availableRooms.Select(r => new AvailableRoomDTO(r.RoomId, r.Name)).ToList();
     }
 }
 
