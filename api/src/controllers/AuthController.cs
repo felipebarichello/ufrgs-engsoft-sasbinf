@@ -24,7 +24,7 @@ public class AuthController : ControllerBase {
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
+    public async Task<IActionResult> PostMemberLogin([FromBody] LoginDTO login) {
         var user = await _dbContext.Members
             .Where(u => u.Username == login.user && u.Password == login.password)
             .FirstOrDefaultAsync();

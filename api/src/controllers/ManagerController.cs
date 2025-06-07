@@ -18,7 +18,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("create-room")]
-    public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
+    public async Task<IActionResult> PostCreateRoom([FromBody] CreateRoomDto roomDto) {
         var roomAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
 
         if (roomAlreadyExists) {
@@ -55,7 +55,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
+    public async Task<IActionResult> ChangeRoomAvailability([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
 
         return await executionStrategy.ExecuteAsync(async () => {
