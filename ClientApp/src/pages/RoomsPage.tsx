@@ -41,12 +41,18 @@ function RoomsPage() {
           setFiltersState={setFiltersState}
         />
         <INFLibrary
-          available={availableRooms}
+         
+          available={availableRooms ?? []}
+         
           filtersState={filtersState}
           selected={selected}
           setSelected={setSelected}
+       
         />
       </div>
+      {availableRooms !== null && availableRooms.length === 0 && (
+        <p style={{ color: "red" }}>Não há salas disponíveis</p>
+      )}
     </MemberWrapper>
   );
 }
