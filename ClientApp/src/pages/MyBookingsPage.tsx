@@ -1,6 +1,8 @@
 import { useState } from "react";
 import MemberWrapper from "../components/MemberWrapper";
 import MyBookingsList from "../components/MyBookingsList";
+import * as v from "valibot";
+import { useGetMyBookingsQuery } from "../api/sasbinfAPI";
 
 export type LogFilters = {
   memberId: string;
@@ -16,38 +18,46 @@ export type MyBooking = {
   status: string;
 };
 
+export const MyBookingSchema = v.object({
+  bookingId: v.number(),
+  roomName: v.string(),
+  startTime: v.string(),
+  endTime: v.string(),
+  status: v.string(),
+});
+
+export const MyBookingsResponseSchema = v.array(MyBookingSchema);
+
 function MyBookingsPage() {
-  const [logs, setLogs] = useState<MyBooking[]>([]);
+  const [myBookings, setMyBookings] = useState<MyBooking[]>([]);
+  const getMyBookings = useGetMyBookingsQuery();
 
-  // Fetch logs for the current member (simulate fetching booked rooms)
-  // Replace this with actual API call as needed
-  // For demonstration, we'll use a mock memberId and mock data
-  useState(() => {
-    // Mock data: list of rooms booked by the member
-    const mockLogs: MyBooking[] = [
-      {
-        bookingId: 1,
-        roomName: "Room A",
-        startTime: "2024-06-01T10:00:00",
-        endTime: "2024-06-01T12:00:00",
-        status: "Confirmed",
-      },
-      {
-        bookingId: 2,
-        roomName: "Room B",
-        startTime: "2024-06-03T14:00:00",
-        endTime: "2024-06-03T16:00:00",
-        status: "Pending",
-      },
-    ];
+  if (getMyBookings.isLoading) {
+    return (
+      <MemberWrapper>
+        <div className="d-flex justify-content-center pt-5" style={{ width: "75vw" }}>
+          <span>Carregando...</span>
+        </div>
+      </MemberWrapper>
+    );
+  }
 
-    setLogs(mockLogs);
-  });
+  if (getMyBookings.isError || !getMyBookings.data) {
+    return (
+      <MemberWrapper>
+        <div className="d-flex justify-content-center pt-5" style={{ width: "75vw" }}>
+          <span>Falha ao carregar</span>
+        </div>
+      </MemberWrapper>
+    )
+  }
+
+  setMyBookings(getMyBookings.data);
 
   return (
     <MemberWrapper>
       <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
-        <MyBookingsList bookingsList={logs} />
+        <MyBookingsList bookingsList={myBookings} />
       </div>
     </MemberWrapper>
   );

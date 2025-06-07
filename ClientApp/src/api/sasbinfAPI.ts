@@ -9,7 +9,11 @@ import {
 import { BookingArraySchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
-import { MyBookingsResponseSchema } from '../schemas/myBookings';
+import { MyBooking, MyBookingsResponseSchema } from '../schemas/myBookings';
+
+function getToken() {
+  return sessionStorage.getItem('authToken');
+}
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -185,12 +189,12 @@ export const sasbinf = createApi({
       }),
     }),
 
-    getMyBookings: build.query({
-      query: ({ token }: { memberId: string; token: string }) => ({
+    getMyBookings: build.query<MyBooking[], void>({
+      query: () => ({
         url: `my-bookings`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
       transformResponse: (response) => {
@@ -279,6 +283,7 @@ export const {
   usePostRoomActivationMutation,
   useLazyGetRoomsHistorySearchQuery,
   usePostCheckinOutMutation,
+  useGetMyBookingsQuery,
   usePostBanMemberMutation,
   usePostMembersMutation,
   usePostRoomsMutation,
