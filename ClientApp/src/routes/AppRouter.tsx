@@ -8,7 +8,6 @@ import LoginManagerPage from "../pages/manager/ManagerLoginPage";
 import ManagerMainPage from "../pages/manager/ManagerMainPage";
 import ManagerRoomsPage from "../pages/manager/RoomsPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
-import Dev from "../pages/Dev";
 
 function AppRouter() {
   return (
@@ -18,8 +17,6 @@ function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/rooms" element={<RoomsPage />} />
-
-      <Route path="/dev" element={<Dev />} />
 
       <Route path="/my-bookings" element={<MyBookingsPage />} />
 
