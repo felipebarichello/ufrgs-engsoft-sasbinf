@@ -7,13 +7,10 @@ import {
   RoomsSchema,
 } from "../schemas/rooms";
 import { BookingArraySchema } from "../schemas/booking";
-
-// <<<<<<< HEAD
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
-// =======
-// import { RoomFilters } from "../components/RoomsForm";
-// >>>>>>> 9d8fcad (web: ban member and checkin queries)
+import { MyBooking, MyBookingsResponseSchema } from '../schemas/myBookings';
+import { HeaderBuilder } from "../lib/headers";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -31,14 +28,12 @@ export const sasbinf = createApi({
         method: "POST",
         body: login,
       }),
-      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformErrorResponse: () => ({ message: "Credenciais inválidas" }),
       transformResponse: (response) => {
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error(
-            "Oops. Something went wrong while dealing with your login request."
-          );
+          throw new Error("Ops. Algo deu errado com o seu login.");
         }
       },
     }),
@@ -48,15 +43,15 @@ export const sasbinf = createApi({
         url: "rooms/available-rooms-search",
         method: "POST",
         body: filters,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformResponse: (response) => {
         try {
           return v.parse(AvailableRoomsSchema, response).availableRoomsIDs;
         } catch (e) {
-          throw new Error("Failed to parse response: " + e);
+          throw new Error("Algo deu errado com a sua pesquisa. Erro: " + e);
         }
       },
     }),
@@ -66,9 +61,9 @@ export const sasbinf = createApi({
         url: "rooms/book",
         method: "POST",
         body: req,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformErrorResponse: (e) => {
         alert("Falha ao alugar sala" + e);
@@ -84,16 +79,16 @@ export const sasbinf = createApi({
 
     postLoginManager: build.mutation({
       query: (login: Login) => ({
-        url: "manager/login",
+        url: "auth/login/manager",
         method: "POST",
         body: login,
       }),
-      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformErrorResponse: () => ({ message: "Credenciais inválidas" }),
       transformResponse: (response) => {
         try {
           return v.parse(LoginResponseSchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Algo deu errado com o seu login");
         }
       },
     }),
@@ -111,7 +106,7 @@ export const sasbinf = createApi({
         url: "manager/create-room",
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
         body: {
           name,
@@ -125,7 +120,7 @@ export const sasbinf = createApi({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -143,7 +138,7 @@ export const sasbinf = createApi({
         url: `manager/activation-room/${roomId}/${isActive}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -161,14 +156,14 @@ export const sasbinf = createApi({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformResponse: (response) => {
         try {
           return v.parse(BookingArraySchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Falha ao obter histórico de salas");
         }
       },
     }),
@@ -186,9 +181,26 @@ export const sasbinf = createApi({
         url: `manager/bookings/change-status/${bookingId}/${status}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+    }),
+
+    getMyBookings: build.query<MyBooking[], void>({
+      query: () => ({
+        url: `rooms/my-bookings`,
+        method: "GET",
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MyBookingsResponseSchema, response);
+        } catch (e) {
+          throw new Error("Falha ao obter as reservas do usuário. Erro: " + e);
+        }
+      },
     }),
 
     postBanMember: build.mutation({
@@ -204,7 +216,7 @@ export const sasbinf = createApi({
         url: `manager/ban-member/${memberId}/${shouldBan}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -221,7 +233,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: { name: studentName },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
@@ -248,7 +260,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: { name: roomName, capacity: capacity },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
@@ -276,6 +288,7 @@ export const {
   usePostRoomActivationMutation,
   useLazyGetRoomsHistorySearchQuery,
   usePostCheckinAbsenceMutation,
+  useGetMyBookingsQuery,
   usePostBanMemberMutation,
   usePostMembersMutation,
   usePostRoomsMutation,

@@ -1,17 +1,12 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using api.src.Models;
-using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
 [Route("api/manager")]
+[Authorize(Roles = Roles.Manager)]
 public class ManagerController : ControllerBase {
-    private const double TOKEN_EXPIRATION_HOURS = 1;
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
     private readonly AppDbContext _dbContext;
@@ -22,44 +17,12 @@ public class ManagerController : ControllerBase {
         _dbContext = dbContext;
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
-        var user = await _dbContext.Managers
-            .Where(m => m.Username == login.user && m.Password == login.password)
-            .FirstOrDefaultAsync();
-
-        if (user == null) {
-            return Unauthorized(new { message = "Manager Not Found" });
-        }
-
-        var authClaims = new List<Claim> {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, user.ManagerId.ToString()),
-            new(ClaimTypes.Role, Roles.Manager)
-        };
-
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
-        var token = new JwtSecurityToken(
-            issuer: configuration["JWT:ValidIssuer"],
-            audience: configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(TOKEN_EXPIRATION_HOURS),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        );
-
-        return Ok(new {
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
-        });
-    }
-
     [HttpPost("create-room")]
-    [Authorize(Roles = Roles.Manager)]
-    public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
-        var roolAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
-        if (roolAlreadyExists) {
-            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome" });
+    public async Task<IActionResult> PostCreateRoom([FromBody] CreateRoomDto roomDto) {
+        var roomAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
+
+        if (roomAlreadyExists) {
+            return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome." });
         }
 
         Room room = new Room {
@@ -78,7 +41,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpDelete("delete-room/{roomId}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> Delete([FromRoute] long roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
         if (room == null) {
@@ -93,8 +55,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("activation-room/{roomId}/{isActive}")]
-    [Authorize(Roles = Roles.Manager)]
-    public async Task<IActionResult> ChangeAvailabilityRoom([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
+    public async Task<IActionResult> ChangeRoomAvailability([FromRoute] long roomId, [FromRoute] bool isActive) { // TODO: Rename to ChangeRoomAvailability
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
 
         return await executionStrategy.ExecuteAsync(async () => {
@@ -143,7 +104,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
@@ -159,7 +119,6 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
@@ -176,8 +135,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
-    [Authorize(Roles = "manager")]
-    public async Task<IActionResult> ChangeBookingSatus([FromRoute] long bookingId, [FromRoute] string status) {
+    public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
         if (!validStatuses.Contains(status)) {
@@ -195,10 +153,12 @@ public class ManagerController : ControllerBase {
         return Ok();
     }
 
+    // TODO: The parameters could be a DTO in the body
     [HttpPost("ban-member/{memberId}/{shouldBan}")]
     [Authorize(Roles = "manager")]
     public async Task<IActionResult> BanMember([FromRoute] long memberId, [FromRoute] bool shouldBan) {
         Notification notification;
+
         var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
         if (member == null) {
             return BadRequest(new { message = $"membro não existe" });
@@ -221,9 +181,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("students")]
-    [Authorize(Roles = Roles.Manager)]
-    public IActionResult
-     GetStudents([FromBody] Search search) {
+    public IActionResult GetStudents([FromBody] Search search) {
 
         List<MemberDto> members;
         if (search.name == null) {
@@ -237,10 +195,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("rooms")]
-    [Authorize(Roles = Roles.Manager)]
-    public IActionResult
-
-    GetRooms([FromBody] Search search) {
+    public IActionResult GetRooms([FromBody] Search search) {
         var capacity = search.capacity ?? 1;
         List<RoomDto>? rooms;
         if (search.name == null) {
