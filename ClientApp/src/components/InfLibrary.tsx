@@ -9,12 +9,12 @@ import { Erroralert } from "./ErrorAlert";
 import RoomsDropdown from "./RoomsDropdown";
 
 const simpleRooms = Object.freeze([
-  { index: 1, name: "104G" },
-  { index: 2, name: "104F" },
-  { index: 3, name: "104E" },
-  { index: 4, name: "104D" },
-  { index: 5, name: "104C" },
-  { index: 6, name: "104B" },
+  { id: 1, name: "104G" },
+  { id: 2, name: "104F" },
+  { id: 3, name: "104E" },
+  { id: 4, name: "104D" },
+  { id: 5, name: "104C" },
+  { id: 6, name: "104B" },
 ]); // Trust me, I know what I'm doing
 
 export default function INFLibrary({
@@ -25,8 +25,8 @@ export default function INFLibrary({
 }: {
   available: { name: string; id: number }[];
   filtersState: RoomFilters;
-  selected: { index: number; name: string } | null;
-  setSelected: (a: { index: number; name: string } | null) => void;
+  selected: { id: number; name: string } | null;
+  setSelected: (a: { id: number; name: string } | null) => void;
 }) {
   const [triggerBookRequest, metadata] = usePostRoomBookRequestMutation();
 
@@ -47,7 +47,7 @@ export default function INFLibrary({
         .toTimeString()
         .slice(0, 8)}.000`,
 
-      roomId: selected.index,
+      roomId: selected.id,
     };
 
     console.log(bookRequest);
@@ -61,12 +61,12 @@ export default function INFLibrary({
         <h5 style={{ marginRight: "10px", marginLeft: "100px" }}>
           Salas Disponíveis
         </h5>
-        <RoomsDropdown availableRooms={available} />
+        <RoomsDropdown availableRooms={available} setSelected={setSelected} />
       </div>
       <div className="d-flex justify-content-end">
         <NewPointer
           enabled={selected !== null}
-          roomNumber={selected ?? { index: 1, name: "104G" }}
+          roomNumber={selected ?? { id: 1, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
         <div
@@ -81,7 +81,7 @@ export default function INFLibrary({
             available={available}
             setSelected={setSelected}
             //TODO remover esse -1
-            selected={selected ?? { index: -1, name: "" }}
+            selected={selected ?? { id: -1, name: "" }}
           />
           <StandaloneTables />
         </div>
@@ -127,8 +127,8 @@ function RoomSelector({
   setSelected,
 }: {
   available: { id: number; name: string }[];
-  selected: { index: number; name: string };
-  setSelected: (a: { index: number; name: string }) => void;
+  selected: { id: number; name: string };
+  setSelected: (a: { id: number; name: string }) => void;
 }) {
   // TODO Retrieve this from the database
 
@@ -137,8 +137,8 @@ function RoomSelector({
       {simpleRooms.map((room) => {
         return (
           <SimpleRoom
-            available={available.map((r) => r.id).includes(room.index)}
-            selected={selected.index === room.index}
+            available={available.map((r) => r.id).includes(room.id)}
+            selected={selected.id === room.id}
             props={{
               style: SimpleRoomStyle,
               onClick: () => {
@@ -150,12 +150,12 @@ function RoomSelector({
       })}
       <BigRoom
         available={available.map((r) => r.id).includes(7)}
-        selected={selected.index === 7}
+        selected={selected.id === 7}
         props={{
           style: BigRoomStyle,
           onClick: () => {
             // TODO: Retrieve this from the database
-            setSelected({ index: 7, name: "104A" });
+            setSelected({ id: 7, name: "104A" });
           },
         }}
       />

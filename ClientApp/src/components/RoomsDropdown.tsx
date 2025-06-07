@@ -1,13 +1,18 @@
 export default function RoomsDropdown({
   availableRooms,
+  setSelected,
 }: {
   availableRooms: { name: string; id: number }[];
+  setSelected: (a: { id: number; name: string } | null) => void;
 }) {
   return (
     <div>
       <select
         onChange={(e) => {
-          console.log(e.target.value);
+          const roomId = parseInt(e.target.value);
+          console.log(roomId);
+          const room = availableRooms.find((r) => r.id === roomId);
+          setSelected(room !== undefined ? room : null);
         }}
       >
         <option value={-1}>Selecione uma sala</option>

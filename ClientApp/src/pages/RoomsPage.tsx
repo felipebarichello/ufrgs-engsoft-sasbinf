@@ -25,7 +25,7 @@ function RoomsPage() {
   >([]);
   const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
   const [selected, setSelected] = useState<{
-    index: number;
+    id: number;
     name: string;
   } | null>(null);
 
