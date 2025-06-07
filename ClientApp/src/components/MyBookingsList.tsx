@@ -4,6 +4,17 @@ interface MyBookingsListProps {
     bookingsList: MyBooking[];
 }
 
+const bookingCardStyle: React.CSSProperties = {
+    background: "#e5e7eb", // Lighter gray card
+    borderRadius: "16px",   // More rounded
+    padding: "1.5rem 2rem",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "2rem",
+};
+
 export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
     return (
         <div className="member-bookings-list" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -21,19 +32,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                 </div>
             ) : (
                 bookingsList.map((booking) => (
-                    <div
-                        key={booking.bookingId}
-                        style={{
-                            background: "#e5e7eb", // Lighter gray card
-                            borderRadius: "16px",   // More rounded
-                            padding: "1.5rem 2rem",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: "2rem",
-                        }}
-                    >
+                    <div key={booking.bookingId} style={bookingCardStyle}>
                         <div style={{ minWidth: "5em", fontWeight: 600 }}>#{booking.bookingId}</div>
                         <div style={{ flex: 1 }}>
                             <div style={{ fontWeight: 500 }}>{booking.roomName}</div>
