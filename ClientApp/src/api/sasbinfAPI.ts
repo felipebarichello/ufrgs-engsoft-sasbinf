@@ -263,12 +263,12 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
-      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformErrorResponse: () => ({ message: "Algo deu errado ao criar a sala" }),
       transformResponse: (response) => {
         try {
           return v.parse(RoomsSchema, response);
         } catch {
-          throw new Error("Invalid credentials");
+          throw new Error("Algo deu errado ao criar a sala");
         }
       },
     }),
