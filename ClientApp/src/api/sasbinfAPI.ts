@@ -10,10 +10,7 @@ import { BookingArraySchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from '../schemas/myBookings';
-
-function getToken() {
-  return sessionStorage.getItem('authToken');
-}
+import { HeaderBuilder } from "../lib/headers";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -46,9 +43,9 @@ export const sasbinf = createApi({
         url: "rooms/available-rooms-search",
         method: "POST",
         body: filters,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformResponse: (response) => {
         try {
@@ -64,9 +61,9 @@ export const sasbinf = createApi({
         url: "rooms/book",
         method: "POST",
         body: req,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformErrorResponse: (e) => {
         alert("Falha ao alugar sala" + e);
@@ -193,9 +190,9 @@ export const sasbinf = createApi({
       query: () => ({
         url: `rooms/my-bookings`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformResponse: (response) => {
         try {
