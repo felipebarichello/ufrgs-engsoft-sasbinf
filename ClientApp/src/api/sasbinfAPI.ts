@@ -82,7 +82,7 @@ export const sasbinf = createApi({
 
     postLoginManager: build.mutation({
       query: (login: Login) => ({
-        url: "manager/login",
+        url: "auth/login/manager",
         method: "POST",
         body: login,
       }),

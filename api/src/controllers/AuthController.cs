@@ -55,6 +55,38 @@ public class AuthController : ControllerBase {
         });
     }
 
+    [HttpPost("login/manager")]
+    public async Task<IActionResult> PostManagerLogin([FromBody] LoginDTO login) {
+        var user = await _dbContext.Managers
+            .Where(m => m.Username == login.user && m.Password == login.password)
+            .FirstOrDefaultAsync();
+
+        if (user == null) {
+            return Unauthorized(new { message = "Manager Not Found" });
+        }
+
+        var authClaims = new List<Claim> {
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Name, login.user),
+            new(ClaimTypes.NameIdentifier, user.ManagerId.ToString()),
+            new(ClaimTypes.Role, Roles.Manager)
+        };
+
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
+        var token = new JwtSecurityToken(
+            issuer: configuration["JWT:ValidIssuer"],
+            audience: configuration["JWT:ValidAudience"],
+            expires: DateTime.Now.AddHours(TOKEN_EXPIRATION_HOURS),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+
+        return Ok(new {
+            token = new JwtSecurityTokenHandler().WriteToken(token),
+            expiration = token.ValidTo
+        });
+    }
+
     [HttpPost("check")]
     [Authorize]
     public IActionResult CheckAuthStatus() {

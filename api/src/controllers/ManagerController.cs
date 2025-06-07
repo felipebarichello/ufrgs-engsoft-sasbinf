@@ -1,17 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using api.src.Models;
-using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
 [Route("api/manager")]
 public class ManagerController : ControllerBase {
-    private const double TOKEN_EXPIRATION_HOURS = 1;
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
     private readonly AppDbContext _dbContext;
@@ -20,38 +14,6 @@ public class ManagerController : ControllerBase {
         this.configuration = configuration;
         jwtSecret = configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret");
         _dbContext = dbContext;
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> LoginPost([FromBody] LoginDTO login) {
-        var user = await _dbContext.Managers
-            .Where(m => m.Username == login.user && m.Password == login.password)
-            .FirstOrDefaultAsync();
-
-        if (user == null) {
-            return Unauthorized(new { message = "Manager Not Found" });
-        }
-
-        var authClaims = new List<Claim> {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, login.user),
-            new(ClaimTypes.NameIdentifier, user.ManagerId.ToString()),
-            new(ClaimTypes.Role, Roles.Manager)
-        };
-
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
-        var token = new JwtSecurityToken(
-            issuer: configuration["JWT:ValidIssuer"],
-            audience: configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(TOKEN_EXPIRATION_HOURS),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        );
-
-        return Ok(new {
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
-        });
     }
 
     [HttpPost("create-room")]
