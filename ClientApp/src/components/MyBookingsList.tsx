@@ -1,10 +1,4 @@
-interface MyBooking {
-    bookingId: number;
-    roomName: string;
-    startTime: string;
-    endTime: string;
-    status: string;
-}
+import { MyBooking } from "../schemas/myBookings";
 
 interface MyBookingsListProps {
     bookingsList: MyBooking[];
