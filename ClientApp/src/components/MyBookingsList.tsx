@@ -43,17 +43,36 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         <div
                             style={{
                                 padding: "0.4em 0.5em",
-                                borderRadius: "8%",
+                                borderRadius: "0.2em",
                                 background: "#f3f4f6",
                                 fontWeight: 500,
                                 color: "#444",
-                                minWidth: "80px",
+                                minWidth: "8em",
                                 textAlign: "center",
                                 border: "1px solid #ababab",
                             }}
                         >
                             {booking.status}
                         </div>
+                        <button
+                            style={{
+                                marginLeft: "1.5rem",
+                                padding: "0.5em 1em",
+                                borderRadius: "0.5em",
+                                border: "none",
+                                background: "#ef4444",
+                                color: "#fff",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                transition: "background 0.2s",
+                            }}
+                            onClick={() => {
+                                // TODO: Implement cancel booking logic here
+                                alert(`Cancel booking #${booking.bookingId}`);
+                            }}
+                        >
+                            Cancel Booking
+                        </button>
                     </div>
                 ))
             )}
