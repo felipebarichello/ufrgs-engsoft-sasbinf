@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MemberWrapper from "../components/MemberWrapper";
 import MyBookingsList from "../components/MyBookingsList";
 import * as v from "valibot";
@@ -32,6 +32,12 @@ function MyBookingsPage() {
   const [myBookings, setMyBookings] = useState<MyBooking[]>([]);
   const getMyBookings = useGetMyBookingsQuery();
 
+  useEffect(() => {
+    if (getMyBookings.data) {
+      setMyBookings(getMyBookings.data);
+    }
+  }, [getMyBookings.data]);
+
   if (getMyBookings.isLoading) {
     return (
       <MemberWrapper>
@@ -51,8 +57,6 @@ function MyBookingsPage() {
       </MemberWrapper>
     )
   }
-
-  setMyBookings(getMyBookings.data);
 
   return (
     <MemberWrapper>
