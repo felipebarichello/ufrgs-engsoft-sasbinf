@@ -16,6 +16,10 @@ const bookingCardStyle: React.CSSProperties = {
 };
 
 export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
+    function handleCancelBooking(bookingId: number) {
+        alert(`Cancel booking #${bookingId}`);
+    }
+
     return (
         <div className="member-bookings-list" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {bookingsList.length === 0 ? (
@@ -66,10 +70,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                                 cursor: "pointer",
                                 transition: "background 0.2s",
                             }}
-                            onClick={() => {
-                                // TODO: Implement cancel booking logic here
-                                alert(`Cancel booking #${booking.bookingId}`);
-                            }}
+                            onClick={() => handleCancelBooking(booking.bookingId)}
                         >
                             Cancel Booking
                         </button>
