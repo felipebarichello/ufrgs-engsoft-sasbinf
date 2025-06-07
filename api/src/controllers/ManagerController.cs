@@ -58,7 +58,7 @@ public class ManagerController : ControllerBase {
     [Authorize(Roles = Roles.Manager)]
     public async Task<IActionResult> CreateRoomPost([FromBody] CreateRoomDto roomDto) {
         var roomAlreadyExists = await _dbContext.Rooms.Where(r => r.Name == roomDto.name).AnyAsync();
-        
+
         if (roomAlreadyExists) {
             return BadRequest(new { message = $"Uma sala de nome {roomDto.name} já existe. Por favor escolha outro nome." });
         }
@@ -178,7 +178,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     [Authorize(Roles = Roles.Manager)]
-    public async Task<IActionResult> ChangeBookingSatus([FromRoute] long bookingId, [FromRoute] string status) {
+    public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
         if (!validStatuses.Contains(status)) {
