@@ -98,11 +98,11 @@ public class MemberRoomsController : ControllerBase {
         }
 
         var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == request.bookingId && b.UserId == userId)
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.Status == BookingStatus.Booked)
             .FirstOrDefaultAsync();
 
         if (booking == null) {
-            return NotFound("Reserva não encontrada");
+            return NotFound("Você não pode cancelar essa reserva ou ela não existe");
         }
 
         booking.Status = BookingStatus.Withdrawn;
