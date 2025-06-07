@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/health")]
 public class HealthController : ControllerBase {
     [HttpGet]
-    public IActionResult HealthCheck() {
+    public IActionResult CheckHealth() {
         return Ok(new { message = "API is up and running!" });
     }
 }

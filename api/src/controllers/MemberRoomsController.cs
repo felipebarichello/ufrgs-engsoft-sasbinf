@@ -16,7 +16,7 @@ public class MemberRoomsController : ControllerBase {
     }
 
     [HttpPost("available-rooms-search")]
-    public async Task<IActionResult> AvailableRoomsSearchPost([FromBody] AvailableRoomsSearchDTO search) {
+    public async Task<IActionResult> SearchAvailableRooms([FromBody] AvailableRoomsSearchDTO search) {
         try {
             return Ok(new AvailableRoomsResponseDTO(await GetAvailableRooms(search)));
         }
@@ -26,7 +26,7 @@ public class MemberRoomsController : ControllerBase {
     }
 
     [HttpPost("book")]
-    public async Task<IActionResult> BookRoomPost([FromBody] BookRequestDTO request) {
+    public async Task<IActionResult> BookRoom([FromBody] BookRequestDTO request) {
         var username = User.FindFirstValue(ClaimTypes.Name);
 
         if (username == null) {
