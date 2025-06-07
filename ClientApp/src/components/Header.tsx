@@ -37,11 +37,13 @@ export default function Header() {
 
     return (
         <header style={headerStyle}>
-            <img
-                src={logoImg}
-                alt="SASBINF Logo"
-                style={logoStyle}
-            />
+            <a href="/" style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                    src={logoImg}
+                    alt="SASBINF Logo"
+                    style={logoStyle}
+                />
+            </a>
             <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
                 Minhas Reservas
             </button>
