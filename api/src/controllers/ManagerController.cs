@@ -217,8 +217,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("students")]
     [Authorize(Roles = Roles.Manager)]
-    public IActionResult
-     GetStudents([FromBody] Search search) {
+    public IActionResult GetStudents([FromBody] Search search) {
 
         List<MemberDto> members;
         if (search.name == null) {
@@ -233,9 +232,7 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("rooms")]
     [Authorize(Roles = Roles.Manager)]
-    public IActionResult
-
-    GetRooms([FromBody] Search search) {
+    public IActionResult GetRooms([FromBody] Search search) {
         var capacity = search.capacity ?? 1;
         List<RoomDto>? rooms;
         if (search.name == null) {
@@ -259,7 +256,6 @@ public class ManagerController : ControllerBase {
     public record Search {
         public string? name { get; set; }
         public int? capacity { get; set; }
-
     }
 
     public record CreateRoomDto {
