@@ -1,17 +1,13 @@
-import * as v from 'valibot'
+import * as v from "valibot";
 
 export const BookingSchema = v.object({
-    bookingId: v.number(),
-    userId: v.number(),
-    startDate: v.string(),
-    endDate: v.string(),
-})
+  bookingId: v.number(),
+  userId: v.number(),
+  startDate: v.string(),
+  endDate: v.string(),
+  status: v.string(),
+});
 
-export const BookingArraySchema = v.object({ 
-    history: v.array(BookingSchema),
-})
+export const BookingArraySchema = v.array(BookingSchema);
 
-export type Booking = v.InferInput<typeof BookingSchema>
-
-
-
+export type BookingArray = v.InferInput<typeof BookingArraySchema>;

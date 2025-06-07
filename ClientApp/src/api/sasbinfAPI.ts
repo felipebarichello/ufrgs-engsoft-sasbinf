@@ -168,14 +168,14 @@ export const sasbinf = createApi({
       },
     }),
 
-    postCheckinOut: build.mutation({
+    postCheckinAbsence: build.mutation({
       query: ({
         bookingId,
         status,
         token,
       }: {
         bookingId: number;
-        status: boolean;
+        status: string;
         token: string;
       }) => ({
         url: `manager/bookings/change-status/${bookingId}/${status}`,
@@ -204,8 +204,16 @@ export const sasbinf = createApi({
     }),
 
     postBanMember: build.mutation({
-      query: ({ memberId, token }: { memberId: number; token: string }) => ({
-        url: `manager/ban-member/${memberId}`,
+      query: ({
+        memberId,
+        shouldBan,
+        token,
+      }: {
+        memberId: number;
+        shouldBan: boolean;
+        token: string;
+      }) => ({
+        url: `manager/ban-member/${memberId}/${shouldBan}`,
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
@@ -279,7 +287,7 @@ export const {
   useDeleteRoomMutation,
   usePostRoomActivationMutation,
   useLazyGetRoomsHistorySearchQuery,
-  usePostCheckinOutMutation,
+  usePostCheckinAbsenceMutation,
   useGetMyBookingsQuery,
   usePostBanMemberMutation,
   usePostMembersMutation,

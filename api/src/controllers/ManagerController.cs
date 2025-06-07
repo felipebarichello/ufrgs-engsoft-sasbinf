@@ -111,7 +111,7 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"membro não existe" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == memberId).Select(b => new BookingDto { bookingId = b.BookingId, userId = b.UserId, startDate = b.StartDate, endDate = b.EndDate }).OrderBy(b => b.startDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == memberId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -126,11 +126,11 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { bookingId = b.BookingId, userId = b.UserId, startDate = b.StartDate, endDate = b.EndDate }).OrderBy(b => b.startDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { history = books });
+        return Ok(books);
 
     }
 
@@ -153,18 +153,27 @@ public class ManagerController : ControllerBase {
         return Ok();
     }
 
-    [HttpPost("ban-member/{memberId}")]
-    public async Task<IActionResult> BanMember([FromRoute] long memberId) {
+    // TODO: The parameters could be a DTO in the body
+    [HttpPost("ban-member/{memberId}/{shouldBan}")]
+    [Authorize(Roles = "manager")]
+    public async Task<IActionResult> BanMember([FromRoute] long memberId, [FromRoute] bool shouldBan) {
+        Notification notification;
+
         var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
         if (member == null) {
             return BadRequest(new { message = $"membro não existe" });
         }
 
-        member.TimedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
-        var notification = new Notification { UserId = memberId, Description = $"Você está banido até {member.TimedOutUntil}" };
-        if (notification != null) {
-            await NotifyMembers(notification);
+        if (shouldBan) {
+            notification = new Notification { UserId = memberId, Description = $"Você está banido até {member.TimedOutUntil}" };
+            member.TimedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
         }
+        else {
+            member.TimedOutUntil = null;
+            notification = new Notification { UserId = memberId, Description = $"Você não está mais banido das salas do inf" };
+        }
+
+        await NotifyMembers(notification);
 
         await _dbContext.SaveChangesAsync();
 
@@ -231,9 +240,10 @@ public class ManagerController : ControllerBase {
     }
 
     public record BookingDto {
-        public long bookingId { get; set; }
-        public long userId { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public long BookingId { get; set; }
+        public long UserId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Status { get; set; } = default!;
     }
 }
