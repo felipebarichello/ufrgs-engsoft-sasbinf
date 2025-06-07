@@ -38,33 +38,25 @@ function MyBookingsPage() {
     }
   }, [getMyBookings.data]);
 
-  if (getMyBookings.isLoading) {
-    return (
-      <MemberWrapper>
-        <div className="d-flex justify-content-center pt-5" style={{ width: "75vw" }}>
-          <span>Carregando...</span>
-        </div>
-      </MemberWrapper>
-    );
-  }
+  const wrapperStyle = { minWidth: "70em" };
 
-  if (getMyBookings.isError || !getMyBookings.data) {
-    return (
-      <MemberWrapper>
-        <div className="d-flex justify-content-center pt-5" style={{ width: "75vw" }}>
-          <span>Falha ao carregar</span>
-        </div>
-      </MemberWrapper>
-    )
-  }
-
-  return (
+  const wrapper = (content: React.ReactNode) => (
     <MemberWrapper>
-      <div className="d-flex justify-content-around pt-5" style={{ width: "75vw" }}>
-        <MyBookingsList bookingsList={myBookings} />
+      <div className="d-flex justify-content-center pt-5" style={wrapperStyle}>
+        {content}
       </div>
     </MemberWrapper>
   );
+
+  if (getMyBookings.isLoading) {
+    return wrapper(<span>Carregando...</span>);
+  }
+
+  if (getMyBookings.isError || !getMyBookings.data) {
+    return wrapper(<span>Falha ao carregar</span>);
+  }
+
+  return wrapper(<MyBookingsList bookingsList={myBookings} />);
 }
 
 export default MyBookingsPage;
