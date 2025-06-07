@@ -10,10 +10,7 @@ import { BookingArraySchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
 import { MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from '../schemas/myBookings';
-
-function getToken() {
-  return sessionStorage.getItem('authToken');
-}
+import { HeaderBuilder } from "../lib/headers";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -46,9 +43,9 @@ export const sasbinf = createApi({
         url: "rooms/available-rooms-search",
         method: "POST",
         body: filters,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformResponse: (response) => {
         try {
@@ -64,9 +61,9 @@ export const sasbinf = createApi({
         url: "rooms/book",
         method: "POST",
         body: req,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformErrorResponse: (e) => {
         alert("Falha ao alugar sala" + e);
@@ -82,7 +79,7 @@ export const sasbinf = createApi({
 
     postLoginManager: build.mutation({
       query: (login: Login) => ({
-        url: "manager/login",
+        url: "auth/login/manager",
         method: "POST",
         body: login,
       }),
@@ -109,7 +106,7 @@ export const sasbinf = createApi({
         url: "manager/create-room",
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
         body: {
           name,
@@ -123,7 +120,7 @@ export const sasbinf = createApi({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -141,7 +138,7 @@ export const sasbinf = createApi({
         url: `manager/activation-room/${roomId}/${isActive}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -159,7 +156,7 @@ export const sasbinf = createApi({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformResponse: (response) => {
@@ -184,7 +181,7 @@ export const sasbinf = createApi({
         url: `manager/bookings/change-status/${bookingId}/${status}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -193,9 +190,9 @@ export const sasbinf = createApi({
       query: () => ({
         url: `rooms/my-bookings`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
+        headers: new HeaderBuilder()
+          .withAuthToken()
+          .build(),
       }),
       transformResponse: (response) => {
         try {
@@ -211,7 +208,7 @@ export const sasbinf = createApi({
         url: `manager/ban-member/${memberId}`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
     }),
@@ -228,7 +225,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: { name: studentName },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
@@ -255,7 +252,7 @@ export const sasbinf = createApi({
         method: "POST",
         body: { name: roomName, capacity: capacity },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
