@@ -7,4 +7,5 @@ namespace DTO {
     public record AvailableRoomDTO(long id, string name);
     public record AvailableRoomsResponseDTO(List<AvailableRoomDTO> availableRooms); // available rooms id list
     public record BookRequestDTO(int roomId, DateOnly day, TimeOnly startTime, TimeOnly endTime);
+    public record CancelBookingDTO(long bookingId);
 }

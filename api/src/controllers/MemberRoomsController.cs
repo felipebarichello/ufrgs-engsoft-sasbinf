@@ -89,6 +89,28 @@ public class MemberRoomsController : ControllerBase {
         return Ok(bookingDtos);
     }
 
+    [HttpPost("cancel-booking")]
+    public async Task<IActionResult> CancelBooking([FromBody] CancelBookingDTO request) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
+        }
+
+        var booking = await _dbContext.Bookings
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId)
+            .FirstOrDefaultAsync();
+
+        if (booking == null) {
+            return NotFound("Reserva não encontrada");
+        }
+
+        booking.Status = BookingStatus.Withdrawn;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Reserva cancelada com sucesso" });
+    }
+
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
         // Validate the search parameters
         if (search == null || search.capacity < 1) {
