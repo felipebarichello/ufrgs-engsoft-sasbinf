@@ -4,12 +4,15 @@ import Restricted from "../../components/Restricted";
 import {
   useDeleteRoomMutation,
   useLazyGetRoomsHistorySearchQuery,
+  usePostBanMemberMutation,
+  usePostCheckinAbsenceMutation,
   usePostCreateRoomMutation,
   usePostRoomActivationMutation,
   usePostRoomsMutation,
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
 import "./ManagerMainPage.css";
+import { BookingArray } from "../../schemas/booking";
 
 function ManagerRoomsPage() {
   return (
@@ -29,12 +32,16 @@ function ManagerRoomsPageRestricted() {
   const [roomActivation] = usePostRoomActivationMutation();
   const [deleteRoom] = useDeleteRoomMutation();
   const [getHistory] = useLazyGetRoomsHistorySearchQuery();
+  const [checkin] = usePostCheckinAbsenceMutation();
+  const [banMember] = usePostBanMemberMutation();
   const [formState, setFormState] = useState<{
     roomName: string | null;
     capacity: number | 1;
   }>({ roomName: null, capacity: 1 });
   const [selectedRoom, setSelectedRoom] = useState<null | number>(null);
-  const [historyData, setHistoryData] = useState<Record<number, any[]>>({});
+  const [historyData, setHistoryData] = useState<
+    Record<number, BookingArray | null>
+  >({});
   const [selectedBooking, setSelectedBooking] = useState<number | null>();
   const inicialFormState = { roomName: null, capacity: 1 };
   const token = sessionStorage.getItem("authToken")!;
@@ -91,11 +98,16 @@ function ManagerRoomsPageRestricted() {
         return newData;
       });
     } else {
-      const response = await getHistory({ roomId, numberOfBooks: "5", token });
+      const response = await getHistory({
+        roomId: roomId,
+        numberOfBooks: "5",
+        token,
+      });
       if ("data" in response) {
+        console.log("tenho dados");
         setHistoryData((prev) => ({
           ...prev,
-          [roomId]: response.data.history,
+          [roomId]: response.data,
         }));
       }
     }
@@ -109,12 +121,41 @@ function ManagerRoomsPageRestricted() {
     setSelectedRoom((prev) => (prev === roomId ? null : roomId));
   };
 
-  const handleCheckIn = async (bookingId: number) => {
-    console.log("Check-in para bookingId:", bookingId);
+  const handleCheckIn = async (bookingId: number, roomId: number) => {
+    checkin({ bookingId: bookingId, status: "confirmed", token: token });
+    const response = await getHistory({
+      roomId: roomId,
+      numberOfBooks: "5",
+      token,
+    });
+    if ("data" in response) {
+      console.log("tenho dados");
+      setHistoryData((prev) => ({
+        ...prev,
+        [roomId]: response.data,
+      }));
+    }
   };
 
-  const handleAbsence = async (bookingId: number) => {
-    console.log("Ausência registrada para bookingId:", bookingId);
+  const handleAbsence = async (
+    bookingId: number,
+    memberId: number,
+    roomId: number
+  ) => {
+    checkin({ bookingId: bookingId, status: "absent", token: token });
+    banMember({ memberId: memberId, shouldBan: true, token: token });
+    const response = await getHistory({
+      roomId: roomId,
+      numberOfBooks: "5",
+      token,
+    });
+    if ("data" in response) {
+      console.log("tenho dados");
+      setHistoryData((prev) => ({
+        ...prev,
+        [roomId]: response.data,
+      }));
+    }
   };
 
   return (
@@ -205,7 +246,7 @@ function ManagerRoomsPageRestricted() {
                     </div>
                     {historyData[r.roomId] && (
                       <ul className="history-list">
-                        {historyData[r.roomId].map((h, idx) => (
+                        {historyData[r.roomId]!.map((h, idx) => (
                           <li
                             key={idx}
                             onClick={() => toggleHistory(h.bookingId)}
@@ -219,17 +260,28 @@ function ManagerRoomsPageRestricted() {
                             <p>
                               <strong>Fim:</strong> {h.endDate}
                             </p>
+                            <p>
+                              <strong>Status:</strong> {h.status}
+                            </p>
                             {selectedBooking === h.bookingId && (
                               <div className="booking-actions">
                                 <button
                                   className="checkin"
-                                  onClick={() => handleCheckIn(h.bookingId)}
+                                  onClick={() =>
+                                    handleCheckIn(h.bookingId, r.roomId)
+                                  }
                                 >
                                   Check-in
                                 </button>
                                 <button
                                   className="absence"
-                                  onClick={() => handleAbsence(h.bookingId)}
+                                  onClick={() =>
+                                    handleAbsence(
+                                      h.bookingId,
+                                      h.userId,
+                                      r.roomId
+                                    )
+                                  }
                                 >
                                   Ausência
                                 </button>

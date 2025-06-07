@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import logoImg from "../../assets/logo-sasbinf.png";
 import { Login } from "../../schemas/login";
 import { usePostLoginManagerMutation } from "../../api/sasbinfAPI";
-import "../LoginPage.css"; // ✅ Importa o CSS compartilhado
+import "../LoginPage.css";
 
 function LoginManagerPage() {
   const [login, loginState] = usePostLoginManagerMutation();
