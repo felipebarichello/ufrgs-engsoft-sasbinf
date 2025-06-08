@@ -117,6 +117,18 @@ function ManagerMembersPageRestricted() {
     }
   };
 
+  const handleBan = async (
+    memberId: number,
+    memberName: string | null,
+    ban: boolean
+  ) => {
+    banMember({ memberId: memberId, shouldBan: ban, token: token });
+    searchMembers({
+      memberName: memberName,
+      token,
+    });
+  };
+
   return (
     <div className="manager-card">
       <div className="logo-container">
@@ -169,10 +181,18 @@ function ManagerMembersPageRestricted() {
                       Id: <strong>{r.memberId}</strong>
                     </p>
                     <div className="room-buttons">
-                      <button onClick={() => console.log("banido")}>
+                      <button
+                        onClick={() =>
+                          handleBan(r.memberId, memberName ?? "", true)
+                        }
+                      >
                         Banir por 1 mês
                       </button>
-                      <button onClick={() => console.log("desbanido")}>
+                      <button
+                        onClick={() =>
+                          handleBan(r.memberId, memberName ?? "", false)
+                        }
+                      >
                         Remover Banimento
                       </button>
                       <button onClick={() => handleShowHistory(r.memberId)}>
