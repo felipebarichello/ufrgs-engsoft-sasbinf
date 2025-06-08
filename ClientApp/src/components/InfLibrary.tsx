@@ -3,10 +3,15 @@ import SimpleTable from "./TableSeats";
 import { VerticalSpacer } from "./Spacer";
 import BigRoom from "./BigRoom";
 import SimpleRoom from "./SimpleRoom";
-import { usePostRoomBookRequestMutation } from "../api/sasbinfAPI";
+import {
+  useLazyPostAvailableRoomsSearchQuery,
+  usePostRoomBookRequestMutation,
+} from "../api/sasbinfAPI";
 import { RoomFilters } from "../pages/RoomsPage";
 import { Erroralert } from "./ErrorAlert";
 import RoomsDropdown from "./RoomsDropdown";
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const simpleRooms = Object.freeze([
   { id: 1, name: "104G" },
@@ -22,15 +27,19 @@ export default function INFLibrary({
   filtersState,
   selected,
   setSelected,
+  setAvailable,
 }: {
   available: { name: string; id: number }[];
   filtersState: RoomFilters;
   selected: { id: number; name: string } | null;
   setSelected: (a: { id: number; name: string } | null) => void;
+  setAvailable: (a: { id: number; name: string }[]) => void;
 }) {
   const [triggerBookRequest, metadata] = usePostRoomBookRequestMutation();
+  const [triggerAvailableRoomsQuery, availableRoomsState] =
+    useLazyPostAvailableRoomsSearchQuery();
 
-  function handleBookPress() {
+  async function handleBookPress() {
     if (selected === null) {
       alert("Nenhuma sala está selecionada. Clique na sala para selecioná-la.");
       return;
@@ -53,6 +62,24 @@ export default function INFLibrary({
     console.log(bookRequest);
 
     triggerBookRequest(bookRequest);
+
+    setAvailable([]);
+
+    try {
+      await sleep(500);
+
+      const newAvailableState = await triggerAvailableRoomsQuery(
+        filtersState
+      ).unwrap();
+
+      setAvailable(newAvailableState);
+    } catch {
+      console.log(
+        availableRoomsState.error,
+        availableRoomsState.isLoading,
+        availableRoomsState.data
+      );
+    }
   }
 
   return (

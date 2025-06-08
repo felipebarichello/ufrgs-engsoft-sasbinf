@@ -43,6 +43,7 @@ function RoomsPage() {
         />
         <INFLibrary
           available={availableRooms ?? []}
+          setAvailable={setAvailableRooms}
           filtersState={filtersState}
           selected={selected}
           setSelected={setSelected}
