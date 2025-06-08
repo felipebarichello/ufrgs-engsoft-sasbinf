@@ -40,11 +40,11 @@ export default function Header() {
       <a href="/" style={{ display: "flex", alignItems: "center" }}>
         <img src={logoImg} alt="SASBINF Logo" style={logoStyle} />
       </a>
-      <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
-        Minhas Reservas
-      </button>
       <button style={buttonStyle} onClick={() => navigate("/rooms")}>
         Salas
+      </button>
+      <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
+        Minhas Reservas
       </button>
       <button style={buttonStyle} onClick={logout}>
         Logout
