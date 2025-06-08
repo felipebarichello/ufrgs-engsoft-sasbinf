@@ -61,7 +61,11 @@ export default function INFLibrary({
         <h5 style={{ marginRight: "10px", marginLeft: "100px" }}>
           Salas Disponíveis:
         </h5>
-        <RoomsDropdown availableRooms={available} setSelected={setSelected} />
+        <RoomsDropdown
+          availableRooms={available}
+          selected={selected}
+          setSelected={setSelected}
+        />
       </div>
       <div className="d-flex justify-content-end">
         <NewPointer
