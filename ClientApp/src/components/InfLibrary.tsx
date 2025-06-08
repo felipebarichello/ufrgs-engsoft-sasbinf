@@ -59,7 +59,7 @@ export default function INFLibrary({
     <div>
       <div className="d-flex flex-row justify-content-center">
         <h5 style={{ marginRight: "10px", marginLeft: "100px" }}>
-          Salas Disponíveis
+          Salas Disponíveis:
         </h5>
         <RoomsDropdown availableRooms={available} setSelected={setSelected} />
       </div>
