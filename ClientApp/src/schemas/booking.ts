@@ -3,6 +3,7 @@ import * as v from "valibot";
 export const BookingSchema = v.object({
   bookingId: v.number(),
   userId: v.number(),
+  roomId: v.number(),
   startDate: v.string(),
   endDate: v.string(),
   status: v.string(),
