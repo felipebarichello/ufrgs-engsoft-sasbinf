@@ -154,7 +154,7 @@ public class MemberRoomsController : ControllerBase {
         // A: b
         // B: unnamed
         var conflictingBookings = await _dbContext.Bookings
-            .Where(b => b.StartDate <= endDateTime && b.EndDate >= startDateTime && b.Status == "BOOKED")
+            .Where(b => b.StartDate <= endDateTime && b.EndDate >= startDateTime && b.Status == BookingStatus.Booked)
             .ToListAsync();
 
         // Extract the IDs of rooms that are already booked
