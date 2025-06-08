@@ -92,7 +92,7 @@ public class MemberRoomsController : ControllerBase {
     [HttpPost("cancel-booking")]
     public async Task<IActionResult> CancelBooking([FromBody] CancelBookingDTO request) {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
         }
@@ -154,7 +154,7 @@ public class MemberRoomsController : ControllerBase {
         // A: b
         // B: unnamed
         var conflictingBookings = await _dbContext.Bookings
-            .Where(b => b.StartDate <= endDateTime && b.EndDate >= startDateTime)
+            .Where(b => b.StartDate <= endDateTime && b.EndDate >= startDateTime && b.Status == "BOOKED")
             .ToListAsync();
 
         // Extract the IDs of rooms that are already booked
