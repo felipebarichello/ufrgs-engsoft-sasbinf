@@ -69,7 +69,13 @@ export default function INFLibrary({
       </div>
       <div className="d-flex justify-content-end">
         <NewPointer
-          enabled={selected !== null && (simpleRooms.map((r) => r.id).includes(selected.id) || selected.id === 7)}
+          // This 'enabled' clause poses a problem: the rooms on the map must have exact, hard-coded ids and names on the database;
+          // Not a big deal if you ask me, especially since we are matching it with INF's, but it would be nice to discuss it with the team
+          enabled={
+            selected !== null &&
+            (simpleRooms.map((r) => r.id).includes(selected.id) ||
+              selected.id === 7)
+          }
           room={selected ?? { id: 1, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
