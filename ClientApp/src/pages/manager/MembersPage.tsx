@@ -142,7 +142,7 @@ function ManagerMembersPageRestricted() {
           <label>Nome do Membro</label>
           <input
             type="text"
-            placeholder="Digite o nome do aluno"
+            placeholder="Digite o nome de usuário"
             value={memberName || ""}
             onChange={(e) => setMemberName(e.target.value)}
           />
