@@ -21,8 +21,8 @@ const initialState: RoomFilters = {
 
 function RoomsPage() {
   const [availableRooms, setAvailableRooms] = useState<
-    { name: string; id: number }[]
-  >([]);
+    { name: string; id: number }[] | null
+  >(null);
   const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
   const [selected, setSelected] = useState<{
     id: number;
@@ -36,23 +36,18 @@ function RoomsPage() {
         style={{ width: "75vw" }}
       >
         <RoomsForm
+          available={availableRooms}
           setAvailableRooms={setAvailableRooms}
           filtersState={filtersState}
           setFiltersState={setFiltersState}
         />
         <INFLibrary
-         
           available={availableRooms ?? []}
-         
           filtersState={filtersState}
           selected={selected}
           setSelected={setSelected}
-       
         />
       </div>
-      {availableRooms !== null && availableRooms.length === 0 && (
-        <p style={{ color: "red" }}>Não há salas disponíveis</p>
-      )}
     </MemberWrapper>
   );
 }

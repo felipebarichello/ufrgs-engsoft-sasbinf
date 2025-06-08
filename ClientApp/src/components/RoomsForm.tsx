@@ -4,16 +4,16 @@ import { Erroralert } from "./ErrorAlert";
 import { Epoch, RoomFilters } from "../pages/RoomsPage";
 
 export default function RoomsForm({
+  available,
   setAvailableRooms,
   filtersState,
   setFiltersState,
 }: {
-  setAvailableRooms: (a: {name: string, id: number}[]) => void;
+  available: { name: string; id: number }[] | null;
+  setAvailableRooms: (a: { name: string; id: number }[]) => void;
   filtersState: RoomFilters;
   setFiltersState: (a: RoomFilters) => void;
 }) {
-  // const [filtersState, setFiltersState] = useState<RoomFilters>(initialState);
-
   return (
     <div>
       <h2>Filtrar Sala</h2>
@@ -21,6 +21,7 @@ export default function RoomsForm({
         <RoomsFormInputs
           inputs={filtersState}
           setInputs={setFiltersState}
+          available={available}
           setAvailable={setAvailableRooms}
         />
       </div>
@@ -31,10 +32,12 @@ export default function RoomsForm({
 function RoomsFormInputs({
   inputs,
   setInputs,
+  available,
   setAvailable,
 }: {
   inputs: RoomFilters;
   setInputs: (a: RoomFilters) => void;
+  available: { name: string; id: number }[] | null;
   setAvailable: (a: { name: string; id: number }[]) => void;
 }) {
   const [triggerAvailableRoomsQuery, availableRoomsState] =
@@ -156,6 +159,10 @@ function RoomsFormInputs({
           </button>
         </div>
       </form>
+
+      {available !== null && available.length === 0 && (
+        <p style={{ color: "red", marginTop: "10px" }}> Não há salas disponíveis</p>
+      )}
 
       {availableRoomsState.isError &&
         Erroralert({ error: availableRoomsState.error })}
