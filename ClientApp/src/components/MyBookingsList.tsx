@@ -72,7 +72,21 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         </div>
                         <button
                             style={{
-                                marginLeft: "1.5rem",
+                                padding: "0.5em 1em",
+                                borderRadius: "0.5em",
+                                border: "none",
+                                background: "#2563eb",
+                                color: "#fff",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                transition: "background 0.2s",
+                            }}
+                            onClick={() => handleCancelBooking(booking.bookingId)}
+                        >
+                            Transferir
+                        </button>
+                        <button
+                            style={{
                                 padding: "0.5em 1em",
                                 borderRadius: "0.5em",
                                 border: "none",
@@ -84,7 +98,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                             }}
                             onClick={() => handleCancelBooking(booking.bookingId)}
                         >
-                            Cancelar reserva
+                            Cancelar
                         </button>
                     </div>
                 ))
