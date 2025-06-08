@@ -136,7 +136,6 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
-        // TODO: Change all statuses to the constants
         var validStatuses = new[] { BookingStatus.Booked, BookingStatus.Claimed, BookingStatus.Missed, BookingStatus.Withdrawn, BookingStatus.Cancelled };
 
         if (!validStatuses.Contains(status)) {
