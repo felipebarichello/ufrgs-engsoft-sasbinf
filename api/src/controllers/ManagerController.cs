@@ -61,6 +61,7 @@ public class ManagerController : ControllerBase {
         return await executionStrategy.ExecuteAsync(async () => {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync()) {
                 try {
+
                     var room = await _dbContext.Rooms
                         .FirstOrDefaultAsync(r => r.RoomId == roomId);
 
@@ -69,20 +70,21 @@ public class ManagerController : ControllerBase {
                     }
 
                     room.IsActive = isActive;
+                    if (!isActive) {
+                        var bookingsToNotify = await _dbContext.Bookings
+                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.Status == "pending")
+                            .ToListAsync();
 
-                    var bookingsToNotify = await _dbContext.Bookings
-                        .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId)
-                        .ToListAsync();
+                        if (bookingsToNotify.Any()) {
+                            var notifications = bookingsToNotify.Select(b => new Notification {
+                                UserId = b.UserId,
+                                Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
+                            }).ToList();
 
-                    if (bookingsToNotify.Any()) {
-                        var notifications = bookingsToNotify.Select(b => new Notification {
-                            UserId = b.UserId,
-                            Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
-                        }).ToList();
-
-                        bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
-                        if (notifications != null) {
-                            await NotifyMembers(notifications);
+                            bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
+                            if (notifications != null) {
+                                await NotifyMembers(notifications);
+                            }
                         }
                     }
 
@@ -92,7 +94,6 @@ public class ManagerController : ControllerBase {
                     return Ok(new {
                         name = room.Name,
                         isActive = room.IsActive,
-                        cancelledBookings = bookingsToNotify.Count
                     });
                 }
                 catch (Exception ex) {
@@ -111,7 +112,7 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"membro não existe" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == memberId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status, RoomId = b.RoomId }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -126,7 +127,7 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status, RoomId = b.RoomId }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -179,7 +180,7 @@ public class ManagerController : ControllerBase {
         return Ok();
     }
 
-    [HttpPost("students")]
+    [HttpPost("members")]
     public IActionResult GetStudents([FromBody] Search search) {
 
         List<MemberDto> members;
@@ -244,5 +245,6 @@ public class ManagerController : ControllerBase {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = default!;
+        public long RoomId { get; set; }
     }
 }

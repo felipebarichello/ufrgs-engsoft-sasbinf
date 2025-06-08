@@ -4,12 +4,12 @@ import { Login, LoginResponseSchema } from "../schemas/login";
 import {
   AvailableRoomsSchema,
   BookRequest,
-  RoomsSchema,
+  RoomArraySchema,
 } from "../schemas/rooms";
 import { BookingArraySchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
-import { MembersSchema } from "../schemas/member";
-import { MyBooking, MyBookingsResponseSchema } from '../schemas/myBookings';
+import { MemberArraySchema } from "../schemas/member";
+import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
 
 // Define a service using a base URL and expected endpoints
@@ -38,14 +38,15 @@ export const sasbinf = createApi({
       },
     }),
 
-    postAvailableRoomsSearch: build.query<{ name: string, id: number; }[], RoomFilters>({
+    postAvailableRoomsSearch: build.query<
+      { name: string; id: number }[],
+      RoomFilters
+    >({
       query: (filters: RoomFilters) => ({
         url: "rooms/available-rooms-search",
         method: "POST",
         body: filters,
-        headers: new HeaderBuilder()
-          .withAuthToken()
-          .build(),
+        headers: new HeaderBuilder().withAuthToken().build(),
       }),
       transformResponse: (response) => {
         try {
@@ -61,9 +62,7 @@ export const sasbinf = createApi({
         url: "rooms/book",
         method: "POST",
         body: req,
-        headers: new HeaderBuilder()
-          .withAuthToken()
-          .build(),
+        headers: new HeaderBuilder().withAuthToken().build(),
       }),
       transformErrorResponse: (e) => {
         alert("Falha ao alugar sala" + e);
@@ -168,6 +167,31 @@ export const sasbinf = createApi({
       },
     }),
 
+    getMemberRoomsHistorySearch: build.query({
+      query: ({
+        memberId: memberId,
+        numberOfBooks,
+        token,
+      }: {
+        memberId: number;
+        numberOfBooks: number;
+        token: string;
+      }) => ({
+        url: `manager/member-history/${memberId}/${numberOfBooks}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(BookingArraySchema, response);
+        } catch {
+          throw new Error("Falha ao obter histórico de salas");
+        }
+      },
+    }),
+
     postCheckinAbsence: build.mutation({
       query: ({
         bookingId,
@@ -190,9 +214,7 @@ export const sasbinf = createApi({
       query: () => ({
         url: `rooms/my-bookings`,
         method: "GET",
-        headers: new HeaderBuilder()
-          .withAuthToken()
-          .build(),
+        headers: new HeaderBuilder().withAuthToken().build(),
       }),
       transformResponse: (response) => {
         try {
@@ -223,15 +245,15 @@ export const sasbinf = createApi({
 
     postMembers: build.mutation({
       query: ({
-        studentName,
+        memberName,
         token,
       }: {
-        studentName: string | null;
+        memberName: string | null;
         token: string;
       }) => ({
-        url: "manager/students",
+        url: "manager/members",
         method: "POST",
-        body: { name: studentName },
+        body: { name: memberName },
         headers: {
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
@@ -239,7 +261,7 @@ export const sasbinf = createApi({
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
         try {
-          return v.parse(MembersSchema, response);
+          return v.parse(MemberArraySchema, response);
         } catch {
           throw new Error("Invalid credentials");
         }
@@ -263,10 +285,12 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
-      transformErrorResponse: () => ({ message: "Algo deu errado ao criar a sala" }),
+      transformErrorResponse: () => ({
+        message: "Algo deu errado ao criar a sala",
+      }),
       transformResponse: (response) => {
         try {
-          return v.parse(RoomsSchema, response);
+          return v.parse(RoomArraySchema, response);
         } catch {
           throw new Error("Algo deu errado ao criar a sala");
         }
@@ -277,9 +301,7 @@ export const sasbinf = createApi({
       query: ({ bookingId }: { bookingId: number }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
-        headers: new HeaderBuilder()
-          .withAuthToken()
-          .build(),
+        headers: new HeaderBuilder().withAuthToken().build(),
         body: { bookingId },
       }),
       transformResponse: () => ({ success: true }),
@@ -300,6 +322,7 @@ export const {
   useDeleteRoomMutation,
   usePostRoomActivationMutation,
   useLazyGetRoomsHistorySearchQuery,
+  useLazyGetMemberRoomsHistorySearchQuery,
   usePostCheckinAbsenceMutation,
   useGetMyBookingsQuery,
   usePostBanMemberMutation,
