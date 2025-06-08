@@ -162,7 +162,13 @@ public class MemberRoomsController : ControllerBase {
 
         // Find rooms that are not booked during the requested time and meet the capacity requirement
         var availableRooms = await _dbContext.Rooms
-            .Where(r => !conflictingRoomIds.Contains(r.RoomId) && r.Capacity >= search.capacity)
+            .Where(
+                r => (
+                    !conflictingRoomIds.Contains(r.RoomId)
+                    && r.Capacity >= search.capacity
+                    && r.IsActive
+                )
+            )
             .ToListAsync();
 
         return availableRooms.Select(r => new AvailableRoomDTO(r.RoomId, r.Name)).ToList();
