@@ -136,7 +136,8 @@ public class ManagerController : ControllerBase {
 
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
-        var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
+        // TODO: Change all statuses to the constants
+        var validStatuses = new[] { BookingStatus.Booked, "confirmed", "absent", BookingStatus.Withdrawn, BookingStatus.Cancelled };
 
         if (!validStatuses.Contains(status)) {
             string validStatusesString = string.Join(", ", validStatuses); // Create a comma separated string of valid statuses
