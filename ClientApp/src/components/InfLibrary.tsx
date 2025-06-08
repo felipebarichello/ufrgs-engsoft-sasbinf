@@ -69,7 +69,7 @@ export default function INFLibrary({
       </div>
       <div className="d-flex justify-content-end">
         <NewPointer
-          enabled={selected !== null}
+          enabled={selected !== null && (simpleRooms.map((r) => r.id).includes(selected.id) || selected.id === 7)}
           room={selected ?? { id: 1, name: "104G" }}
           props={{ style: { width: "200px" } }}
         />
