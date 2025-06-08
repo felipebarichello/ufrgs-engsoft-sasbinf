@@ -31,6 +31,15 @@ public class MemberRoomsController : ControllerBase {
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
         }
+        
+        var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == userId);
+        if (member == null) {
+            return Unauthorized("Token de autorização inválido");
+        }
+
+        if (member.IsTimedOut()) {
+            return Forbid("Você está em timeout e portanto temporariamente impedido de reservar salas.");
+        }
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
         if (!availableRoomIds.Select(a => a.id).Contains(request.roomId)) {

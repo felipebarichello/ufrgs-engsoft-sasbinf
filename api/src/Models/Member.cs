@@ -8,5 +8,8 @@ namespace api.src.Models {
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
+        public bool IsTimedOut() {
+            return TimedOutUntil.HasValue && DateTime.UtcNow < TimedOutUntil.Value;
+        }
     }
 }
