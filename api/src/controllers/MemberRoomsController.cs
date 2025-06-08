@@ -27,16 +27,10 @@ public class MemberRoomsController : ControllerBase {
 
     [HttpPost("book")]
     public async Task<IActionResult> BookRoom([FromBody] BookRequestDTO request) {
-        var username = User.FindFirstValue(ClaimTypes.Name);
-
-        if (username == null) {
-            return Unauthorized($"Falha ao encontrar o usuário para o token fornecido: nome de usuário inválido");
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("ID do usuário não está em formato válido");
         }
-
-        var userId = await _dbContext.Members
-            .Where(m => m.Username == username)
-            .Select(m => m.MemberId)
-            .FirstOrDefaultAsync();
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
         if (!availableRoomIds.Select(a => a.id).Contains(request.roomId)) {

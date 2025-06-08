@@ -35,7 +35,7 @@ public class AuthController : ControllerBase {
 
         var authClaims = new List<Claim> {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, login.user),
+            new(ClaimTypes.Name, login.user), // TODO: Remove this claim
             new(ClaimTypes.NameIdentifier, user.MemberId.ToString()),
             new(ClaimTypes.Role, Roles.Member)
         };
