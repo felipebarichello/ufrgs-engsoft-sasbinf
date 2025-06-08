@@ -160,9 +160,15 @@ function RoomsFormInputs({
         </div>
       </form>
 
-      {available !== null && available.length === 0 && (
-        <p style={{ color: "red", marginTop: "10px" }}> Não há salas disponíveis</p>
-      )}
+      {!availableRoomsState.isLoading &&
+        !availableRoomsState.isError &&
+        available !== null &&
+        available.length === 0 && (
+          <p style={{ color: "red", marginTop: "10px" }}>
+            {" "}
+            Não há salas disponíveis
+          </p>
+        )}
 
       {availableRoomsState.isError &&
         Erroralert({ error: availableRoomsState.error })}
