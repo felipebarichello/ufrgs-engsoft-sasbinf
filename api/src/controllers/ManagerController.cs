@@ -80,7 +80,7 @@ public class ManagerController : ControllerBase {
                             Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
                         }).ToList();
 
-                        bookingsToNotify.ForEach(b => b.Status = "CANCELLED");
+                        bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
                         if (notifications != null) {
                             await NotifyMembers(notifications);
                         }
@@ -155,7 +155,6 @@ public class ManagerController : ControllerBase {
 
     // TODO: The parameters could be a DTO in the body
     [HttpPost("ban-member/{memberId}/{shouldBan}")]
-    [Authorize(Roles = "manager")]
     public async Task<IActionResult> BanMember([FromRoute] long memberId, [FromRoute] bool shouldBan) {
         Notification notification;
 
