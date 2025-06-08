@@ -84,7 +84,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                             }}
                             onClick={() => handleCancelBooking(booking.bookingId)}
                         >
-                            Cancel Booking
+                            Cancelar reserva
                         </button>
                     </div>
                 ))
