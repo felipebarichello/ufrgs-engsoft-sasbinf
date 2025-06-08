@@ -140,7 +140,7 @@ public class ManagerController : ControllerBase {
 
         if (!validStatuses.Contains(status)) {
             string validStatusesString = string.Join(", ", validStatuses); // Create a comma separated string of valid statuses
-            return BadRequest(new { message = $"estado inválido. Valores possíveis: {validStatusesString}" });
+            return BadRequest(new { message = $"estado inválido; valores possíveis: {validStatusesString}" });
         }
 
         var booking = await _dbContext.Bookings.Where(r => r.BookingId == bookingId).FirstOrDefaultAsync();
