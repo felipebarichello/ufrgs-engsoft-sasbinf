@@ -30,7 +30,7 @@ public class MemberRoomsController : ControllerBase {
         var username = User.FindFirstValue(ClaimTypes.Name);
 
         if (username == null) {
-            return Unauthorized($"Failed to find user for provided bearer token");
+            return Unauthorized($"Falha ao encontrar o usuário para o token fornecido: nome de usuário inválido");
         }
 
         var userId = await _dbContext.Members
@@ -40,7 +40,7 @@ public class MemberRoomsController : ControllerBase {
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
         if (!availableRoomIds.Select(a => a.id).Contains(request.roomId)) {
-            return BadRequest("Room is not available at requested time frame");
+            return BadRequest("Sala não está disponível no horário solicitado");
         }
 
         var bookingInsertion = await _dbContext.Bookings.AddAsync(new Booking {
@@ -52,7 +52,7 @@ public class MemberRoomsController : ControllerBase {
         });
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { message = $"Room (RoomId: {request.roomId}) successfully booked!" });
+        return Ok(new { message = $"Sala de ID #{request.roomId} reservada com sucesso!" });
     }
 
     [HttpGet("my-bookings")]
