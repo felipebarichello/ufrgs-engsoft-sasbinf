@@ -139,7 +139,8 @@ public class ManagerController : ControllerBase {
         var validStatuses = new[] { "pending", "confirmed", "cancelled", "absent" };
 
         if (!validStatuses.Contains(status)) {
-            return BadRequest(new { message = $"estado inválido. Valores possíveis: pending, confirmed, cancelled, completed" });
+            string validStatusesString = string.Join(", ", validStatuses); // Create a comma separated string of valid statuses
+            return BadRequest(new { message = $"estado inválido. Valores possíveis: {validStatusesString}" });
         }
 
         var booking = await _dbContext.Bookings.Where(r => r.BookingId == bookingId).FirstOrDefaultAsync();
