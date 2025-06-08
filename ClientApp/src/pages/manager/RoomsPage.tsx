@@ -13,6 +13,7 @@ import {
 import { Erroralert } from "../../components/ErrorAlert";
 import "./ManagerMainPage.css";
 import { BookingArray } from "../../schemas/booking";
+import { BookingStatus } from "../../lib/BookingStatus";
 
 function ManagerRoomsPage() {
   return (
@@ -122,7 +123,7 @@ function ManagerRoomsPageRestricted() {
   };
 
   const handleCheckIn = async (bookingId: number, roomId: number) => {
-    checkin({ bookingId: bookingId, status: "confirmed", token: token });
+    checkin({ bookingId: bookingId, status: BookingStatus.CLAIMED, token: token });
     const response = await getHistory({
       roomId: roomId,
       numberOfBooks: "5",
@@ -142,7 +143,7 @@ function ManagerRoomsPageRestricted() {
     memberId: number,
     roomId: number
   ) => {
-    checkin({ bookingId: bookingId, status: "absent", token: token });
+    checkin({ bookingId: bookingId, status: BookingStatus.MISSED, token: token });
     banMember({ memberId: memberId, shouldBan: true, token: token });
     const response = await getHistory({
       roomId: roomId,
