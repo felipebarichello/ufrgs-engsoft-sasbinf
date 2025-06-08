@@ -115,7 +115,7 @@ public class ManagerController : ControllerBase {
 
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { history = books });
+        return Ok(books);
     }
 
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
