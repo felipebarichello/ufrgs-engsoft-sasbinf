@@ -73,7 +73,7 @@ public class MemberRoomsController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (userId == 0) {
-            return NotFound("User not found");
+            return UnprocessableEntity("Usuário não encontrado");
         }
 
         var bookings = await _dbContext.Bookings
@@ -107,7 +107,7 @@ public class MemberRoomsController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (booking == null) {
-            return NotFound("Você não pode cancelar essa reserva ou ela não existe");
+            return UnprocessableEntity("Você não pode cancelar essa reserva ou ela não existe");
         }
 
         booking.Status = BookingStatus.Withdrawn;
