@@ -72,12 +72,13 @@ public class MemberRoomsController : ControllerBase {
             .Select(m => m.MemberId)
             .FirstOrDefaultAsync();
 
-        if (userId == 0) {
+        if (userId == 0) { // TODO: Is this correct? If so, can we do better?
             return UnprocessableEntity("Usuário não encontrado");
         }
 
         var bookings = await _dbContext.Bookings
             .Where(b => b.UserId == userId)
+            .Where(b => b.Status == BookingStatus.Booked)
             .Include(b => b.Room)
             .OrderByDescending(b => b.StartDate)
             .ToListAsync();
@@ -87,7 +88,6 @@ public class MemberRoomsController : ControllerBase {
             roomName = b.Room?.Name ?? "",
             startTime = b.StartDate.ToString("o"),
             endTime = b.EndDate.ToString("o"),
-            status = b.Status.ToString()
         }).ToList();
 
         return Ok(bookingDtos);

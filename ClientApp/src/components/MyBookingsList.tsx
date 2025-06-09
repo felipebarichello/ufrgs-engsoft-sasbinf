@@ -60,7 +60,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         color: "#888",
                     }}
                 >
-                    No bookings to display.
+                    Não há salas para mostrar.
                 </div>
             ) : (
                 bookingsList.map((booking) => (
@@ -71,19 +71,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                             <div style={{ fontSize: "0.95em", color: "#666" }}>
                                 {new Date(booking.startTime).toLocaleString()} &ndash; {new Date(booking.endTime).toLocaleString()}
                             </div>
-                        </div>
-                        <div
-                            style={{
-                                padding: "0.4em 0.5em",
-                                background: "#f3f4f6",
-                                fontWeight: 500,
-                                color: "#444",
-                                minWidth: "8em",
-                                textAlign: "center",
-                                border: "1px solid #ababab",
-                            }}
-                        >
-                            {booking.status}
                         </div>
                         <button
                             style={{
