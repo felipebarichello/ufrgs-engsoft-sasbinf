@@ -91,8 +91,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                                 border: "none",
                                 background: "#2563eb",
                                 color: "#fff",
-                                fontWeight: 600,
-                                cursor: "pointer",
                                 transition: "background 0.2s",
                             }}
                             onClick={() => handleTransferBooking(booking.bookingId)}
@@ -105,8 +103,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                                 border: "none",
                                 background: "#ef4444",
                                 color: "#fff",
-                                fontWeight: 600,
-                                cursor: "pointer",
                                 transition: "background 0.2s",
                             }}
                             onClick={() => handleCancelBooking(booking.bookingId)}
