@@ -18,12 +18,28 @@ const bookingCardStyle: React.CSSProperties = {
 
 export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
     const [cancelBooking] = usePostCancelBookingMutation();
+    // const [transferBooking] = usePostTransferBookingMutation();
+
+    function handleTransferBooking(bookingId: number) {
+        alert("A funcionalidade de transferir reservas ainda não foi implementada. ID da reserva: " + bookingId);
+
+        // transferBooking({ bookingId }).then((response) => {
+        //     if (response.data && response.data.success === true) {
+        //         alert(`Reserva #${bookingId} transferida com sucesso!`);
+        //         window.location.reload(); // TODO: Refetch bookings instead of reloading
+        //         return;
+        //     } else {
+        //         alert(`Falha ao transferir reserva #${bookingId}`);
+        //         return;
+        //     }
+        // });
+    }
 
     function handleCancelBooking(bookingId: number) {
         cancelBooking({ bookingId }).then((response) => {
             if (response.data && response.data.success === true) {
                 alert(`Reserva #${bookingId} cancelada com sucesso!`);
-                window.location.reload();
+                window.location.reload(); // TODO: Refetch bookings instead of reloading
                 return;
             } else {
                 alert(`Falha ao cancelar reserva #${bookingId}`);
@@ -72,7 +88,21 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         </div>
                         <button
                             style={{
-                                marginLeft: "1.5rem",
+                                padding: "0.5em 1em",
+                                borderRadius: "0.5em",
+                                border: "none",
+                                background: "#2563eb",
+                                color: "#fff",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                transition: "background 0.2s",
+                            }}
+                            onClick={() => handleTransferBooking(booking.bookingId)}
+                        >
+                            Transferir
+                        </button>
+                        <button
+                            style={{
                                 padding: "0.5em 1em",
                                 borderRadius: "0.5em",
                                 border: "none",
@@ -84,7 +114,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                             }}
                             onClick={() => handleCancelBooking(booking.bookingId)}
                         >
-                            Cancel Booking
+                            Cancelar
                         </button>
                     </div>
                 ))

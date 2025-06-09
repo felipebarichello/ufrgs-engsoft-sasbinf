@@ -53,6 +53,7 @@ public class MemberRoomsController : ControllerBase {
             EndDate = request.day.ToDateTime(request.endTime),
             Status = BookingStatus.Booked,
         });
+
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = $"Sala de ID #{request.roomId} reservada com sucesso!" });
@@ -72,7 +73,7 @@ public class MemberRoomsController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (userId == 0) {
-            return NotFound("User not found");
+            return UnprocessableEntity("Usuário não encontrado");
         }
 
         var bookings = await _dbContext.Bookings
@@ -106,13 +107,36 @@ public class MemberRoomsController : ControllerBase {
             .FirstOrDefaultAsync();
 
         if (booking == null) {
-            return NotFound("Você não pode cancelar essa reserva ou ela não existe");
+            return UnprocessableEntity("Você não pode cancelar essa reserva ou ela não existe");
         }
 
         booking.Status = BookingStatus.Withdrawn;
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Reserva cancelada com sucesso" });
+    }
+
+    [HttpPost("transfer-booking")]
+    public async Task<IActionResult> TransferBooking([FromBody] TransferBookingDTO request) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
+        }
+
+        var booking = await _dbContext.Bookings
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.Status == BookingStatus.Booked)
+            .OrderByDescending(b => b.StartDate)
+            .FirstOrDefaultAsync();
+
+        if (booking == null) {
+            return UnprocessableEntity("Você não pode transferir essa reserva ou ela não existe");
+        }
+
+        booking.UserId = request.newUserId;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Reserva transferida com sucesso" });
     }
 
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
