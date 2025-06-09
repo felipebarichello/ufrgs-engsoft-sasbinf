@@ -72,19 +72,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                                 {new Date(booking.startTime).toLocaleString()} &ndash; {new Date(booking.endTime).toLocaleString()}
                             </div>
                         </div>
-                        <div
-                            style={{
-                                padding: "0.4em 0.5em",
-                                background: "#f3f4f6",
-                                fontWeight: 500,
-                                color: "#444",
-                                minWidth: "8em",
-                                textAlign: "center",
-                                border: "1px solid #ababab",
-                            }}
-                        >
-                            {booking.status}
-                        </div>
                         <button
                             style={{
                                 padding: "0.5em 1em",

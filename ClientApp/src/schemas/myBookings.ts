@@ -5,7 +5,6 @@ export const MyBookingSchema = v.object({
   roomName: v.string(),
   startTime: v.string(),
   endTime: v.string(),
-  status: v.string(),
 });
 
 export const MyBookingsResponseSchema = v.array(MyBookingSchema);
