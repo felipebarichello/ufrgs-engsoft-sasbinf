@@ -75,7 +75,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         <div
                             style={{
                                 padding: "0.4em 0.5em",
-                                borderRadius: "0.2em",
                                 background: "#f3f4f6",
                                 fontWeight: 500,
                                 color: "#444",
@@ -89,7 +88,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         <button
                             style={{
                                 padding: "0.5em 1em",
-                                borderRadius: "0.5em",
                                 border: "none",
                                 background: "#2563eb",
                                 color: "#fff",
@@ -104,7 +102,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         <button
                             style={{
                                 padding: "0.5em 1em",
-                                borderRadius: "0.5em",
                                 border: "none",
                                 background: "#ef4444",
                                 color: "#fff",
