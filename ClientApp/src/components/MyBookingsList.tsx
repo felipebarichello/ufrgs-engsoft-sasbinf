@@ -60,7 +60,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
                         color: "#888",
                     }}
                 >
-                    No bookings to display.
+                    Não há salas para mostrar.
                 </div>
             ) : (
                 bookingsList.map((booking) => (
