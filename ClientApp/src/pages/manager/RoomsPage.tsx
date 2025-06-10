@@ -123,7 +123,11 @@ function ManagerRoomsPageRestricted() {
   };
 
   const handleCheckIn = async (bookingId: number, roomId: number) => {
-    checkin({ bookingId: bookingId, status: BookingStatus.CLAIMED, token: token });
+    checkin({
+      bookingId: bookingId,
+      status: BookingStatus.CLAIMED,
+      token: token,
+    });
     const response = await getHistory({
       roomId: roomId,
       numberOfBooks: "5",
@@ -143,7 +147,11 @@ function ManagerRoomsPageRestricted() {
     memberId: number,
     roomId: number
   ) => {
-    checkin({ bookingId: bookingId, status: BookingStatus.MISSED, token: token });
+    checkin({
+      bookingId: bookingId,
+      status: BookingStatus.MISSED,
+      token: token,
+    });
     banMember({ memberId: memberId, shouldBan: true, token: token });
     const response = await getHistory({
       roomId: roomId,
@@ -256,10 +264,12 @@ function ManagerRoomsPageRestricted() {
                               <strong>Usuário:</strong> {h.userId}
                             </p>
                             <p>
-                              <strong>Início:</strong> {h.startDate}
+                              <strong>Início:</strong>{" "}
+                              {new Date(h.startDate).toLocaleString()}
                             </p>
                             <p>
-                              <strong>Fim:</strong> {h.endDate}
+                              <strong>Fim:</strong>{" "}
+                              {new Date(h.endDate).toLocaleString()}
                             </p>
                             <p>
                               <strong>Status:</strong> {h.status}

@@ -209,10 +209,12 @@ function ManagerMembersPageRestricted() {
                             onClick={() => toggleHistory(h.bookingId)}
                           >
                             <p>
-                              <strong>Início:</strong> {h.startDate}
+                              <strong>Início:</strong>{" "}
+                              {new Date(h.startDate).toLocaleString()}
                             </p>
                             <p>
-                              <strong>Fim:</strong> {h.endDate}
+                              <strong>Fim:</strong>{" "}
+                              {new Date(h.endDate).toLocaleString()}
                             </p>
                             <p>
                               <strong>Status:</strong> {h.status}
