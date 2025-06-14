@@ -1,5 +1,6 @@
 import * as v from "valibot";
 
+export type Booking = v.InferInput<typeof BookingSchema>;
 export const BookingSchema = v.object({
   bookingId: v.number(),
   userId: v.number(),
@@ -9,6 +10,5 @@ export const BookingSchema = v.object({
   status: v.string(),
 });
 
-export const BookingArraySchema = v.array(BookingSchema);
-
 export type BookingArray = v.InferInput<typeof BookingArraySchema>;
+export const BookingArraySchema = v.array(BookingSchema);

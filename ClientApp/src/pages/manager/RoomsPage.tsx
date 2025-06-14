@@ -4,8 +4,6 @@ import Restricted from "../../components/Restricted";
 import {
   useDeleteRoomMutation,
   useLazyGetRoomsHistorySearchQuery,
-  usePostBanMemberMutation,
-  usePostCheckinAbsenceMutation,
   usePostCreateRoomMutation,
   usePostRoomActivationMutation,
   usePostRoomsMutation,
@@ -13,7 +11,7 @@ import {
 import { Erroralert } from "../../components/ErrorAlert";
 import "./ManagerMainPage.css";
 import { BookingArray } from "../../schemas/booking";
-import { BookingStatus } from "../../lib/BookingStatus";
+import { Booking } from "../../components/manager/Booking";
 
 function ManagerRoomsPage() {
   return (
@@ -33,8 +31,6 @@ function ManagerRoomsPageRestricted() {
   const [roomActivation] = usePostRoomActivationMutation();
   const [deleteRoom] = useDeleteRoomMutation();
   const [getHistory] = useLazyGetRoomsHistorySearchQuery();
-  const [checkin] = usePostCheckinAbsenceMutation();
-  const [banMember] = usePostBanMemberMutation();
   const [formState, setFormState] = useState<{
     roomName: string | null;
     capacity: number | 1;
@@ -43,7 +39,6 @@ function ManagerRoomsPageRestricted() {
   const [historyData, setHistoryData] = useState<
     Record<number, BookingArray | null>
   >({});
-  const [selectedBooking, setSelectedBooking] = useState<number | null>();
   const inicialFormState = { roomName: null, capacity: 1 };
   const token = sessionStorage.getItem("authToken")!;
 
@@ -114,57 +109,8 @@ function ManagerRoomsPageRestricted() {
     }
   };
 
-  const toggleHistory = (bookingId: number) => {
-    setSelectedBooking((prev) => (prev === bookingId ? null : bookingId));
-  };
-
   const toggleSelectedRoom = (roomId: number) => {
     setSelectedRoom((prev) => (prev === roomId ? null : roomId));
-  };
-
-  const handleCheckIn = async (bookingId: number, roomId: number) => {
-    checkin({
-      bookingId: bookingId,
-      status: BookingStatus.CLAIMED,
-      token: token,
-    });
-    const response = await getHistory({
-      roomId: roomId,
-      numberOfBooks: "5",
-      token,
-    });
-    if ("data" in response) {
-      console.log("tenho dados");
-      setHistoryData((prev) => ({
-        ...prev,
-        [roomId]: response.data,
-      }));
-    }
-  };
-
-  const handleAbsence = async (
-    bookingId: number,
-    memberId: number,
-    roomId: number
-  ) => {
-    checkin({
-      bookingId: bookingId,
-      status: BookingStatus.MISSED,
-      token: token,
-    });
-    banMember({ memberId: memberId, shouldBan: true, token: token });
-    const response = await getHistory({
-      roomId: roomId,
-      numberOfBooks: "5",
-      token,
-    });
-    if ("data" in response) {
-      console.log("tenho dados");
-      setHistoryData((prev) => ({
-        ...prev,
-        [roomId]: response.data,
-      }));
-    }
   };
 
   return (
@@ -255,50 +201,13 @@ function ManagerRoomsPageRestricted() {
                     </div>
                     {historyData[r.roomId] && (
                       <ul className="history-list">
-                        {historyData[r.roomId]!.map((h, idx) => (
-                          <li
-                            key={idx}
-                            onClick={() => toggleHistory(h.bookingId)}
-                          >
-                            <p>
-                              <strong>Usuário:</strong> {h.userId}
-                            </p>
-                            <p>
-                              <strong>Início:</strong>{" "}
-                              {new Date(h.startDate).toLocaleString()}
-                            </p>
-                            <p>
-                              <strong>Fim:</strong>{" "}
-                              {new Date(h.endDate).toLocaleString()}
-                            </p>
-                            <p>
-                              <strong>Status:</strong> {h.status}
-                            </p>
-                            {selectedBooking === h.bookingId && (
-                              <div className="booking-actions">
-                                <button
-                                  className="checkin"
-                                  onClick={() =>
-                                    handleCheckIn(h.bookingId, r.roomId)
-                                  }
-                                >
-                                  Check-in
-                                </button>
-                                <button
-                                  className="absence"
-                                  onClick={() =>
-                                    handleAbsence(
-                                      h.bookingId,
-                                      h.userId,
-                                      r.roomId
-                                    )
-                                  }
-                                >
-                                  Ausência
-                                </button>
-                              </div>
-                            )}
-                          </li>
+                        {historyData[r.roomId]!.map((b) => (
+                          <Booking
+                            booking={b}
+                            idx={b.bookingId}
+                            setHistoryData={setHistoryData}
+                            useMember={false}
+                          />
                         ))}
                       </ul>
                     )}
