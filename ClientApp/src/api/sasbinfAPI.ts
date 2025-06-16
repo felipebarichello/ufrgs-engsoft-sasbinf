@@ -6,9 +6,9 @@ import {
   BookRequest,
   RoomArraySchema,
 } from "../schemas/rooms";
-import { BookingArraySchema } from "../schemas/booking";
+import { BookingArraySchema, BookingSchema } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
-import { MemberArraySchema } from "../schemas/member";
+import { MemberArraySchema, MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
 
@@ -167,6 +167,23 @@ export const sasbinf = createApi({
       },
     }),
 
+    getBooking: build.query({
+      query: ({ bookingId, token }: { bookingId: number; token: string }) => ({
+        url: `manager/booking/${bookingId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(BookingSchema, response);
+        } catch {
+          throw new Error("Falha ao obter histórico de salas");
+        }
+      },
+    }),
+
     getMemberRoomsHistorySearch: build.query({
       query: ({
         memberId: memberId,
@@ -268,6 +285,24 @@ export const sasbinf = createApi({
       },
     }),
 
+    getMember: build.query({
+      query: ({ memberId, token }: { memberId: number; token: string }) => ({
+        url: `manager/member/${memberId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MembersSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+
     postRooms: build.mutation({
       query: ({
         roomName,
@@ -327,6 +362,8 @@ export const {
   useGetMyBookingsQuery,
   usePostBanMemberMutation,
   usePostMembersMutation,
+  useGetMemberQuery,
   usePostRoomsMutation,
   usePostCancelBookingMutation,
+  useGetBookingQuery,
 } = sasbinf;
