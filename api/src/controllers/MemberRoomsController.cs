@@ -32,6 +32,7 @@ public class MemberRoomsController : ControllerBase {
             return Unauthorized("ID do usuário não está em formato válido");
         }
 
+
         var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == userId);
         if (member == null) {
             return Unauthorized("Token de autorização inválido");
