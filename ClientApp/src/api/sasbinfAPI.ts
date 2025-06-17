@@ -17,7 +17,7 @@ export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string }, void>({
+    getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -39,7 +39,7 @@ export const sasbinf = createApi({
     }),
 
     postAvailableRoomsSearch: build.query<
-      { name: string; id: number }[],
+      { name: string; id: number; }[],
       RoomFilters
     >({
       query: (filters: RoomFilters) => ({
@@ -115,7 +115,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -298,7 +298,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number }) => ({
+      query: ({ bookingId }: { bookingId: number; }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -306,6 +306,17 @@ export const sasbinf = createApi({
       }),
       transformResponse: () => ({ success: true }),
       transformErrorResponse: () => ({ success: false }),
+    }),
+
+    postTransferBooking: build.mutation({
+      query: ({ bookingId, newUserId }: { bookingId: number, newUserId: number; }) => ({
+        url: 'rooms/transfer-booking',
+        method: "POST",
+        headers: new HeaderBuilder().withAuthToken().build(),
+        body: { bookingId, newUserId }
+      }),
+      transformResponse: (d) => ({ data: d }),
+      transformErrorResponse: (e) => ({ error: e })
     }),
   }),
 });
@@ -329,4 +340,5 @@ export const {
   usePostMembersMutation,
   usePostRoomsMutation,
   usePostCancelBookingMutation,
+  usePostTransferBookingMutation
 } = sasbinf;

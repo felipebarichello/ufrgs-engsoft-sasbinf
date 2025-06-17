@@ -31,7 +31,7 @@ public class MemberRoomsController : ControllerBase {
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
         }
-        
+
         var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == userId);
         if (member == null) {
             return Unauthorized("Token de autorização inválido");
@@ -134,6 +134,7 @@ public class MemberRoomsController : ControllerBase {
         }
 
         booking.UserId = request.newUserId;
+
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Reserva transferida com sucesso" });
@@ -180,15 +181,15 @@ public class MemberRoomsController : ControllerBase {
         // (StartA <= EndB) && (EndA >= StartB)
         // A: b
         // B: unnamed
-        var conflictingBookings = await _dbContext.Bookings
+        var conflictingBookings = _dbContext.Bookings
             .Where(b => (
                 b.StartDate <= endDateTime
                 && b.EndDate >= startDateTime
                 && b.Status == BookingStatus.Booked
-            )).ToListAsync();
+            ));
 
         // Extract the IDs of rooms that are already booked
-        var conflictingRoomIds = conflictingBookings.Select(b => b.RoomId).ToList();
+        var conflictingRoomIds = await conflictingBookings.Select(b => b.RoomId).ToListAsync();
 
         // Find rooms that are not booked during the requested time and meet the capacity requirement
         var availableRooms = await _dbContext.Rooms
