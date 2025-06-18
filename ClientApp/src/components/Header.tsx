@@ -35,12 +35,15 @@ export default function Header() {
       <a href="/" style={{ display: "flex", alignItems: "center" }}>
         <img src={logoImg} alt="SASBINF Logo" style={logoStyle} />
       </a>
-      <button style={buttonStyle} onClick={() => navigate("/rooms")}>
-        Salas
-      </button>
-      <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
-        Minhas Reservas
-      </button>
+      <nav className="header-nav">
+        <a href="/rooms">
+          Salas
+        </a>
+        <div className="header-nav-divider"></div>
+        <a href="/my-bookings">
+          Minhas Reservas
+        </a>
+      </nav>
       <button style={buttonStyle} onClick={logout}>
         Logout
       </button>
