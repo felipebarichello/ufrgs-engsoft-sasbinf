@@ -23,7 +23,7 @@ export default function NewPointer({
           paddingTop: `${22 + 86 * (room.id - 1)}px`, // DO NOT TOUCH
         }}
       >
-        <img src={Pointer} alt="NewPointer" style={{ width: "100%" }} />
+        <img src={Pointer} style={{ width: "100%" }} />
         <h5
           style={{
             position: "absolute",
