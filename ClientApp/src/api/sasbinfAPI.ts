@@ -11,13 +11,14 @@ import { RoomFilters } from "../pages/RoomsPage";
 import { MemberArraySchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
+import { NotficationsSchema } from "../schemas/notifications";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string }, void>({
+    getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -39,7 +40,7 @@ export const sasbinf = createApi({
     }),
 
     postAvailableRoomsSearch: build.query<
-      { name: string; id: number }[],
+      { name: string; id: number; }[],
       RoomFilters
     >({
       query: (filters: RoomFilters) => ({
@@ -115,7 +116,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -298,7 +299,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number }) => ({
+      query: ({ bookingId }: { bookingId: number; }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -307,6 +308,21 @@ export const sasbinf = createApi({
       transformResponse: () => ({ success: true }),
       transformErrorResponse: () => ({ success: false }),
     }),
+
+    getNotifications: build.query({
+      query: () => ({
+        url: 'notifications',
+        method: 'GET',
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (e) => {
+        try {
+          return v.parse(NotficationsSchema, e);
+        } catch {
+          throw new Error('Algo falhou ao buscar suas notificações. Tente novamente mais tarde');
+        }
+      },
+    })
   }),
 });
 
@@ -329,4 +345,5 @@ export const {
   usePostMembersMutation,
   usePostRoomsMutation,
   usePostCancelBookingMutation,
+  useGetNotificationsQuery
 } = sasbinf;
