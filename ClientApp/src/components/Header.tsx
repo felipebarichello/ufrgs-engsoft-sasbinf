@@ -18,13 +18,8 @@ const logoStyle: React.CSSProperties = {
 };
 
 const buttonStyle: React.CSSProperties = {
-  padding: "8px 16px",
-  backgroundColor: "#1976d2",
+  backgroundColor: "#1976d2", // TODO: Use css vars
   color: "#fff",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "16px",
 };
 
 export default function Header() {
