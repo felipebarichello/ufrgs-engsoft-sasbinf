@@ -21,8 +21,14 @@ public class NotificationsController : ControllerBase {
         // We need some form of notification status in order to accept or reject rooms transfers. 
         // If we don't, some method somewhere will have to do a LOT database updates, inserts and deletes - and the failure of any will imply an invalid state in the system
 
+        // We'll also need some way of connecting a notification to a transfer, so that we can accept/reject it
+
         // SELECT desription, type, status FROM sasbinf.notifications n
         // WHERE n.user_id = @userIdString AND status = 'PENDING'
+
+        // UPDATE sasbinf.transfers SET (status = 'ACCEPTED')
+
+        // You get the idea
 
         return Ok(new { message = "ok" });
     }

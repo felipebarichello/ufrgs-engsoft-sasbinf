@@ -6,6 +6,8 @@ import * as v from 'valibot';
 */
 export const NotficationsSchema = v.array(v.object({
     description: v.string(),
-    type: v.union([v.literal('TRANSFER_CONFIRMATION'), v.literal('SIMPLE')])
+    type: v.union([v.literal('TRANSFER_CONFIRMATION'), v.literal('SIMPLE')]),
+    status: v.string(),
+    id: v.pipe(v.number(), v.integer())
 }));
 export type Notifications = v.InferInput<typeof NotficationsSchema>;
