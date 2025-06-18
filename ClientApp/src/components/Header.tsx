@@ -46,6 +46,9 @@ export default function Header() {
       <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
         Minhas Reservas
       </button>
+      <button style={buttonStyle} onClick={() => navigate("/notifications")}>
+        Notificações
+      </button>
       <button style={buttonStyle} onClick={logout}>
         Logout
       </button>
