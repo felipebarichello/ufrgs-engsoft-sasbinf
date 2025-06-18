@@ -1,5 +1,6 @@
 import React from 'react';
 import MemberWrapper from '../components/MemberWrapper';
+import { useDeleteNotificationMutation } from '../api/sasbinfAPI';
 
 const notifications = [
 	{
@@ -148,19 +149,25 @@ const wrapper = (content: React.ReactNode) => (
 	</MemberWrapper>
 );
 
-function acceptTransfer(notificationId: number) {
-	alert(`Not Implemented. notificationId: ${notificationId}`);
-}
-
-function rejectTransfer(notificationId: number) {
-	alert(`Not Implemented. notificationId: ${notificationId}`);
-}
-
-function deleteNotification(notificationId: number) {
-	alert(`Not Implemented. notificationId: ${notificationId}`);
-}
-
 export default function NotificationsPage() {
+	const [deleteNotificationById] = useDeleteNotificationMutation();
+
+	function acceptTransfer(notificationId: number) {
+		alert(`Not Implemented. notificationId: ${notificationId}`);
+	}
+
+	function rejectTransfer(notificationId: number) {
+		alert(`Not Implemented. notificationId: ${notificationId}`);
+	}
+
+	async function deleteNotification(notificationId: number) {
+		try {
+			const response =
+				await deleteNotificationById(notificationId).unwrap();
+		} catch {
+			alert(`Falha ao remover notificação`);
+		}
+	}
 	return wrapper(
 		notifications.map((notification, index) => (
 			<div
@@ -197,7 +204,7 @@ export default function NotificationsPage() {
 						)}
 					{notification.type === 'SIMPLE' && (
 						<button
-							className="btn btn-secondary"
+							className="btn btn-primary"
 							style={buttonStyle}
 							onClick={() => {
 								deleteNotification(notification.id);

@@ -322,7 +322,18 @@ export const sasbinf = createApi({
           throw new Error('Algo falhou ao buscar suas notificações. Tente novamente mais tarde');
         }
       },
-    })
+    }),
+
+    deleteNotification: build.mutation({
+      query: (id: number) => ({
+        url: `delete-notification/${id}`,
+        method: 'DELETE',
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (e) => {
+        return { message: "Notification deleted." + e };
+      },
+    }),
   }),
 });
 
@@ -345,5 +356,6 @@ export const {
   usePostMembersMutation,
   usePostRoomsMutation,
   usePostCancelBookingMutation,
-  useGetNotificationsQuery
+  useGetNotificationsQuery,
+  useDeleteNotificationMutation
 } = sasbinf;
