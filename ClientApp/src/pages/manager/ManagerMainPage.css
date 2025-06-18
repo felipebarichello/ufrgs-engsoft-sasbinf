@@ -1,228 +1,230 @@
 .manager-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+	display: flex;
+	justify-content: center;
+	padding: 20px;
 }
 
 .manager-card {
-  width: 100%;
-  max-width: 600px;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	max-width: 600px;
+	padding: 30px;
+	background-color: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .logo-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
 }
 
 .logo {
-  width: 200px;
-  height: auto;
+	width: 200px;
+	height: auto;
 }
 
 .title {
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
+	text-align: center;
+	font-size: 24px;
+	font-weight: 600;
+	margin-bottom: 20px;
 }
 
 .form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 25px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 25px;
 }
 
 .form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 15px;
 }
 
 .form-section label {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 .form-section input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 16px;
 }
 
 .form-buttons {
-  display: flex;
-  gap: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .form-buttons button {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+	flex: 1;
+	padding: 10px;
+	font-size: 16px;
+	border: none;
+	border-radius: 6px;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 }
 
 .form-buttons button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+	background-color: #cccccc;
+	cursor: not-allowed;
 }
 
 .form-buttons button:not(:disabled):hover {
-  background-color: #0056b3;
+	background-color: #0056b3;
 }
 
 .room-list-title {
-  font-size: 20px;
-  margin: 20px 0 10px;
-  font-weight: 600;
+	font-size: 20px;
+	margin: 20px 0 10px;
+	font-weight: 600;
 }
 
 .room-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 .room-list li {
-  background-color: #f9f9f9;
-  border: 1px solid #e3e3e3;
-  border-radius: 8px;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+	background-color: #f9f9f9;
+	border: 1px solid #e3e3e3;
+	border-radius: 8px;
+	padding: 12px 16px;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
 .room-list li:hover {
-  background-color: #f0f8ff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+	background-color: #f0f8ff;
+	box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .room-list li.selected {
-  background-color: #e9f5ff;
-  border-color: #a7d8ff;
+	background-color: #e9f5ff;
+	border-color: #a7d8ff;
 }
 
 .room-name {
-  font-weight: 600;
-  font-size: 16px;
+	font-weight: 600;
+	font-size: 16px;
 }
 
 .room-options {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed #ccc;
-  animation: fadeIn 0.2s ease-in-out;
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed #ccc;
+	animation: fadeIn 0.2s ease-in-out;
 }
 
 .room-options p {
-  margin: 4px 0;
+	margin: 4px 0;
 }
 
 .room-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 10px;
 }
 
 .room-buttons button {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+	padding: 8px 12px;
+	font-size: 14px;
+	border: none;
+	border-radius: 6px;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 }
 
 .room-buttons button:hover {
-  background-color: #0056b3;
+	background-color: #0056b3;
 }
 
 /* Estilo para a lista de histórico */
 .history-list {
-  margin-top: 12px;
-  padding-left: 16px;
-  border-left: 3px solid #007bff;
+	margin-top: 12px;
+	padding-left: 16px;
+	border-left: 3px solid #007bff;
 }
 
 .history-list li {
-  margin-bottom: 10px;
-  background-color: #f1f8ff;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
+	margin-bottom: 10px;
+	background-color: #f1f8ff;
+	padding: 10px;
+	border-radius: 6px;
+	font-size: 14px;
 }
 
 /* Estilos dos botões de ações (check-in e ausência) */
 .booking-actions {
-  margin-top: 8px;
-  justify-content: center;
-  display: flex;
-  gap: 8px;
+	margin-top: 8px;
+	justify-content: center;
+	display: flex;
+	gap: 8px;
 }
 
 .booking-actions button {
-  padding: 6px 10px;
-  font-size: 13px;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+	padding: 6px 10px;
+	font-size: 13px;
+	border: none;
+	border-radius: 5px;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 }
 
 /* Botão de check-in (verde suave) */
 .booking-actions .checkin {
-  background-color: #265f28;
+	background-color: #265f28;
 }
 
 .booking-actions .checkin:hover {
-  background-color: #449d48;
+	background-color: #449d48;
 }
 
 /* Botão de ausência (vermelho suave) */
 .booking-actions .absence {
-  background-color: #8a251d;
+	background-color: #8a251d;
 }
 
 .booking-actions .absence:hover {
-  background-color: #e53935;
+	background-color: #e53935;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+	from {
+		opacity: 0;
+		transform: translateY(-5px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .booking-actions button {
-  padding: 6px 10px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff; /* Azul padrão do layout */
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+	padding: 6px 10px;
+	font-size: 14px;
+	border: none;
+	border-radius: 6px;
+	background-color: #007bff; /* Azul padrão do layout */
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 }

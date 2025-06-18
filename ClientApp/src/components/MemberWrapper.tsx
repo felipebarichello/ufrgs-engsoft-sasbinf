@@ -3,16 +3,14 @@ import Header from './Header';
 import Restricted from './Restricted';
 
 type MemberWrapperProps = {
-  children: ReactNode;
+	children: ReactNode;
 };
 
 export default function MemberWrapper({ children }: MemberWrapperProps) {
-  return (
-    <Restricted>
-      <Header />
-      <main>
-        {children}
-      </main>
-    </Restricted>
-  );
+	return (
+		<Restricted>
+			<Header />
+			<main>{children}</main>
+		</Restricted>
+	);
 }

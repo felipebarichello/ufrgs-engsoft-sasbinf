@@ -1,186 +1,208 @@
-import React, { useEffect, useState } from "react";
-import logoImg from "../../assets/logo-sasbinf.png";
-import Restricted from "../../components/Restricted";
+import React, { useEffect, useState } from 'react';
+import logoImg from '../../assets/logo-sasbinf.png';
+import Restricted from '../../components/Restricted';
 import {
-  useLazyGetMemberRoomsHistorySearchQuery,
-  usePostBanMemberMutation,
-  usePostMembersMutation,
-} from "../../api/sasbinfAPI";
-import "./ManagerMainPage.css";
-import { BookingArray } from "../../schemas/booking";
-import { Booking } from "../../components/manager/Booking";
+	useLazyGetMemberRoomsHistorySearchQuery,
+	usePostBanMemberMutation,
+	usePostMembersMutation,
+} from '../../api/sasbinfAPI';
+import './ManagerMainPage.css';
+import { BookingArray } from '../../schemas/booking';
+import { Booking } from '../../components/manager/Booking';
 
 function ManagerMembersPage() {
-  return (
-    <Restricted>
-      <div className="manager-container">
-        <ManagerMembersPageRestricted />
-      </div>
-    </Restricted>
-  );
+	return (
+		<Restricted>
+			<div className="manager-container">
+				<ManagerMembersPageRestricted />
+			</div>
+		</Restricted>
+	);
 }
 
 export default ManagerMembersPage;
 
 function ManagerMembersPageRestricted() {
-  const [searchMembers, searchMembersState] = usePostMembersMutation();
-  const [getHistory] = useLazyGetMemberRoomsHistorySearchQuery();
-  const [banMember] = usePostBanMemberMutation();
-  const [memberName, setMemberName] = useState<string | null>();
-  const [selectedMember, setSelectedMember] = useState<null | number>(null);
-  const [historyData, setHistoryData] = useState<
-    Record<number, BookingArray | null>
-  >({});
-  const token = sessionStorage.getItem("authToken")!;
+	const [searchMembers, searchMembersState] = usePostMembersMutation();
+	const [getHistory] = useLazyGetMemberRoomsHistorySearchQuery();
+	const [banMember] = usePostBanMemberMutation();
+	const [memberName, setMemberName] = useState<string | null>();
+	const [selectedMember, setSelectedMember] = useState<null | number>(null);
+	const [historyData, setHistoryData] = useState<
+		Record<number, BookingArray | null>
+	>({});
+	const token = sessionStorage.getItem('authToken')!;
 
-  const fetchMembers = () => {
-    searchMembers({ memberName: null, token });
-  };
+	const fetchMembers = () => {
+		searchMembers({ memberName: null, token });
+	};
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
+	useEffect(() => {
+		fetchMembers();
+	}, []);
 
-  const handleSearchMembers = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!memberName) return;
-    searchMembers({
-      memberName: memberName,
-      token,
-    });
-  };
+	const handleSearchMembers = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!memberName) return;
+		searchMembers({
+			memberName: memberName,
+			token,
+		});
+	};
 
-  const handleShowHistory = async (memberId: number) => {
-    console.log("mid: " + memberId);
-    if (historyData[memberId]) {
-      setHistoryData((prev) => {
-        const newData = { ...prev };
-        delete newData[memberId];
-        return newData;
-      });
-    } else {
-      const response = await getHistory({
-        memberId: memberId,
-        numberOfBooks: "5",
-        token,
-      });
-      if ("data" in response) {
-        console.log("tenho dados");
-        setHistoryData((prev) => ({
-          ...prev,
-          [memberId]: response.data,
-        }));
-      }
-    }
-  };
+	const handleShowHistory = async (memberId: number) => {
+		console.log('mid: ' + memberId);
+		if (historyData[memberId]) {
+			setHistoryData((prev) => {
+				const newData = { ...prev };
+				delete newData[memberId];
+				return newData;
+			});
+		} else {
+			const response = await getHistory({
+				memberId: memberId,
+				numberOfBooks: '5',
+				token,
+			});
+			if ('data' in response) {
+				console.log('tenho dados');
+				setHistoryData((prev) => ({
+					...prev,
+					[memberId]: response.data,
+				}));
+			}
+		}
+	};
 
-  const toggleSelectedMember = (roomId: number) => {
-    setSelectedMember((prev) => (prev === roomId ? null : roomId));
-  };
+	const toggleSelectedMember = (roomId: number) => {
+		setSelectedMember((prev) => (prev === roomId ? null : roomId));
+	};
 
-  const handleBan = async (
-    memberId: number,
-    memberName: string | null,
-    ban: boolean
-  ) => {
-    banMember({ memberId: memberId, shouldBan: ban, token: token });
-    searchMembers({
-      memberName: memberName,
-      token,
-    });
-  };
+	const handleBan = async (
+		memberId: number,
+		memberName: string | null,
+		ban: boolean
+	) => {
+		banMember({ memberId: memberId, shouldBan: ban, token: token });
+		searchMembers({
+			memberName: memberName,
+			token,
+		});
+	};
 
-  return (
-    <div className="manager-card">
-      <div className="logo-container">
-        <img src={logoImg} alt="SasbINF" className="logo" />
-      </div>
+	return (
+		<div className="manager-card">
+			<div className="logo-container">
+				<img src={logoImg} alt="SasbINF" className="logo" />
+			</div>
 
-      <h2 className="title">Gerenciamento de Membros</h2>
+			<h2 className="title">Gerenciamento de Membros</h2>
 
-      <form onSubmit={handleSearchMembers} className="form-section">
-        <div className="form-fields">
-          <label>Nome do Membro</label>
-          <input
-            type="text"
-            placeholder="Digite o nome de usuário"
-            value={memberName || ""}
-            onChange={(e) => setMemberName(e.target.value)}
-          />
-        </div>
+			<form onSubmit={handleSearchMembers} className="form-section">
+				<div className="form-fields">
+					<label>Nome do Membro</label>
+					<input
+						type="text"
+						placeholder="Digite o nome de usuário"
+						value={memberName || ''}
+						onChange={(e) => setMemberName(e.target.value)}
+					/>
+				</div>
 
-        <div className="form-buttons">
-          <button type="submit">Buscar Membro</button>
-        </div>
-      </form>
+				<div className="form-buttons">
+					<button type="submit">Buscar Membro</button>
+				</div>
+			</form>
 
-      {searchMembersState.isSuccess && (
-        <>
-          <h3 className="room-list-title">Membros</h3>
-          <ul className="room-list">
-            {searchMembersState.data?.map((r, index) => (
-              <li
-                key={index}
-                className={selectedMember === r.memberId ? "selected" : ""}
-                onClick={() => toggleSelectedMember(r.memberId)}
-              >
-                <div className="room-name">{r.username}</div>
-                {selectedMember === r.memberId && (
-                  <div
-                    className="room-options"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <p>
-                      Estado:{" "}
-                      <strong>
-                        {r.timedOutUntil
-                          ? `banido até ${r.timedOutUntil}`
-                          : "Regular"}
-                      </strong>
-                    </p>
-                    <p>
-                      Id: <strong>{r.memberId}</strong>
-                    </p>
-                    <div className="room-buttons">
-                      <button
-                        onClick={() =>
-                          handleBan(r.memberId, memberName ?? "", true)
-                        }
-                      >
-                        Banir por 1 mês
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleBan(r.memberId, memberName ?? "", false)
-                        }
-                      >
-                        Remover Banimento
-                      </button>
-                      <button onClick={() => handleShowHistory(r.memberId)}>
-                        {historyData[r.memberId]
-                          ? "Ocultar Histórico"
-                          : "Ver Histórico"}
-                      </button>
-                    </div>
-                    {historyData[r.memberId] && (
-                      <ul className="history-list">
-                        {historyData[r.memberId]!.map((b) => (
-                          <Booking
-                            booking={b}
-                            idx={b.bookingId}
-                            setHistoryData={setHistoryData}
-                            useMember={true}
-                          />
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-  );
+			{searchMembersState.isSuccess && (
+				<>
+					<h3 className="room-list-title">Membros</h3>
+					<ul className="room-list">
+						{searchMembersState.data?.map((r, index) => (
+							<li
+								key={index}
+								className={
+									selectedMember === r.memberId
+										? 'selected'
+										: ''
+								}
+								onClick={() => toggleSelectedMember(r.memberId)}
+							>
+								<div className="room-name">{r.username}</div>
+								{selectedMember === r.memberId && (
+									<div
+										className="room-options"
+										onClick={(e) => e.stopPropagation()}
+									>
+										<p>
+											Estado:{' '}
+											<strong>
+												{r.timedOutUntil
+													? `banido até ${r.timedOutUntil}`
+													: 'Regular'}
+											</strong>
+										</p>
+										<p>
+											Id: <strong>{r.memberId}</strong>
+										</p>
+										<div className="room-buttons">
+											<button
+												onClick={() =>
+													handleBan(
+														r.memberId,
+														memberName ?? '',
+														true
+													)
+												}
+											>
+												Banir por 1 mês
+											</button>
+											<button
+												onClick={() =>
+													handleBan(
+														r.memberId,
+														memberName ?? '',
+														false
+													)
+												}
+											>
+												Remover Banimento
+											</button>
+											<button
+												onClick={() =>
+													handleShowHistory(
+														r.memberId
+													)
+												}
+											>
+												{historyData[r.memberId]
+													? 'Ocultar Histórico'
+													: 'Ver Histórico'}
+											</button>
+										</div>
+										{historyData[r.memberId] && (
+											<ul className="history-list">
+												{historyData[r.memberId]!.map(
+													(b) => (
+														<Booking
+															booking={b}
+															idx={b.bookingId}
+															setHistoryData={
+																setHistoryData
+															}
+															useMember={true}
+														/>
+													)
+												)}
+											</ul>
+										)}
+									</div>
+								)}
+							</li>
+						))}
+					</ul>
+				</>
+			)}
+		</div>
+	);
 }
