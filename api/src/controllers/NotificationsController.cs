@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 [ApiController]
-[Route("api")]
+[Route("api")] // TODO: Use a more specific route prefix
 [Authorize(Roles = Roles.Member)]
 public class NotificationsController : ControllerBase {
     private readonly AppDbContext _dbContext;
