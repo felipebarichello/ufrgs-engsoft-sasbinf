@@ -95,9 +95,7 @@ public class NotificationsController : ControllerBase {
 
         booking.UserId = userId;
 
-        // Delete notification
         await DeleteNotification(notificationId);
-
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Transferência aceita com sucesso!" });
