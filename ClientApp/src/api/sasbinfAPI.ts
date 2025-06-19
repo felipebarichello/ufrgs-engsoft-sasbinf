@@ -375,6 +375,23 @@ export const sasbinf = createApi({
       transformResponse: () => ({ success: true }),
       transformErrorResponse: () => ({ success: false }),
     }),
+
+    postTransferBooking: build.mutation({
+      query: ({
+        bookingId,
+        newUserId,
+      }: {
+        bookingId: number;
+        newUserId: number;
+      }) => ({
+        url: "rooms/transfer-booking",
+        method: "POST",
+        headers: new HeaderBuilder().withAuthToken().build(),
+        body: { bookingId, newUserId },
+      }),
+      transformResponse: (d) => ({ data: d }),
+      transformErrorResponse: (e) => ({ error: e }),
+    }),
   }),
 });
 
@@ -401,4 +418,5 @@ export const {
   useGetBookingQuery,
   useLazyGetRoomsHistorySearchQuery,
   useGetRoomQuery,
+  usePostTransferBookingMutation,
 } = sasbinf;

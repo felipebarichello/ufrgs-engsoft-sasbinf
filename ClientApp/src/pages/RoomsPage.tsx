@@ -33,7 +33,6 @@ function RoomsPage() {
     <MemberWrapper>
       <div
         className="d-flex justify-content-around pt-5"
-        style={{ width: "75vw" }}
       >
         <RoomsForm
           available={availableRooms}

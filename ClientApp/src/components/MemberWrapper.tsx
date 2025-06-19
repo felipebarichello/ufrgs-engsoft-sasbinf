@@ -11,7 +11,9 @@ export default function MemberWrapper({ children }: MemberWrapperProps) {
     <Restricted>
       <Header />
       <main>
-        {children}
+        <div className="standard-page-container">
+          {children}
+        </div>
       </main>
     </Restricted>
   );
