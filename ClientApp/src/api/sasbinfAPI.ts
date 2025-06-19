@@ -381,5 +381,4 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
-  usePostTransferBookingMutation,
 } = sasbinf;
