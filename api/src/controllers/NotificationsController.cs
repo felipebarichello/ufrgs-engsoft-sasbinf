@@ -39,6 +39,71 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity("O ID de notificação não está no formato correto. Tente novamente");
         }
 
+        var (hasFailed, deletedRows) = await DeleteNotification(notificationId);
+
+        if (hasFailed) {
+            return UnprocessableEntity($"Too many notifications ({deletedRows}) match given Id ({notificationId})");
+        }
+
+        return Ok(new { message = "Notification successfully deleted" });
+    }
+
+    [HttpPost("update-transfer/{notificationIdString}")]
+    public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] string status) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("ID do usuário não está em formato válido");
+        }
+
+        if (!long.TryParse(notificationIdString, out var notificationId)) {
+            return UnprocessableEntity("O ID de notificação não está no formato correto. Tente novamente");
+        }
+
+        var allowedStatuses = new string[] { "ACCEPTED", "REJECTED" };
+        if (!allowedStatuses.Contains(status)) {
+            return UnprocessableEntity($"Cannot process transfer with status {status}");
+        }
+
+        if (status == "REJECTED") {
+            // Notify original user of the rejection
+            // Delete notification
+            return Ok(new { message = "Transferência recusada com sucesso!" });
+        }
+
+        // Update notification to point to new userId (the user who just accepted)
+        string? bookingIdString = await _dbContext.Notifications
+            .Where(n => n.NotificationId == notificationId && n.Kind == NotificationKind.BookingTransfer)
+            .Select(n => n.Body)
+            .FirstOrDefaultAsync();
+
+        if (bookingIdString == null) {
+            return NotFound($"Could not find transfer with Id {notificationId}");
+        }
+
+        if (!long.TryParse(notificationIdString, out var bookingId)) {
+            return UnprocessableEntity("O ID de locação não está no formato correto. Tente novamente");
+        }
+
+        // Body is the bookingId of to be transfered
+        var booking = await _dbContext.Bookings
+            .Where(b => b.BookingId == bookingId)
+            .FirstOrDefaultAsync();
+
+        if (booking == null) {
+            return NotFound($"Could not find booking with Id {bookingId}");
+        }
+
+        booking.UserId = userId;
+
+        // Delete notification
+        await DeleteNotification(notificationId);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Transferência aceita com sucesso!" });
+    }
+
+    private async Task<(bool, int)> DeleteNotification(long notificationId) {
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
         bool hasFailed = false;
         int deletedRows = 0;
@@ -64,10 +129,6 @@ public class NotificationsController : ControllerBase {
             }
         );
 
-        if (hasFailed) {
-            return UnprocessableEntity($"Too many notifications ({deletedRows}) match given Id ({notificationId})");
-        }
-
-        return Ok(new { message = "Notification successfully deleted" });
+        return (hasFailed, deletedRows);
     }
 }
