@@ -3,7 +3,7 @@ import * as v from "valibot";
 export type Member = v.InferInput<typeof MembersSchema>;
 export const MembersSchema = v.object({
   username: v.string(),
-  memberId: v.number(),
+  memberId: v.pipe(v.number(), v.integer()),
   timedOutUntil: v.nullable(v.string()),
 });
 

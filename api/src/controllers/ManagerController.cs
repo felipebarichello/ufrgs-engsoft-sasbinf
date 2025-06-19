@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -120,6 +121,17 @@ public class ManagerController : ControllerBase {
         return Ok(books);
     }
 
+    [HttpGet("booking/{bookingId}")]
+    public async Task<IActionResult> GetBooking([FromRoute] long bookingId) {
+
+        var booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        if (booking == null) {
+            return BadRequest(new { message = $"booking {bookingId} não existe" });
+        }
+
+        return Ok(booking);
+    }
+
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
     public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
@@ -193,7 +205,7 @@ public class ManagerController : ControllerBase {
     }
 
     [HttpPost("members")]
-    public IActionResult GetStudents([FromBody] Search search) {
+    public IActionResult GetMembers([FromBody] Search search) {
 
         List<MemberDto> members;
         if (search.name == null) {
@@ -204,6 +216,14 @@ public class ManagerController : ControllerBase {
         }
 
         return Ok(members);
+    }
+
+    [HttpGet("member/{memberId}")]
+    public async Task<IActionResult> GetMember([FromRoute] long memberId) {
+
+        var member = await _dbContext.Members.Where(m => m.MemberId == memberId).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).FirstOrDefaultAsync();
+
+        return Ok(member);
     }
 
     [HttpPost("rooms")]
@@ -218,6 +238,14 @@ public class ManagerController : ControllerBase {
         }
 
         return Ok(rooms);
+    }
+
+    [HttpGet("room/{roomId}")]
+    public async Task<IActionResult> GetRoom([FromRoute] long roomId) {
+
+        var room = await _dbContext.Rooms.Where(m => m.RoomId == roomId).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).FirstOrDefaultAsync();
+
+        return Ok(room);
     }
 
     public async Task NotifyMembers(IList<Notification> notifications) {
