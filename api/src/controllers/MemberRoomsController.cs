@@ -76,19 +76,18 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Usuário não encontrado");
         }
 
-        var bookings = await _dbContext.Bookings
+        var bookings = _dbContext.Bookings
             .Where(b => b.UserId == userId)
             .Where(b => b.Status == BookingStatus.Booked)
             .Include(b => b.Room)
-            .OrderByDescending(b => b.StartDate)
-            .ToListAsync();
+            .OrderByDescending(b => b.StartDate);
 
-        var bookingDtos = bookings.Select(b => new {
+        var bookingDtos = await bookings.Select(b => new {
             bookingId = b.BookingId,
-            roomName = b.Room?.Name ?? "",
+            roomName = b.Room.Name ?? "",
             startTime = b.StartDate.ToString("o"),
             endTime = b.EndDate.ToString("o"),
-        }).ToList();
+        }).ToListAsync();
 
         return Ok(bookingDtos);
     }
@@ -138,6 +137,24 @@ public class MemberRoomsController : ControllerBase {
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Reserva transferida com sucesso" });
+    }
+
+    [HttpGet("history")]
+    [Authorize]
+    public async Task<IActionResult> GetBookingHistory() {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
+        }
+
+        // TODO: Do we need to show the transfered ones too?
+        var pastBookings = await _dbContext.Bookings
+            .Where(b => b.UserId == userId)
+            .Select(b => new { b.BookingId, b.StartDate, b.EndDate, b.Room, b.Status })
+            .OrderByDescending(b => b.StartDate)
+            .ToListAsync();
+
+        return Ok(pastBookings);
     }
 
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
