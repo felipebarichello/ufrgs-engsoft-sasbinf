@@ -11,7 +11,7 @@ import { RoomFilters } from "../pages/RoomsPage";
 import { MemberArraySchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
-import { NotficationsSchema } from "../schemas/notifications";
+import { NotficationsSchema, Notifications } from "../schemas/notifications";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
@@ -320,7 +320,7 @@ export const sasbinf = createApi({
       transformErrorResponse: (e) => ({ error: e })
     }),
 
-    getNotifications: build.query({
+    getNotifications: build.query<Notifications, void>({
       query: () => ({
         url: 'notifications',
         method: 'GET',
@@ -344,6 +344,15 @@ export const sasbinf = createApi({
       transformResponse: (e) => {
         return { message: "Notification deleted." + e };
       },
+    }),
+
+    updateTransferStatus: build.mutation({
+      query: ({ notificationId, status }: { notificationId: number, status: "ACCEPTED" | "REJECTED"; }) => ({
+        url: `update-transfer/${notificationId}`,
+        method: "POST",
+        headers: new HeaderBuilder().withAuthToken().build(),
+        body: { status: status }
+      }),
     }),
   }),
 });
@@ -370,4 +379,5 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
+  useUpdateTransferStatusMutation
 } = sasbinf;

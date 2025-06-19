@@ -2,7 +2,11 @@ using System.Security.Claims;
 using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
+[ApiController]
+[Route("api")]
+[Authorize(Roles = Roles.Member)]
 public class NotificationsController : ControllerBase {
     private readonly AppDbContext _dbContext;
 
@@ -10,7 +14,7 @@ public class NotificationsController : ControllerBase {
         _dbContext = dbContext;
     }
 
-    [HttpGet("/my-notifications")]
+    [HttpGet("notifications")]
     [Authorize]
     public async Task<IActionResult> GetNotifications() {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -29,7 +33,14 @@ public class NotificationsController : ControllerBase {
         // UPDATE sasbinf.transfers SET (status = 'ACCEPTED')
 
         // You get the idea
+        var notifications = await _dbContext.Notifications
+            .Where(n => n.MemberId == userId)
+            .ToListAsync();
 
-        return Ok(new { message = "ok" });
+        var builder = WebApplication.CreateBuilder();
+        var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
+        logger.LogInformation("Example: {Var}", notifications.Count);
+
+        return Ok(notifications);
     }
 }
