@@ -1,6 +1,6 @@
 import { ClassAttributes, ImgHTMLAttributes } from "react";
 import { JSX } from "react/jsx-runtime";
-import BigRoomSvg from "#svgs/BigRoom.svg";
+import BigRoomSvg from "#svgs/BigRoom.png";
 import SelectedBigRoomSvg from "#svgs/SelectedBigRoom.svg";
 
 export default function BigRoom({

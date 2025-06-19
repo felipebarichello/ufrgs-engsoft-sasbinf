@@ -1,6 +1,6 @@
 import { ClassAttributes, ImgHTMLAttributes } from "react";
 import { JSX } from "react/jsx-runtime";
-import SimpleRoomSvg from "#svgs/SimpleRoom.svg";
+import SimpleRoomSvg from "#svgs/Room.png";
 import SelectedSimpleRoomSvg from "#svgs/SelectedSimpleRoom.svg";
 
 export default function SimpleRoom({
