@@ -26,49 +26,51 @@ function LoginPage() {
 
   return (
     <div className="login-container">
-      <img src={logoImg} alt="SasbINF" className="login-logo" />
+      <div className="login-card">
+        <img src={logoImg} alt="SasbINF" className="login-logo" />
 
-      <form onSubmit={handleSubmit} method="POST" className="login-form">
-        <div className="form-group">
-          <label htmlFor="username">Usuário:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            onChange={(e) =>
-              setFormState({ ...formState, user: e.target.value })
-            }
-            value={formState.user}
-            disabled={loginState.isLoading}
-          />
-        </div>
+        <form onSubmit={handleSubmit} method="POST" className="login-form">
+          <div className="form-group">
+            <label htmlFor="username">Usuário:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              onChange={(e) =>
+                setFormState({ ...formState, user: e.target.value })
+              }
+              value={formState.user}
+              disabled={loginState.isLoading}
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Senha:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            onChange={(e) =>
-              setFormState({ ...formState, password: e.target.value })
-            }
-            value={formState.password}
-            disabled={loginState.isLoading}
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="password">Senha:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              onChange={(e) =>
+                setFormState({ ...formState, password: e.target.value })
+              }
+              value={formState.password}
+              disabled={loginState.isLoading}
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={anyInputIsEmpty(formState) || loginState.isLoading}
-          className="submit-button"
-        >
-          {loginState.isLoading ? "Entrando..." : "Entrar"}
-        </button>
+          <button
+            type="submit"
+            disabled={anyInputIsEmpty(formState) || loginState.isLoading}
+            className="submit-button"
+          >
+            {loginState.isLoading ? "Entrando..." : "Entrar"}
+          </button>
 
-        {loginState.isError && (
-          <p className="error-text">Falha no login. Tente novamente.</p>
-        )}
-      </form>
+          {loginState.isError && (
+            <p className="error-text">Falha no login. Tente novamente.</p>
+          )}
+        </form>
+      </div>
     </div>
   );
 }

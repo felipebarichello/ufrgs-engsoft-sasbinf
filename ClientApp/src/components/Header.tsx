@@ -9,8 +9,8 @@ const headerStyle: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "space-between",
   padding: "12px 24px",
-  backgroundColor: "#f5f5f5",
   borderBottom: "1px solid #e0e0e0",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
 };
 
 const logoStyle: React.CSSProperties = {
@@ -18,13 +18,8 @@ const logoStyle: React.CSSProperties = {
 };
 
 const buttonStyle: React.CSSProperties = {
-  padding: "8px 16px",
-  backgroundColor: "#1976d2",
+  backgroundColor: "#1976d2", // TODO: Use css vars
   color: "#fff",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "16px",
 };
 
 export default function Header() {
@@ -40,15 +35,19 @@ export default function Header() {
       <a href="/" style={{ display: "flex", alignItems: "center" }}>
         <img src={logoImg} alt="SASBINF Logo" style={logoStyle} />
       </a>
-      <button style={buttonStyle} onClick={() => navigate("/rooms")}>
-        Salas
-      </button>
-      <button style={buttonStyle} onClick={() => navigate("/my-bookings")}>
-        Minhas Reservas
-      </button>
-      <button style={buttonStyle} onClick={() => navigate("/notifications")}>
-        Notificações
-      </button>
+      <nav className="header-nav">
+        <a href="/rooms">
+          Salas
+        </a>
+        <div className="header-nav-divider"></div>
+        <a href="/my-bookings">
+          Minhas Reservas
+        </a>
+        <div className="header-nav-divider"></div>
+        <a href="/notifications">
+          Notificações
+        </a>
+      </nav>
       <button style={buttonStyle} onClick={logout}>
         Logout
       </button>
