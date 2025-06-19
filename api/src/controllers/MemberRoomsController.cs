@@ -133,11 +133,16 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Você não pode transferir essa reserva ou ela não existe");
         }
 
-        booking.UserId = request.newUserId;
+        var notification = Notification.Create(
+            memberId: request.newUserId,
+            kind: NotificationKind.BookingTransfer,
+            body: booking.BookingId.ToString()
+        );
 
+        await _dbContext.Notifications.AddAsync(notification);
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { message = "Reserva transferida com sucesso" });
+        return Ok(new { message = "Reserva transferida com sucesso; pendente aceitação do outro membro" });
     }
 
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
