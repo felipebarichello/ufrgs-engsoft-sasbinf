@@ -139,16 +139,15 @@ function RoomsFormInputs({
             />
           </div>
 
-        <br />
-        <div className="d-grid gap-2">
-          <button
-            className="btn btn-danger"
-            type="submit"
-            disabled={anyInputIsEmpty(inputs)}
-          >
-            Pesquisar
-          </button>
-        </div>
+          <div className="d-grid">
+            <button
+              className="btn btn-primary btn-lg"
+              type="submit"
+              disabled={anyInputIsEmpty(inputs)}
+            >
+              🔎 Pesquisar
+            </button>
+          </div>
       </form>
 
       {!availableRoomsState.isLoading &&
