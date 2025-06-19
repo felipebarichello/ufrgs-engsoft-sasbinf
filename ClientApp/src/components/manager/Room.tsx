@@ -26,8 +26,12 @@ export function Room({ roomId }: { roomId: number }) {
 
   console.log("memberId: " + roomId);
 
-  if (getMember.isError || getMember.isLoading) {
-    return <></>;
+  if (getMember.isLoading) {
+    return <>Carregando sala</>;
+  }
+
+  if (getMember.isError) {
+    return <>Erro ao carregar sala</>;
   }
 
   if (getMember.data === undefined) {

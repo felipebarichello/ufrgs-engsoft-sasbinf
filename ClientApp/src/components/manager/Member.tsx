@@ -24,8 +24,12 @@ export function Member({ memberId }: { memberId: number }) {
 
   console.log("memberId: " + memberId);
 
-  if (getMember.isError || getMember.isLoading) {
-    return <></>;
+  if (getMember.isLoading) {
+    return <>Carregando Membro</>;
+  }
+
+  if (getMember.isError) {
+    return <>Erro ao carregar o membro</>;
   }
 
   if (getMember.data === undefined) {
