@@ -103,22 +103,19 @@ function RoomsFormInputs({
             />
           </div>
           <br />
-          <div style={inputDivStyle}>
+          <div className="mb-3">
             <label htmlFor="startTime" className="form-label">
               Horário de Entrada
             </label>
-
             <input
               className="form-control"
               name="startTime"
               id="startTime"
               type="time"
-              defaultValue="00:00"
-              onChange={handleChange}
               value={inputs.startTime}
+              onChange={handleChange}
             />
           </div>
-
           <br />
           <div style={inputDivStyle}>
             <label htmlFor="endTime" className="form-label">
