@@ -85,10 +85,6 @@ function RoomsFormInputs({
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div
-          className="d-flex flex-column justify-content-between align-items-end"
-          style={{ height: "100%" }}
-        >
           <div className="mb-3">
             <label htmlFor="day" className="form-label">
               Dia
@@ -143,7 +139,6 @@ function RoomsFormInputs({
               value={inputs.capacity}
             />
           </div>
-        </div>
 
         <br />
         <div className="d-grid gap-2">
