@@ -89,7 +89,7 @@ function RoomsFormInputs({
           className="d-flex flex-column justify-content-between align-items-end"
           style={{ height: "100%" }}
         >
-          <div className="mb-3" style={inputDivStyle}>
+          <div className="mb-3">
             <label htmlFor="day" className="form-label">
               Dia
             </label>
