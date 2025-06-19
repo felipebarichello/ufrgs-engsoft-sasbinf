@@ -6,9 +6,14 @@ import {
   BookRequest,
   RoomArraySchema,
 } from "../schemas/rooms";
-import { BookingArraySchema, BookingSchema } from "../schemas/booking";
+import {
+  Booking,
+  BookingArray,
+  BookingArraySchema,
+  BookingSchema,
+} from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
-import { MemberArraySchema, MembersSchema } from "../schemas/member";
+import { Member, MemberArraySchema, MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
 
@@ -16,6 +21,7 @@ import { HeaderBuilder } from "../lib/headers";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: ["bookings", "members", "users"],
   endpoints: (build) => ({
     getHealth: build.query<{ message: string }, void>({
       // Espera um objeto com a chave message
@@ -158,6 +164,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      providesTags: ["bookings"],
       transformResponse: (response) => {
         try {
           return v.parse(BookingArraySchema, response);
@@ -167,14 +174,15 @@ export const sasbinf = createApi({
       },
     }),
 
-    getBooking: build.query({
-      query: ({ bookingId, token }: { bookingId: number; token: string }) => ({
+    getBooking: build.query<Booking, number>({
+      query: (bookingId) => ({
         url: `manager/booking/${bookingId}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`, // TODO: Use HeaderBuilder
         },
       }),
+      providesTags: ["bookings"],
       transformResponse: (response) => {
         try {
           return v.parse(BookingSchema, response);
@@ -184,23 +192,23 @@ export const sasbinf = createApi({
       },
     }),
 
-    getMemberRoomsHistorySearch: build.query({
-      query: ({
-        memberId: memberId,
-        numberOfBooks,
-        token,
-      }: {
+    getMemberRoomsHistorySearch: build.query<
+      BookingArray,
+      {
         memberId: number;
         numberOfBooks: number;
         token: string;
-      }) => ({
+      }
+    >({
+      query: ({ memberId, numberOfBooks, token }) => ({
         url: `manager/member-history/${memberId}/${numberOfBooks}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+          Authorization: `Bearer ${token}`,
         },
       }),
-      transformResponse: (response) => {
+      providesTags: ["bookings"],
+      transformResponse: (response: unknown): BookingArray => {
         try {
           return v.parse(BookingArraySchema, response);
         } catch {
@@ -225,6 +233,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["bookings"],
     }),
 
     getMyBookings: build.query<MyBooking[], void>({
@@ -258,6 +267,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["members"],
     }),
 
     postMembers: build.mutation({
@@ -285,14 +295,15 @@ export const sasbinf = createApi({
       },
     }),
 
-    getMember: build.query({
-      query: ({ memberId, token }: { memberId: number; token: string }) => ({
+    getMember: build.query<Member, number>({
+      query: (memberId) => ({
         url: `manager/member/${memberId}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
         },
       }),
+      providesTags: ["members"],
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
         try {
@@ -356,8 +367,8 @@ export const {
   usePostCreateRoomMutation,
   useDeleteRoomMutation,
   usePostRoomActivationMutation,
-  useLazyGetRoomsHistorySearchQuery,
-  useLazyGetMemberRoomsHistorySearchQuery,
+  useGetMemberRoomsHistorySearchQuery,
+  useGetRoomsHistorySearchQuery,
   usePostCheckinAbsenceMutation,
   useGetMyBookingsQuery,
   usePostBanMemberMutation,
@@ -366,4 +377,5 @@ export const {
   usePostRoomsMutation,
   usePostCancelBookingMutation,
   useGetBookingQuery,
+  useLazyGetRoomsHistorySearchQuery,
 } = sasbinf;

@@ -1,97 +1,55 @@
 import { useState } from "react";
 import {
-  useLazyGetMemberRoomsHistorySearchQuery,
-  useLazyGetRoomsHistorySearchQuery,
+  useGetBookingQuery,
   usePostBanMemberMutation,
   usePostCheckinAbsenceMutation,
 } from "../../api/sasbinfAPI";
-import { BookingArray } from "../../schemas/booking";
 
-export function Booking({
-  booking,
-  setHistoryData,
-  idx,
-  useMember,
-}: {
-  booking: BookingArray[number];
-  setHistoryData: (
-    a: (
-      b: Record<number, BookingArray | null>
-    ) => Record<number, BookingArray | null>
-  ) => void;
-  idx: number;
-  useMember: boolean;
-}) {
-  const [getRoomHistory] = useLazyGetRoomsHistorySearchQuery();
-  const [getMemberHistory] = useLazyGetMemberRoomsHistorySearchQuery();
-
+export function Booking({ bookingId }: { bookingId: number }) {
+  const getBooking = useGetBookingQuery(bookingId);
   const [checkinOrAbsence] = usePostCheckinAbsenceMutation();
   const [banMember] = usePostBanMemberMutation();
 
   const token = sessionStorage.getItem("authToken")!;
   const [showBooking, setShowBooking] = useState(false);
 
-  const historyId = useMember ? booking.userId : booking.roomId;
-  console.log("hid: " + historyId);
-
-  const getHistory = async () => {
-    if (useMember) {
-      return await getMemberHistory({
-        memberId: historyId,
-        numberOfBooks: "5",
-        token,
-      });
-    }
-    return await getRoomHistory({
-      roomId: historyId,
-      numberOfBooks: "5",
-      token,
-    });
-  };
-
   const handleCheckin = async () => {
     checkinOrAbsence({
-      bookingId: booking.bookingId,
+      bookingId: bookingId,
       status: "WITHDRAWN",
       token: token,
     });
-    const response = await getHistory();
-    if ("data" in response) {
-      console.log("tenho dados");
-      setHistoryData((prev) => ({
-        ...prev,
-        [historyId]: response.data,
-      }));
-    }
   };
 
   const handleAbsence = async () => {
     checkinOrAbsence({
-      bookingId: booking.bookingId,
+      bookingId: bookingId,
       status: "MISSED",
       token: token,
     });
-    banMember({ memberId: booking.userId, shouldBan: true, token: token });
-    const response = await getHistory();
-    if ("data" in response) {
-      console.log("tenho dados");
-      setHistoryData((prev) => ({
-        ...prev,
-        [historyId]: response.data,
-      }));
-    }
+    banMember({
+      memberId: getBooking.data!.userId,
+      shouldBan: true,
+      token: token,
+    });
   };
 
+  if (getBooking.isError || getBooking.isLoading) {
+    return <></>;
+  }
+
   return (
-    <li key={idx} onClick={() => setShowBooking((prev) => !prev)}>
+    <li key={bookingId} onClick={() => setShowBooking((prev) => !prev)}>
       <p>
-        <strong>Início:</strong> {new Date(booking.startDate).toLocaleString()}
+        <strong>Início:</strong>{" "}
+        {new Date(getBooking.data!.startDate).toLocaleString()}
       </p>
       <p>
-        <strong>Fim:</strong> {new Date(booking.endDate).toLocaleString()}
+        <strong>Fim:</strong>{" "}
+        {new Date(getBooking.data!.endDate).toLocaleString()}
       </p>
       <p>
-        <strong>Status:</strong> {booking.status}
+        <strong>Status:</strong> {getBooking.data!.status}
       </p>
       {showBooking && (
         <div className="booking-actions">

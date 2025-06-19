@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
 import Restricted from "../../components/Restricted";
-import {
-  useLazyGetMemberRoomsHistorySearchQuery,
-  usePostBanMemberMutation,
-  usePostMembersMutation,
-} from "../../api/sasbinfAPI";
+import { usePostMembersMutation } from "../../api/sasbinfAPI";
 import "./ManagerMainPage.css";
-import { BookingArray } from "../../schemas/booking";
-import { Booking } from "../../components/manager/Booking";
+import { Member } from "../../components/manager/Member";
 
 function ManagerMembersPage() {
   return (
@@ -24,17 +19,12 @@ export default ManagerMembersPage;
 
 function ManagerMembersPageRestricted() {
   const [searchMembers, searchMembersState] = usePostMembersMutation();
-  const [getHistory] = useLazyGetMemberRoomsHistorySearchQuery();
-  const [banMember] = usePostBanMemberMutation();
   const [memberName, setMemberName] = useState<string | null>();
-  const [selectedMember, setSelectedMember] = useState<null | number>(null);
-  const [historyData, setHistoryData] = useState<
-    Record<number, BookingArray | null>
-  >({});
   const token = sessionStorage.getItem("authToken")!;
 
   const fetchMembers = () => {
     searchMembers({ memberName: null, token });
+    console.log("busque agora");
   };
 
   useEffect(() => {
@@ -50,45 +40,9 @@ function ManagerMembersPageRestricted() {
     });
   };
 
-  const handleShowHistory = async (memberId: number) => {
-    console.log("mid: " + memberId);
-    if (historyData[memberId]) {
-      setHistoryData((prev) => {
-        const newData = { ...prev };
-        delete newData[memberId];
-        return newData;
-      });
-    } else {
-      const response = await getHistory({
-        memberId: memberId,
-        numberOfBooks: "5",
-        token,
-      });
-      if ("data" in response) {
-        console.log("tenho dados");
-        setHistoryData((prev) => ({
-          ...prev,
-          [memberId]: response.data,
-        }));
-      }
-    }
-  };
-
-  const toggleSelectedMember = (roomId: number) => {
-    setSelectedMember((prev) => (prev === roomId ? null : roomId));
-  };
-
-  const handleBan = async (
-    memberId: number,
-    memberName: string | null,
-    ban: boolean
-  ) => {
-    banMember({ memberId: memberId, shouldBan: ban, token: token });
-    searchMembers({
-      memberName: memberName,
-      token,
-    });
-  };
+  if (searchMembersState.isError || searchMembersState.isLoading) {
+    return <></>;
+  }
 
   return (
     <div className="manager-card">
@@ -118,65 +72,8 @@ function ManagerMembersPageRestricted() {
         <>
           <h3 className="room-list-title">Membros</h3>
           <ul className="room-list">
-            {searchMembersState.data?.map((r, index) => (
-              <li
-                key={index}
-                className={selectedMember === r.memberId ? "selected" : ""}
-                onClick={() => toggleSelectedMember(r.memberId)}
-              >
-                <div className="room-name">{r.username}</div>
-                {selectedMember === r.memberId && (
-                  <div
-                    className="room-options"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <p>
-                      Estado:{" "}
-                      <strong>
-                        {r.timedOutUntil
-                          ? `banido até ${r.timedOutUntil}`
-                          : "Regular"}
-                      </strong>
-                    </p>
-                    <p>
-                      Id: <strong>{r.memberId}</strong>
-                    </p>
-                    <div className="room-buttons">
-                      <button
-                        onClick={() =>
-                          handleBan(r.memberId, memberName ?? "", true)
-                        }
-                      >
-                        Banir por 1 mês
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleBan(r.memberId, memberName ?? "", false)
-                        }
-                      >
-                        Remover Banimento
-                      </button>
-                      <button onClick={() => handleShowHistory(r.memberId)}>
-                        {historyData[r.memberId]
-                          ? "Ocultar Histórico"
-                          : "Ver Histórico"}
-                      </button>
-                    </div>
-                    {historyData[r.memberId] && (
-                      <ul className="history-list">
-                        {historyData[r.memberId]!.map((b) => (
-                          <Booking
-                            booking={b}
-                            idx={b.bookingId}
-                            setHistoryData={setHistoryData}
-                            useMember={true}
-                          />
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </li>
+            {searchMembersState.data?.map((r) => (
+              <Member memberId={r.memberId}></Member>
             ))}
           </ul>
         </>
