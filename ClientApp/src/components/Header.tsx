@@ -5,30 +5,30 @@ import logoImg from "../assets/logo-sasbinf.png";
 // TODO: Move to a CSS file (not needed for the course tho)
 
 const headerStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: "12px 24px",
-  borderBottom: "1px solid #e0e0e0",
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "space-between",
+	padding: "12px 24px",
+	borderBottom: "1px solid #e0e0e0",
+	boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
 };
 
 const logoStyle: React.CSSProperties = {
-  height: "40px",
+	height: "40px",
 };
 
 const buttonStyle: React.CSSProperties = {
-  backgroundColor: "#1976d2", // TODO: Use css vars
-  color: "#fff",
+	backgroundColor: "#1976d2", // TODO: Use css vars
+	color: "#fff",
 };
 
 export default function Header() {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 
-  const logout = () => {
-    sessionStorage.removeItem("authTokenExpiration");
-    navigate("/login");
-  };
+	const logout = () => {
+		sessionStorage.removeItem("authTokenExpiration");
+		navigate("/login");
+	};
 
   return (
     <header style={headerStyle}>
