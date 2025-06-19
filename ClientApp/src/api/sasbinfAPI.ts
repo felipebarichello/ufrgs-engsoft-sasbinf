@@ -345,17 +345,6 @@ export const sasbinf = createApi({
         return { message: "Notification deleted." + e };
       },
     }),
-    
-    postTransferBooking: build.mutation({
-      query: ({ bookingId, newUserId }: { bookingId: number, newUserId: number; }) => ({
-        url: 'rooms/transfer-booking',
-        method: "POST",
-        headers: new HeaderBuilder().withAuthToken().build(),
-        body: { bookingId, newUserId }
-      }),
-      transformResponse: (d) => ({ data: d }),
-      transformErrorResponse: (e) => ({ error: e })
-    }),
   }),
 });
 
