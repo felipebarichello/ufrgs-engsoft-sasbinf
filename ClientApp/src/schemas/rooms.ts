@@ -13,8 +13,8 @@ export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>;
 
 export type Room = v.InferInput<typeof RoomSchema>;
 export const RoomSchema = v.object({
-  roomId: v.number(),
-  capacity: v.number(),
+  roomId: v.pipe(v.number(), v.integer()),
+  capacity: v.pipe(v.number(), v.integer()),
   isActive: v.boolean(),
   name: v.string(),
 });
