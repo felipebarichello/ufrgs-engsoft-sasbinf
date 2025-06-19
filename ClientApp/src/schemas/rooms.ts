@@ -11,19 +11,20 @@ export const AvailableRoomsSchema = v.object({
 
 export type AvailableRooms = v.InferInput<typeof AvailableRoomsSchema>;
 
+export type Room = v.InferInput<typeof RoomSchema>;
+export const RoomSchema = v.object({
+  roomId: v.number(),
+  capacity: v.number(),
+  isActive: v.boolean(),
+  name: v.string(),
+});
+
+export type Rooms = v.InferInput<typeof RoomArraySchema>;
+export const RoomArraySchema = v.array(RoomSchema);
+
 export type BookRequest = {
   day: string;
   startTime: string;
   endTime: string;
   roomId: number;
 };
-
-export type Rooms = v.InferInput<typeof RoomArraySchema>;
-export const RoomArraySchema = v.array(
-  v.object({
-    roomId: v.number(),
-    capacity: v.number(),
-    isActive: v.boolean(),
-    name: v.string(),
-  })
-);

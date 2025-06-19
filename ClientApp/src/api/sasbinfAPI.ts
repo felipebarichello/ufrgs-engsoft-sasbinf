@@ -23,7 +23,7 @@ import { HeaderBuilder } from "../lib/headers";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["bookings", "members", "users"],
+  tagTypes: ["bookings", "member", "member", "room"],
   endpoints: (build) => ({
     getHealth: build.query<{ message: string }, void>({
       // Espera um objeto com a chave message
@@ -130,6 +130,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["room"],
     }),
 
     postRoomActivation: build.mutation({
@@ -148,18 +149,18 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["room"],
     }),
 
-    getRoomsHistorySearch: build.query({
-      query: ({
-        roomId,
-        numberOfBooks,
-        token,
-      }: {
+    getRoomsHistorySearch: build.query<
+      BookingArray,
+      {
         roomId: number;
         numberOfBooks: number;
         token: string;
-      }) => ({
+      }
+    >({
+      query: ({ roomId, numberOfBooks, token }) => ({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
         method: "GET",
         headers: {
@@ -269,7 +270,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
-      invalidatesTags: ["members"],
+      invalidatesTags: ["member"],
     }),
 
     postMembers: build.mutation({
@@ -305,7 +306,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
         },
       }),
-      providesTags: ["members"],
+      providesTags: ["member"],
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
         try {
@@ -324,7 +325,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
         },
       }),
-      providesTags: ["members"],
+      providesTags: ["room"],
       transformErrorResponse: () => ({ message: "Invalid credentials" }),
       transformResponse: (response) => {
         try {
