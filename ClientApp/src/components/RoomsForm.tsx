@@ -102,7 +102,6 @@ function RoomsFormInputs({
               value={inputs.day}
             />
           </div>
-          <br />
           <div className="mb-3">
             <label htmlFor="startTime" className="form-label">
               Horário de Entrada
@@ -116,7 +115,6 @@ function RoomsFormInputs({
               onChange={handleChange}
             />
           </div>
-          <br />
           <div style={inputDivStyle}>
             <label htmlFor="endTime" className="form-label">
               Horário de Saída
