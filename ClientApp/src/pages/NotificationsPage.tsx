@@ -50,7 +50,14 @@ export default function NotificationsPage() {
 
 	async function deleteNotification(notificationId: number) {
 		try {
-			await deleteNotificationById(notificationId).unwrap();
+			const { data, error } = await deleteNotificationById(notificationId);
+
+			if (error !== undefined) {
+				throw error;
+			}
+
+			alert("Notificação removida com sucesso!");
+			console.log(data);
 		} catch {
 			alert(`Falha ao remover notificação`);
 		}
@@ -62,22 +69,23 @@ export default function NotificationsPage() {
 	}
 
 	return wrapper(
-		notifications.map((notification, index) => (
-			<div
-				className="d-flex justify-content-between align-items-center"
-				style={notificationCardStyle}
-			>
-				<div style={{ minWidth: "5em", fontWeight: 600 }}>#{index + 1}</div>
-				{notification.description}
-				<div className="d-flex justify-content-evenly">
-					{notification.type === "TRANSFER_CONFIRMATION" &&
-						notification.status === "TO_BE_ACCEPTED" && (
+		<>
+			<h1 style={{ paddingBottom: "2rem" }}>Notificações</h1>
+			{notifications.map((notification, index) => (
+				<div
+					className="d-flex justify-content-between align-items-center"
+					style={notificationCardStyle}
+				>
+					<div style={{ minWidth: "5em", fontWeight: 600 }}>#{index + 1}</div>
+					{notification.body}
+					<div className="d-flex justify-content-evenly">
+						{notification.kind === 1 && (
 							<>
 								<button
 									className="btn btn-success"
 									style={buttonStyle}
 									onClick={() => {
-										acceptTransfer(notification.id);
+										acceptTransfer(notification.notificationId);
 									}}
 								>
 									Aceitar
@@ -86,26 +94,27 @@ export default function NotificationsPage() {
 									className="btn btn-danger"
 									style={buttonStyle}
 									onClick={() => {
-										rejectTransfer(notification.id);
+										rejectTransfer(notification.notificationId);
 									}}
 								>
 									Rejeitar
 								</button>
 							</>
 						)}
-					{notification.type === "SIMPLE" && (
-						<button
-							className="btn btn-primary"
-							style={buttonStyle}
-							onClick={() => {
-								deleteNotification(notification.id);
-							}}
-						>
-							Apagar
-						</button>
-					)}
+						{notification.kind === 0 && (
+							<button
+								className="btn btn-primary"
+								style={buttonStyle}
+								onClick={() => {
+									deleteNotification(notification.notificationId);
+								}}
+							>
+								Apagar
+							</button>
+						)}
+					</div>
 				</div>
-			</div>
-		))
+			))}
+		</>
 	);
 }

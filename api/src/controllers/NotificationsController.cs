@@ -22,17 +22,6 @@ public class NotificationsController : ControllerBase {
             return Unauthorized("ID do usuário não está em formato válido");
         }
 
-        // We need some form of notification status in order to accept or reject rooms transfers. 
-        // If we don't, some method somewhere will have to do a LOT database updates, inserts and deletes - and the failure of any will imply an invalid state in the system
-
-        // We'll also need some way of connecting a notification to a transfer, so that we can accept/reject it
-
-        // SELECT desription, type, status FROM sasbinf.notifications n
-        // WHERE n.user_id = @userIdString AND status = 'PENDING'
-
-        // UPDATE sasbinf.transfers SET (status = 'ACCEPTED')
-
-        // You get the idea
         var notifications = await _dbContext.Notifications
             .Where(n => n.MemberId == userId)
             .ToListAsync();
@@ -42,5 +31,43 @@ public class NotificationsController : ControllerBase {
         logger.LogInformation("Example: {Var}", notifications.Count);
 
         return Ok(notifications);
+    }
+
+    [HttpDelete("delete-notification/{notificationIdString}")]
+    public async Task<IActionResult> Delete([FromRoute] string notificationIdString) {
+        if (!long.TryParse(notificationIdString, out var notificationId)) {
+            return UnprocessableEntity("O ID de notificação não está no formato correto. Tente novamente");
+        }
+
+        var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
+        bool hasFailed = false;
+        int deletedRows = 0;
+
+        await executionStrategy.Execute(
+            async () => {
+                await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                try {
+                    deletedRows = _dbContext.Notifications
+                        .Where(n => n.NotificationId == notificationId)
+                        .ExecuteDelete();
+
+                    if (deletedRows > 1) {
+                        throw new Exception($"Too many rows deleted! Cancelling transaction...");
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception) {
+                    await transaction.DisposeAsync();
+                    hasFailed = true;
+                }
+            }
+        );
+
+        if (hasFailed) {
+            return UnprocessableEntity($"Too many notifications ({deletedRows}) match given Id ({notificationId})");
+        }
+
+        return Ok(new { message = "Notification successfully deleted" });
     }
 }
