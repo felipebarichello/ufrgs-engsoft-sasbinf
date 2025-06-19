@@ -72,14 +72,15 @@ public class ManagerController : ControllerBase {
                     room.IsActive = isActive;
                     if (!isActive) {
                         var bookingsToNotify = await _dbContext.Bookings
-                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.Status == "pending")
+                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.Status == BookingStatus.Booked)
                             .ToListAsync();
 
                         if (bookingsToNotify.Any()) {
-                            var notifications = bookingsToNotify.Select(b => new Notification {
-                                UserId = b.UserId,
-                                Description = $"Sua reserva da sala {room.Name} do horário {b.StartDate:dd/MM/yyyy HH:mm} foi removida pois a sala entrou em manutenção."
-                            }).ToList();
+                            var notifications = bookingsToNotify.Select(b => Notification.Create(
+                                memberId: b.UserId,
+                                kind: NotificationKind.RoomMaintenance,
+                                body: b.BookingId.ToString()
+                            )).ToList();
 
                             bookingsToNotify.ForEach(b => b.Status = BookingStatus.Cancelled);
                             if (notifications != null) {
@@ -166,16 +167,26 @@ public class ManagerController : ControllerBase {
         }
 
         if (shouldBan) {
-            notification = new Notification { UserId = memberId, Description = $"Você está banido até {member.TimedOutUntil}" };
-            member.TimedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
+            // Banir
+            var timedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
+            member.TimedOutUntil = timedOutUntil;
+
+            notification = Notification.Create(
+                memberId: memberId,
+                kind: NotificationKind.TimedOut,
+                body: timedOutUntil.ToString()
+            );
         }
         else {
+            // Desbanir
             member.TimedOutUntil = null;
-            notification = new Notification { UserId = memberId, Description = $"Você não está mais banido das salas do inf" };
+            notification = Notification.Create(
+                memberId: memberId,
+                kind: NotificationKind.UntimedOut
+            );
         }
 
         await NotifyMembers(notification);
-
         await _dbContext.SaveChangesAsync();
 
         return Ok();

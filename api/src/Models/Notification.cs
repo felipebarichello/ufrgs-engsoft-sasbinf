@@ -1,8 +1,23 @@
 namespace api.src.Models {
     public class Notification {
         public long NotificationId { get; set; }
-        public long UserId { get; set; }
-        public string Description { get; set; } = null!;
+        public long MemberId { get; set; }
+        public NotificationKind Kind { get; set; }
+        public string Body { get; set; } = null!;
         public Member User { get; set; } = default!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public static Notification Create(long memberId, NotificationKind kind, string body) {
+            return new Notification {
+                MemberId = memberId,
+                Kind = kind,
+                Body = body,
+                CreatedAt = DateTime.UtcNow
+            };
+        }
+
+        public static Notification Create(long memberId, NotificationKind kind) {
+            return Create(memberId, kind, string.Empty);
+        }
     }
 }
