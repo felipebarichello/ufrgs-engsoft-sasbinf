@@ -47,6 +47,7 @@ public class NotificationsController : ControllerBase {
         return Ok(new { message = "Notification successfully deleted" });
     }
 
+    // TODO: Use fkn constants or enums
     [HttpPost("update-transfer/{notificationIdString}")]
     public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] string status) {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
