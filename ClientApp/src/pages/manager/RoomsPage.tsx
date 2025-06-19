@@ -8,6 +8,7 @@ import {
 import { Erroralert } from "../../components/ErrorAlert";
 import "./ManagerActionsPages.css";
 import { Room } from "../../components/manager/Room";
+import { useNavigate } from "react-router-dom";
 
 function ManagerRoomsPage() {
   return (
@@ -22,6 +23,7 @@ function ManagerRoomsPage() {
 export default ManagerRoomsPage;
 
 function ManagerRoomsPageRestricted() {
+  const navigate = useNavigate();
   const [createRoom, createRoomState] = usePostCreateRoomMutation();
   const [searchRooms, searchRoomsState] = usePostRoomsMutation();
   const [formState, setFormState] = useState<{
@@ -64,7 +66,10 @@ function ManagerRoomsPageRestricted() {
 
   return (
     <div className="manager-card">
-      <div className="logo-container">
+      <div
+        onClick={() => navigate("/manager/main-page")}
+        className="logo-container"
+      >
         <img src={logoImg} alt="SasbINF" className="logo" />
       </div>
 

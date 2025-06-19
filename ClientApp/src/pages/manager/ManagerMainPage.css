@@ -35,11 +35,6 @@ html, body {
 .logo {
   width: 200px;
   height: auto;
-  transition: none;
-  filter: none;
-  opacity: 1;
-  box-shadow: none;
-  pointer-events: none; 
 }
 
 .title {
