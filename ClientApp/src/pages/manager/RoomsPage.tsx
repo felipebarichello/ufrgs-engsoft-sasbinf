@@ -6,7 +6,7 @@ import {
   usePostRoomsMutation,
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
-import "./ManagerMainPage.css";
+import "./ManagerActionsPages.css";
 import { Room } from "../../components/manager/Room";
 
 function ManagerRoomsPage() {

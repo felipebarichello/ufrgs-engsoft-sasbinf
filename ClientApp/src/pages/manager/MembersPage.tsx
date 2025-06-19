@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
 import Restricted from "../../components/Restricted";
 import { usePostMembersMutation } from "../../api/sasbinfAPI";
-import "./ManagerMainPage.css";
+import "./ManagerActionsPages.css";
 import { Member } from "../../components/manager/Member";
 
 function ManagerMembersPage() {
