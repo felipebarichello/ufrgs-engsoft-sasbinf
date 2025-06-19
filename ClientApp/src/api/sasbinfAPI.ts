@@ -4,11 +4,18 @@ import { Login, LoginResponseSchema } from "../schemas/login";
 import {
   AvailableRoomsSchema,
   BookRequest,
+  Room,
   RoomArraySchema,
+  RoomSchema,
 } from "../schemas/rooms";
-import { BookingArraySchema } from "../schemas/booking";
+import {
+  Booking,
+  BookingArray,
+  BookingArraySchema,
+  BookingSchema,
+} from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
-import { MemberArraySchema } from "../schemas/member";
+import { Member, MemberArraySchema, MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
 
@@ -16,8 +23,9 @@ import { HeaderBuilder } from "../lib/headers";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: ["bookings", "member", "room"],
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string; }, void>({
+    getHealth: build.query<{ message: string }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -39,7 +47,7 @@ export const sasbinf = createApi({
     }),
 
     postAvailableRoomsSearch: build.query<
-      { name: string; id: number; }[],
+      { name: string; id: number }[],
       RoomFilters
     >({
       query: (filters: RoomFilters) => ({
@@ -115,13 +123,14 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["room"],
     }),
 
     postRoomActivation: build.mutation({
@@ -140,24 +149,25 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["room"],
     }),
 
-    getRoomsHistorySearch: build.query({
-      query: ({
-        roomId,
-        numberOfBooks,
-        token,
-      }: {
+    getRoomsHistorySearch: build.query<
+      BookingArray,
+      {
         roomId: number;
         numberOfBooks: number;
         token: string;
-      }) => ({
+      }
+    >({
+      query: ({ roomId, numberOfBooks, token }) => ({
         url: `manager/room-history/${roomId}/${numberOfBooks}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      providesTags: ["bookings"],
       transformResponse: (response) => {
         try {
           return v.parse(BookingArraySchema, response);
@@ -167,23 +177,41 @@ export const sasbinf = createApi({
       },
     }),
 
-    getMemberRoomsHistorySearch: build.query({
-      query: ({
-        memberId: memberId,
-        numberOfBooks,
-        token,
-      }: {
+    getBooking: build.query<Booking, number>({
+      query: (bookingId) => ({
+        url: `manager/booking/${bookingId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      providesTags: ["bookings"],
+      transformResponse: (response) => {
+        try {
+          return v.parse(BookingSchema, response);
+        } catch {
+          throw new Error("Falha ao obter histórico de salas");
+        }
+      },
+    }),
+
+    getMemberRoomsHistorySearch: build.query<
+      BookingArray,
+      {
         memberId: number;
         numberOfBooks: number;
         token: string;
-      }) => ({
+      }
+    >({
+      query: ({ memberId, numberOfBooks, token }) => ({
         url: `manager/member-history/${memberId}/${numberOfBooks}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
+          Authorization: `Bearer ${token}`,
         },
       }),
-      transformResponse: (response) => {
+      providesTags: ["bookings"],
+      transformResponse: (response: unknown): BookingArray => {
         try {
           return v.parse(BookingArraySchema, response);
         } catch {
@@ -208,6 +236,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["bookings"],
     }),
 
     getMyBookings: build.query<MyBooking[], void>({
@@ -241,6 +270,7 @@ export const sasbinf = createApi({
           Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
         },
       }),
+      invalidatesTags: ["member"],
     }),
 
     postMembers: build.mutation({
@@ -262,6 +292,44 @@ export const sasbinf = createApi({
       transformResponse: (response) => {
         try {
           return v.parse(MemberArraySchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+
+    getMember: build.query<Member, number>({
+      query: (memberId) => ({
+        url: `manager/member/${memberId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      providesTags: ["member"],
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MembersSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+
+    getRoom: build.query<Room, number>({
+      query: (roomId) => ({
+        url: `manager/room/${roomId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      providesTags: ["room"],
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(RoomSchema, response);
         } catch {
           throw new Error("Invalid credentials");
         }
@@ -298,7 +366,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number; }) => ({
+      query: ({ bookingId }: { bookingId: number }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -309,14 +377,20 @@ export const sasbinf = createApi({
     }),
 
     postTransferBooking: build.mutation({
-      query: ({ bookingId, newUserId }: { bookingId: number, newUserId: number; }) => ({
-        url: 'rooms/transfer-booking',
+      query: ({
+        bookingId,
+        newUserId,
+      }: {
+        bookingId: number;
+        newUserId: number;
+      }) => ({
+        url: "rooms/transfer-booking",
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
-        body: { bookingId, newUserId }
+        body: { bookingId, newUserId },
       }),
       transformResponse: (d) => ({ data: d }),
-      transformErrorResponse: (e) => ({ error: e })
+      transformErrorResponse: (e) => ({ error: e }),
     }),
   }),
 });
@@ -332,13 +406,17 @@ export const {
   usePostCreateRoomMutation,
   useDeleteRoomMutation,
   usePostRoomActivationMutation,
-  useLazyGetRoomsHistorySearchQuery,
-  useLazyGetMemberRoomsHistorySearchQuery,
+  useGetMemberRoomsHistorySearchQuery,
+  useGetRoomsHistorySearchQuery,
   usePostCheckinAbsenceMutation,
   useGetMyBookingsQuery,
   usePostBanMemberMutation,
   usePostMembersMutation,
+  useGetMemberQuery,
   usePostRoomsMutation,
   usePostCancelBookingMutation,
-  usePostTransferBookingMutation
+  useGetBookingQuery,
+  useLazyGetRoomsHistorySearchQuery,
+  useGetRoomQuery,
+  usePostTransferBookingMutation,
 } = sasbinf;
