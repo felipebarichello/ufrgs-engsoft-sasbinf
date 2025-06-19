@@ -73,15 +73,6 @@ function RoomsFormInputs({
     }
   }
 
-  const inputDivStyle = {
-    marginBottom: "10px",
-    padding: "10px",
-    border: "1px solid gray",
-    backgroundColor: "#D9D9D9",
-    width: "100%",
-    height: "25%",
-  };
-
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -145,7 +136,7 @@ function RoomsFormInputs({
               type="submit"
               disabled={anyInputIsEmpty(inputs)}
             >
-              🔎 Pesquisar
+              Pesquisar
             </button>
           </div>
       </form>
