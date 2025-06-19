@@ -15,15 +15,17 @@ export default function RoomsForm({
   setFiltersState: (a: RoomFilters) => void;
 }) {
   return (
-    <div>
-      <h2>Filtrar Sala</h2>
-      <div className="d-flex">
-        <RoomsFormInputs
-          inputs={filtersState}
-          setInputs={setFiltersState}
-          available={available}
-          setAvailable={setAvailableRooms}
-        />
+    <div className="container mt-4">
+      <h2 className="mb-4 text-center">Filtrar Salas Disponíveis</h2>
+      <div className="d-flex justify-content-center">
+        <div className="card shadow-lg p-4 w-100" style={{ maxWidth: "600px" }}>
+          <RoomsFormInputs
+            inputs={filtersState}
+            setInputs={setFiltersState}
+            available={available}
+            setAvailable={setAvailableRooms}
+          />
+        </div>
       </div>
     </div>
   );
