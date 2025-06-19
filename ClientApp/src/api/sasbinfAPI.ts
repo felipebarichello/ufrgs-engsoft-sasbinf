@@ -23,7 +23,7 @@ import { HeaderBuilder } from "../lib/headers";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["bookings", "member", "member", "room"],
+  tagTypes: ["bookings", "member", "room"],
   endpoints: (build) => ({
     getHealth: build.query<{ message: string }, void>({
       // Espera um objeto com a chave message
