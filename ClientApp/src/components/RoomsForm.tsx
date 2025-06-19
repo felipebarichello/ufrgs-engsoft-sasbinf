@@ -124,17 +124,18 @@ function RoomsFormInputs({
               onChange={handleChange}
             />
           </div>
-          <br />
-          <div style={inputDivStyle}>
+          <div className="mb-4">
             <label htmlFor="capacity" className="form-label">
-              Capacidade requerida
+              Capacidade Requerida
             </label>
             <input
               className="form-control"
               name="capacity"
               id="capacity"
-              onChange={handleChange}
+              type="number"
               value={inputs.capacity}
+              onChange={handleChange}
+              min={1}
             />
           </div>
 
