@@ -207,7 +207,7 @@ public class ManagerController : ControllerBase {
         return Ok(members);
     }
 
-    [HttpGet("member/memberId")]
+    [HttpGet("member/{memberId}")]
     public async Task<IActionResult> GetMember([FromRoute] long memberId) {
 
         var member = await _dbContext.Members.Where(m => m.MemberId == memberId).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).FirstOrDefaultAsync();
