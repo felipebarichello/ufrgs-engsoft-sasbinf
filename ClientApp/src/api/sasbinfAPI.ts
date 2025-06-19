@@ -4,7 +4,9 @@ import { Login, LoginResponseSchema } from "../schemas/login";
 import {
   AvailableRoomsSchema,
   BookRequest,
+  Room,
   RoomArraySchema,
+  RoomSchema,
 } from "../schemas/rooms";
 import {
   Booking,
@@ -314,6 +316,25 @@ export const sasbinf = createApi({
       },
     }),
 
+    getRoom: build.query<Room, number>({
+      query: (roomId) => ({
+        url: `manager/room/${roomId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")!}`, // TODO: Use HeaderBuilder
+        },
+      }),
+      providesTags: ["members"],
+      transformErrorResponse: () => ({ message: "Invalid credentials" }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(RoomSchema, response);
+        } catch {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+
     postRooms: build.mutation({
       query: ({
         roomName,
@@ -378,4 +399,5 @@ export const {
   usePostCancelBookingMutation,
   useGetBookingQuery,
   useLazyGetRoomsHistorySearchQuery,
+  useGetRoomQuery,
 } = sasbinf;

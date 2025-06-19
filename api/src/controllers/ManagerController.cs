@@ -229,6 +229,14 @@ public class ManagerController : ControllerBase {
         return Ok(rooms);
     }
 
+    [HttpGet("room/{roomId}")]
+    public async Task<IActionResult> GetRoom([FromRoute] long roomId) {
+
+        var room = await _dbContext.Rooms.Where(m => m.RoomId == roomId).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).FirstOrDefaultAsync();
+
+        return Ok(room);
+    }
+
     public async Task NotifyMembers(IList<Notification> notifications) {
         await _dbContext.Notifications.AddRangeAsync(notifications);
     }
