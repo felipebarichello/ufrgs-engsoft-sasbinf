@@ -162,6 +162,7 @@ public class NotificationsController : ControllerBase {
 
             // Delete notification
             await DeleteNotification(notificationId);
+
             await _dbContext.SaveChangesAsync();
         }
 
