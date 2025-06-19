@@ -153,17 +153,20 @@ export default function NotificationsPage() {
 	const [deleteNotificationById] = useDeleteNotificationMutation();
 
 	function acceptTransfer(notificationId: number) {
-		alert(`Not Implemented. notificationId: ${notificationId}`);
+		alert(
+			`Accept Transfer Not Implemented. notificationId: ${notificationId}`
+		);
 	}
 
 	function rejectTransfer(notificationId: number) {
-		alert(`Not Implemented. notificationId: ${notificationId}`);
+		alert(
+			`Reject Transfer Not Implemented. notificationId: ${notificationId}`
+		);
 	}
 
 	async function deleteNotification(notificationId: number) {
 		try {
-			const response =
-				await deleteNotificationById(notificationId).unwrap();
+			await deleteNotificationById(notificationId).unwrap();
 		} catch {
 			alert(`Falha ao remover notificação`);
 		}
