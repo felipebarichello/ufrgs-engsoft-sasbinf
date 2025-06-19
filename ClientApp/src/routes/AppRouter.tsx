@@ -9,30 +9,34 @@ import ManagerMainPage from "../pages/manager/ManagerMainPage";
 import ManagerRoomsPage from "../pages/manager/RoomsPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
 import ManagerMembersPage from "../pages/manager/MembersPage";
+import BookingHistoryPage from "../pages/HistoryPage";
 function AppRouter() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/rooms" replace />} />
+		<Routes>
+			<Route path="/" element={<Navigate to="/rooms" replace />} />
 
-      <Route path="/login" element={<LoginPage />} />
+			<Route path="/login" element={<LoginPage />} />
 
-      <Route path="/rooms" element={<RoomsPage />} />
+			<Route path="/rooms" element={<RoomsPage />} />
 
-      <Route path="/my-bookings" element={<MyBookingsPage />} />
+			<Route path="/my-bookings" element={<MyBookingsPage />} />
 
-      <Route path="/doom" element={<DoomPage />} />
+			<Route path="/history" element={<BookingHistoryPage />} />
 
-      <Route path="/manager/login" element={<LoginManagerPage />} />
+			<Route path="/doom" element={<DoomPage />} />
 
-      <Route path="/manager/main-page" element={<ManagerMainPage />} />
+			<Route path="/manager/login" element={<LoginManagerPage />} />
 
-      <Route path="/manager/rooms-page" element={<ManagerRoomsPage />} />
-      <Route path="/manager/members-page" element={<ManagerMembersPage />} />
+			<Route path="/manager/main-page" element={<ManagerMainPage />} />
 
-      {/* Catch-all for 404 */}
-      <Route path="*" element={<Error404Page />} />
-    </Routes>
-  );
+			<Route path="/manager/rooms-page" element={<ManagerRoomsPage />} />
+
+			<Route path="/manager/members-page" element={<ManagerMembersPage />} />
+
+			{/* Catch-all for 404 */}
+			<Route path="*" element={<Error404Page />} />
+		</Routes>
+	);
 }
 
 export default AppRouter;
