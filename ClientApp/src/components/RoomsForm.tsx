@@ -113,7 +113,7 @@ function RoomsFormInputs({
           </div>
           <div className="mb-3">
             <label htmlFor="endTime" className="form-label">
-              ⏳ Horário de Saída
+              Horário de Saída
             </label>
             <input
               className="form-control"
