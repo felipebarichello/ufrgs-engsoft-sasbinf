@@ -172,6 +172,7 @@ function RoomSelector({
         available={available.map((r) => r.id).includes(room.id)}
         selected={selected.id === room.id}
         props={{
+          name: room.name,
           onClick: () => {
             setSelected(room);
           },
@@ -182,6 +183,7 @@ function RoomSelector({
       available={available.map((r) => r.id).includes(7)}
       selected={selected.id === 7}
       props={{
+        name: "104A",
         onClick: () => {
           setSelected({ id: 7, name: "104A" });
         },

@@ -1,8 +1,8 @@
-import { ClassAttributes, ImgHTMLAttributes, CSSProperties} from "react";
+import { ClassAttributes, ImgHTMLAttributes, CSSProperties, useState} from "react";
 import { JSX } from "react/jsx-runtime";
 import BigRoomSvg from "#svgs/BigRoom.svg";
 
-export default function BigRoom({
+export default function SimpleRoom({
   available,
   selected,
   props,
@@ -11,9 +11,13 @@ export default function BigRoom({
   selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
-    ImgHTMLAttributes<HTMLImageElement>;
+    ImgHTMLAttributes<HTMLImageElement> &{
+      name?: string;
+    };
 }) {
   
+  const [hovered, setHovered] = useState(false);
+
   const imgStyle: CSSProperties = {
     borderRight: "3px solid #ccc",
     borderRadius: "1px",
@@ -50,13 +54,43 @@ export default function BigRoom({
     boxSizing: "border-box",
   };
 
-  return (
-    <div style={wrapperStyle} {...props}>
-      <img src={BigRoomSvg} alt="BigRoomImg" style={imgStyle} />
-      {available && <div style={overlayStyle} />}
-      {selected && <div style={selectedBorderStyle} />}
-    </div>
-  );
+  const tooltipStyle: CSSProperties = {
+    position: "absolute",
+    top: "50%",
+    left: "-10px",
+    transform: "translate(-100%, -50%)",
+    // blue
+    backgroundColor: "#cc2222",
+    color: "#fff",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    fontSize: "15px",
+    whiteSpace: "nowrap",
+    opacity: hovered ? 1 : 0,
+    transition: "opacity 0.2s ease-in-out",
+    pointerEvents: "none",
+    zIndex: 10,
+  };
+
+return (
+  <div style={wrapperStyle} {...props}
+       onMouseEnter={() => setHovered(true)}
+       onMouseLeave={() => setHovered(false)}>
+       
+    {hovered && (
+      <div style={{ ...tooltipStyle, visibility: 'visible' }}>
+      Sala {props.name}
+      </div>
+      
+    )}
+
+    <img src={BigRoomSvg} alt="BigRoomImg" style={imgStyle} />
+
+    {available && <div style={overlayStyle} />}
+
+    {selected && <div style={selectedBorderStyle} />}
+  </div>
+);
 }
 
 

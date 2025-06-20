@@ -1,4 +1,4 @@
-import { ClassAttributes, ImgHTMLAttributes, CSSProperties } from "react";
+import { ClassAttributes, ImgHTMLAttributes, CSSProperties, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import SimpleRoomSvg from "#svgs/SimpleRoom.svg";
 
@@ -11,8 +11,11 @@ export default function SimpleRoom({
   selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
-    ImgHTMLAttributes<HTMLImageElement>;
+    ImgHTMLAttributes<HTMLImageElement> &{
+      name?: string;
+    };
 }) {
+  const [hovered, setHovered] = useState(false);
   const imgStyle: CSSProperties = {
     borderBottom: "3px solid #ccc",
     borderRight: "3px solid #ccc",
@@ -29,14 +32,14 @@ export default function SimpleRoom({
     display: "inline-block",
   };
 
-  const availableOverlayStyle: CSSProperties = {
+  const overlayStyle: CSSProperties = {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
     backgroundColor: "#6fdd6f",
-    opacity: 0.2,
+    opacity: 0.5,
     pointerEvents: "none",
     borderRadius: "1px",
   };
@@ -50,11 +53,42 @@ export default function SimpleRoom({
     boxSizing: "border-box",
   };
 
-  return (
-    <div style={wrapperStyle} {...props}>
-      <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={imgStyle} />
-      {available && <div style={availableOverlayStyle} />}
-      {selected && <div style={selectedBorderStyle} />}
-    </div>
-  );
+  const tooltipStyle: CSSProperties = {
+    position: "absolute",
+    top: "50%",
+    left: "-10px",
+    transform: "translate(-100%, -50%)",
+    // blue
+    backgroundColor: "#cc2222",
+    color: "#fff",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    fontSize: "15px",
+    whiteSpace: "nowrap",
+    opacity: hovered ? 1 : 0,
+    transition: "opacity 0.2s ease-in-out",
+    pointerEvents: "none",
+    zIndex: 10,
+  };
+
+  
+return (
+  <div style={wrapperStyle} {...props}
+       onMouseEnter={() => setHovered(true)}
+       onMouseLeave={() => setHovered(false)}>
+       
+    {hovered && (
+      <div style={{ ...tooltipStyle, visibility: 'visible' }}>
+      Sala {props.name}
+      </div>
+      
+    )}
+
+    <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={imgStyle} />
+
+    {available && <div style={overlayStyle} />}
+
+    {selected && <div style={selectedBorderStyle} />}
+  </div>
+);
 }
