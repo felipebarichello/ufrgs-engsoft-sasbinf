@@ -14,11 +14,9 @@ function MyBookingsPage() {
     }
   }, [getMyBookings.data]);
 
-  const wrapperStyle = { minWidth: "70em" };
-
   const wrapper = (content: React.ReactNode) => (
     <MemberWrapper>
-      <div className="d-flex justify-content-center pt-5" style={wrapperStyle}>
+      <div className="d-flex justify-content-center pt-5">
         {content}
       </div>
     </MemberWrapper>

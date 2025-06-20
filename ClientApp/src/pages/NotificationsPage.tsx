@@ -15,11 +15,9 @@ const notificationCardStyle: React.CSSProperties = {
 
 const buttonStyle = { marginLeft: "1rem" };
 
-const wrapperStyle = { minWidth: "70em" };
-
 const wrapper = (content: React.ReactNode) => (
 	<MemberWrapper>
-		<div className="d-flex justify-content-center pt-5" style={wrapperStyle}>
+		<div className="d-flex justify-content-center pt-5">
 			<div
 				className="member-bookings-list"
 				style={{
