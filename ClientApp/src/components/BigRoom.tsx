@@ -1,34 +1,65 @@
-import { ClassAttributes, ImgHTMLAttributes } from "react";
+import { ClassAttributes, ImgHTMLAttributes, CSSProperties} from "react";
 import { JSX } from "react/jsx-runtime";
-import BigRoomSvg from "#svgs/BigRoom.png";
-import SelectedBigRoomSvg from "#svgs/SelectedBigRoom.svg";
+import BigRoomSvg from "#svgs/BigRoom.svg";
 
 export default function BigRoom({
-  selected,
   available,
+  selected,
   props,
 }: {
-  selected: boolean;
   available: boolean;
+  selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
     ImgHTMLAttributes<HTMLImageElement>;
 }) {
-  const style = {
-    width: "100%",
-    border: selected ? "3px solid red" : undefined,
+  
+  const imgStyle: CSSProperties = {
+    borderRight: "3px solid #ccc",
+    borderRadius: "1px",
+    width: "140px",
+    height: "100px",
+    display: "block",
   };
-  if (available) {
-    return (
-      <div {...props}>
-        <img src={SelectedBigRoomSvg} alt="BigRoomImg" style={style} />
-      </div>
-    );
-  } else {
-    return (
-      <div {...props}>
-        <img src={BigRoomSvg} alt="BigRoomImg" style={style} />
-      </div>
-    );
-  }
+
+  const wrapperStyle: CSSProperties = {
+    position: "relative",
+    width: "140px",
+    height: "100px",
+    display: "inline-block",
+  };
+
+  const overlayStyle: CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#6fdd6f",
+    opacity: 0.2,
+    pointerEvents: "none",
+    borderRadius: "1px",
+  };
+
+  const selectedBorderStyle: CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    border: "2px solid #b22222",
+    borderRadius: "1px",
+    pointerEvents: "none",
+    boxSizing: "border-box",
+  };
+
+  return (
+    <div style={wrapperStyle} {...props}>
+      <img src={BigRoomSvg} alt="BigRoomImg" style={imgStyle} />
+      {available && <div style={overlayStyle} />}
+      {selected && <div style={selectedBorderStyle} />}
+    </div>
+  );
 }
+
+
+//140
+//100
+//borderRight: "3px solid #ccc",
