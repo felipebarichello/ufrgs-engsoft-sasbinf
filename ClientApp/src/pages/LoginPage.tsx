@@ -27,7 +27,7 @@ function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <img src={logoImg} alt="SasbINF" className="login-logo" />
+        <img src={logoImg} alt="SasbINF" className="login-logo main-logo" />
 
         <form onSubmit={handleSubmit} method="POST" className="login-form">
           <div className="form-group">

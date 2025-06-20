@@ -18,12 +18,13 @@ import { RoomFilters } from "../pages/RoomsPage";
 import { Member, MemberArraySchema, MembersSchema } from "../schemas/member";
 import { MyBooking, MyBookingsResponseSchema } from "../schemas/myBookings";
 import { HeaderBuilder } from "../lib/headers";
+import { NotficationsSchema, Notifications } from "../schemas/notifications";
 
 // Define a service using a base URL and expected endpoints
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["bookings", "member", "room"],
+  tagTypes: ["bookings", "member", "room", "notifications"],
   endpoints: (build) => ({
     getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
@@ -46,7 +47,10 @@ export const sasbinf = createApi({
       },
     }),
 
-    postAvailableRoomsSearch: build.query<{ name: string; id: number; }[], RoomFilters>({
+    postAvailableRoomsSearch: build.query<
+      { name: string; id: number; }[],
+      RoomFilters
+    >({
       query: (filters: RoomFilters) => ({
         url: "rooms/available-rooms-search",
         method: "POST",
@@ -391,6 +395,46 @@ export const sasbinf = createApi({
       transformResponse: (d) => ({ data: d }),
       transformErrorResponse: (e) => ({ error: e }),
     }),
+
+    getNotifications: build.query<Notifications, void>({
+      query: () => ({
+        url: 'notifications',
+        method: 'GET',
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (e) => {
+        try {
+          return v.parse(NotficationsSchema, e);
+        } catch (e) {
+          console.log(e);
+          throw new Error('Algo falhou ao buscar suas notificações. Tente novamente mais tarde');
+        }
+      },
+      providesTags: ["notifications"]
+    }),
+
+    deleteNotification: build.mutation<{ message: string; }, number>({
+      query: (id: number) => ({
+        url: `delete-notification/${id}`,
+        method: 'DELETE',
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (e) => {
+        return { message: "Notification deleted." + e };
+      },
+      invalidatesTags: ["notifications"],
+    }),
+
+    updateTransferStatus: build.mutation({
+      query: ({ notificationId, status }: { notificationId: number, status: "ACCEPTED" | "REJECTED"; }) => ({
+        url: `update-transfer/${notificationId}`,
+        method: "POST",
+        headers: new HeaderBuilder().withAuthToken().build(),
+        body: { status: status }
+      }),
+    }),
+
+
   }),
 });
 
@@ -419,4 +463,7 @@ export const {
   useLazyGetRoomsHistorySearchQuery,
   useGetRoomQuery,
   usePostTransferBookingMutation,
+  useGetNotificationsQuery,
+  useDeleteNotificationMutation,
+  useUpdateTransferStatusMutation
 } = sasbinf;

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
-import Restricted from "../../components/Restricted";
+import Restricted from "../../components/member/MemberRestricted";
 import {
   usePostCreateRoomMutation,
   usePostRoomsMutation,
 } from "../../api/sasbinfAPI";
 import { Erroralert } from "../../components/ErrorAlert";
-import "./ManagerMainPage.css";
+import "./ManagerActionsPages.css";
 import { Room } from "../../components/manager/Room";
+import { useNavigate } from "react-router-dom";
 
 function ManagerRoomsPage() {
   return (
@@ -22,6 +23,7 @@ function ManagerRoomsPage() {
 export default ManagerRoomsPage;
 
 function ManagerRoomsPageRestricted() {
+  const navigate = useNavigate();
   const [createRoom, createRoomState] = usePostCreateRoomMutation();
   const [searchRooms, searchRoomsState] = usePostRoomsMutation();
   const [formState, setFormState] = useState<{
@@ -38,7 +40,7 @@ function ManagerRoomsPageRestricted() {
 
   useEffect(() => {
     fetchRooms();
-  }, []);
+  });
 
   const handleSearchRoom = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +66,10 @@ function ManagerRoomsPageRestricted() {
 
   return (
     <div className="manager-card">
-      <div className="logo-container">
+      <div
+        onClick={() => navigate("/manager/main-page")}
+        className="logo-container"
+      >
         <img src={logoImg} alt="SasbINF" className="logo" />
       </div>
 

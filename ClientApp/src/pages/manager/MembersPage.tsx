@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
-import Restricted from "../../components/Restricted";
+import Restricted from "../../components/member/MemberRestricted";
 import { usePostMembersMutation } from "../../api/sasbinfAPI";
-import "./ManagerMainPage.css";
+import "./ManagerActionsPages.css";
 import { Member } from "../../components/manager/Member";
+import { useNavigate } from "react-router-dom";
 
 function ManagerMembersPage() {
   return (
@@ -18,6 +19,7 @@ function ManagerMembersPage() {
 export default ManagerMembersPage;
 
 function ManagerMembersPageRestricted() {
+  const navigate = useNavigate();
   const [searchMembers, searchMembersState] = usePostMembersMutation();
   const [memberName, setMemberName] = useState<string | null>();
   const token = sessionStorage.getItem("authToken")!;
@@ -29,7 +31,7 @@ function ManagerMembersPageRestricted() {
 
   useEffect(() => {
     fetchMembers();
-  }, []);
+  });
 
   const handleSearchMembers = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +48,10 @@ function ManagerMembersPageRestricted() {
 
   return (
     <div className="manager-card">
-      <div className="logo-container">
+      <div
+        onClick={() => navigate("/manager/main-page")}
+        className="logo-container"
+      >
         <img src={logoImg} alt="SasbINF" className="logo" />
       </div>
 

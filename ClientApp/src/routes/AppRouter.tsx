@@ -9,6 +9,7 @@ import ManagerMainPage from "../pages/manager/ManagerMainPage";
 import ManagerRoomsPage from "../pages/manager/RoomsPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
 import ManagerMembersPage from "../pages/manager/MembersPage";
+import NotificationsPage from "../pages/NotificationsPage";
 function AppRouter() {
   return (
     <Routes>
@@ -20,6 +21,8 @@ function AppRouter() {
 
       <Route path="/my-bookings" element={<MyBookingsPage />} />
 
+      <Route path="/notifications" element={<NotificationsPage />} />
+
       <Route path="/doom" element={<DoomPage />} />
 
       <Route path="/manager/login" element={<LoginManagerPage />} />
@@ -27,6 +30,7 @@ function AppRouter() {
       <Route path="/manager/main-page" element={<ManagerMainPage />} />
 
       <Route path="/manager/rooms-page" element={<ManagerRoomsPage />} />
+
       <Route path="/manager/members-page" element={<ManagerMembersPage />} />
 
       {/* Catch-all for 404 */}
