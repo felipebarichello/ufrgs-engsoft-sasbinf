@@ -60,31 +60,43 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity($"Cannot process transfer with status {status}");
         }
 
-        // Body is the bookingId of to be transfered
-        string? bookingIdString = await _dbContext.Notifications
+        // Body is the bookingId to be transfered, with the original user's id
+        string? notificationBody = await _dbContext.Notifications
             .Where(n => n.NotificationId == notificationId && n.Kind == NotificationKind.BookingTransfer)
             .Select(n => n.Body)
             .FirstOrDefaultAsync();
 
-        if (bookingIdString == null) {
+        if (notificationBody == null) {
             return NotFound($"Could not find transfer with Id {notificationId}");
         }
 
-        if (!long.TryParse(notificationIdString, out var bookingId)) {
+        string bookingIdString = notificationBody.Split(",")[0];
+        string originalUserIdString = notificationBody.Split(",")[1]; // TODO: remove this mock
+
+        if (!long.TryParse(bookingIdString, out var bookingId)) {
             return UnprocessableEntity("O ID de locação não está no formato correto. Tente novamente");
         }
 
-        var originalUserId = 0; // TODO: remove this mock
+        if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+            return UnprocessableEntity("O ID do membro original não está no formato correto. Tente novamente");
+        }
+
         if (status == "REJECTED") {
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
-                kind: NotificationKind.
+                kind: NotificationKind.TransferRejected,
+                body: $"Sua transferência da reserva {bookingId} foi rejeitada"
             );
 
-            // Delete notification
-            await DeleteNotification(notificationId);
+            await _dbContext.Notifications.AddAsync(notification);
 
+            // Delete notification
+            if ((await DeleteNotification(notificationId)).Item1) {
+                throw new Exception("Delete transaction failed. Returning Internal Server Error");
+            }
+
+            await _dbContext.SaveChangesAsync();
             return Ok(new { message = "Transferência recusada com sucesso!" });
         }
 
@@ -99,6 +111,15 @@ public class NotificationsController : ControllerBase {
             }
 
             booking.UserId = userId;
+
+            // Notify original user of the rejection
+            var notification = Notification.Create(
+                memberId: originalUserId,
+                kind: NotificationKind.TransferAccepted,
+                body: $"Sua transferência da reserva {bookingId} foi aceita"
+            );
+
+            await _dbContext.Notifications.AddAsync(notification);
 
             // Delete notification
             await DeleteNotification(notificationId);

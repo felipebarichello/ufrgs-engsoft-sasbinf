@@ -4,5 +4,5 @@ public enum NotificationKind {
     RoomMaintenance,
     BookingTransfer,
     TransferAccepted,
-    TransferReject
+    TransferRejected
 }
