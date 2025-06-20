@@ -31,28 +31,28 @@ function RoomsPage() {
 
   return (
     <MemberWrapper>
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '100px',
-        justifyContent: 'center', // horizontal alignment (along main axis)
-        alignItems: 'center', // vertical alignment (cross axis)
-      }}
-    >
-      <RoomsForm
-        available={availableRooms}
-        setAvailableRooms={setAvailableRooms}
-        filtersState={filtersState}
-        setFiltersState={setFiltersState}
-      />
-      <INFLibrary
-        available={availableRooms ?? []}
-        setAvailable={setAvailableRooms}
-        filtersState={filtersState}
-        selected={selected}
-        setSelected={setSelected}
-      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "100px",
+          justifyContent: "center", // horizontal alignment (along main axis)
+          alignItems: "center", // vertical alignment (cross axis)
+        }}
+      >
+        <RoomsForm
+          available={availableRooms}
+          setAvailableRooms={setAvailableRooms}
+          filtersState={filtersState}
+          setFiltersState={setFiltersState}
+        />
+        <INFLibrary
+          available={availableRooms ?? []}
+          setAvailable={setAvailableRooms}
+          filtersState={filtersState}
+          selected={selected}
+          setSelected={setSelected}
+        />
       </div>
     </MemberWrapper>
   );

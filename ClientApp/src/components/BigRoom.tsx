@@ -1,4 +1,9 @@
-import { ClassAttributes, ImgHTMLAttributes, CSSProperties, useState} from "react";
+import {
+  ClassAttributes,
+  ImgHTMLAttributes,
+  CSSProperties,
+  useState,
+} from "react";
 import { JSX } from "react/jsx-runtime";
 import BigRoomSvg from "#svgs/BigRoom.svg";
 
@@ -11,11 +16,10 @@ export default function SimpleRoom({
   selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
-    ImgHTMLAttributes<HTMLImageElement> &{
+    ImgHTMLAttributes<HTMLImageElement> & {
       name?: string;
     };
 }) {
-  
   const [hovered, setHovered] = useState(false);
 
   const imgStyle: CSSProperties = {
@@ -66,33 +70,33 @@ export default function SimpleRoom({
     borderRadius: "4px",
     fontSize: "15px",
     whiteSpace: "nowrap",
-    opacity: (selected) ? 1 : (hovered ? 0.7 : 0),
+    opacity: selected ? 1 : hovered ? 0.7 : 0,
     transition: "opacity 0.2s ease-in-out",
     pointerEvents: "none",
     zIndex: 10,
   };
 
-return (
-  <div style={wrapperStyle} {...props}
-       onMouseEnter={() => setHovered(true)}
-       onMouseLeave={() => setHovered(false)}>
-       
-    {(hovered || selected) && (
-      <div style={{ ...tooltipStyle, visibility: 'visible' }}>
-      Sala {props.name}
-      </div>
-      
-    )}
+  return (
+    <div
+      style={wrapperStyle}
+      {...props}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {(hovered || selected) && (
+        <div style={{ ...tooltipStyle, visibility: "visible" }}>
+          Sala {props.name}
+        </div>
+      )}
 
-    <img src={BigRoomSvg} alt="BigRoomImg" style={imgStyle} />
+      <img src={BigRoomSvg} alt="BigRoomImg" style={imgStyle} />
 
-    {available && <div style={overlayStyle} />}
+      {available && <div style={overlayStyle} />}
 
-    {selected && <div style={selectedBorderStyle} />}
-  </div>
-);
+      {selected && <div style={selectedBorderStyle} />}
+    </div>
+  );
 }
-
 
 //140
 //100
