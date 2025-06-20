@@ -25,7 +25,7 @@ export const sasbinf = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   tagTypes: ["bookings", "member", "room"],
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string }, void>({
+    getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -46,10 +46,7 @@ export const sasbinf = createApi({
       },
     }),
 
-    postAvailableRoomsSearch: build.query<
-      { name: string; id: number }[],
-      RoomFilters
-    >({
+    postAvailableRoomsSearch: build.query<{ name: string; id: number; }[], RoomFilters>({
       query: (filters: RoomFilters) => ({
         url: "rooms/available-rooms-search",
         method: "POST",
@@ -63,6 +60,7 @@ export const sasbinf = createApi({
           throw new Error("Algo deu errado com a sua pesquisa. Erro: " + e);
         }
       },
+      providesTags: ["room"]
     }),
 
     postRoomBookRequest: build.mutation({
@@ -74,14 +72,15 @@ export const sasbinf = createApi({
       }),
       transformErrorResponse: () => {
         alert("Falha ao alugar sala");
-        return { message: "Falha ao alugar sala"};
+        return { message: "Falha ao alugar sala" };
       },
       transformResponse: (e) => {
         console.log(e);
         alert(
           "A sala foi reservada com sucesso."
-        ); /* Return the parsed result? */
+        );
       },
+      invalidatesTags: ["room"]
     }),
 
     postLoginManager: build.mutation({
@@ -123,7 +122,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -366,7 +365,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number }) => ({
+      query: ({ bookingId }: { bookingId: number; }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -399,7 +398,7 @@ export const sasbinf = createApi({
 // auto-generated based on the defined endpoints
 export const {
   useGetHealthQuery,
-  useLazyPostAvailableRoomsSearchQuery,
+  usePostAvailableRoomsSearchQuery,
   usePostLoginMutation,
   usePostRoomBookRequestMutation,
   usePostLoginManagerMutation,
