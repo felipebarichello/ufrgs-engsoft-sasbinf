@@ -133,6 +133,8 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Você não pode transferir essa reserva ou ela não existe");
         }
 
+        booking.Status = "TRANSFERING";
+
         var notification = Notification.Create(
             memberId: request.newUserId,
             kind: NotificationKind.BookingTransfer,

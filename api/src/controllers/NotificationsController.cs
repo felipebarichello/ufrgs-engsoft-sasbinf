@@ -25,6 +25,30 @@ public class NotificationsController : ControllerBase {
             .Where(n => n.MemberId == userId)
             .ToListAsync();
 
+        foreach (var notification in notifications) {
+            if (notification.Kind != NotificationKind.BookingTransfer) {
+                continue;
+            }
+
+            string bookingIdString = notification.Body.Split(",")[0];
+            string originalUserIdString = notification.Body.Split(",")[1];
+
+            if (!long.TryParse(bookingIdString, out var bookingId)) {
+                return Unauthorized("ID do usuário não está em formato válido");
+            }
+
+            if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+                return Unauthorized("ID do usuário não está em formato válido");
+            }
+
+            string oldUserName = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstAsync();
+            Booking booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstAsync();
+
+            // This does not work because the string attribution will not happen until we sync the database. Could we clone those notifications?
+            notification.Body = $"O usuário {oldUserName} deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString}. Você deseja aceitar?";
+
+        }
+
         return Ok(notifications);
     }
 
@@ -82,6 +106,17 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity("O ID do membro original não está no formato correto. Tente novamente");
         }
 
+        // Update notification to point to new userId (the user who just accepted)
+        var booking = await _dbContext.Bookings
+            .Where(b => b.BookingId == bookingId)
+            .FirstOrDefaultAsync();
+
+        if (booking == null) {
+            return NotFound($"Could not find booking with Id {bookingId}");
+        }
+
+        booking.Status = "BOOKED";
+
         if (status == "REJECTED") {
             // Notify original user of the rejection
             var notification = Notification.Create(
@@ -102,14 +137,6 @@ public class NotificationsController : ControllerBase {
         }
 
         if (status == "ACCEPTED") {
-            // Update notification to point to new userId (the user who just accepted)
-            var booking = await _dbContext.Bookings
-                .Where(b => b.BookingId == bookingId)
-                .FirstOrDefaultAsync();
-
-            if (booking == null) {
-                return NotFound($"Could not find booking with Id {bookingId}");
-            }
 
             booking.UserId = userId;
 
