@@ -153,19 +153,22 @@ namespace api.src.Models {
                     .HasColumnType("bigint")
                     .IsRequired();
 
-                model.Property(m => m.UserId)
-                    .HasColumnName("user_id")
+                model.Property(m => m.MemberId)
+                    .HasColumnName("member_id")
                     .HasColumnType("bigint")
                     .IsRequired();
 
-                model.Property(m => m.Description)
-                    .HasColumnName("description")
-                    .HasColumnType("nvarchar(512)")
-                    .IsRequired(true);
+                model.Property(m => m.Kind)
+                    .HasColumnName("notification_kind")
+                    .IsRequired();
+
+                model.Property(m => m.Body)
+                    .HasColumnName("body")
+                    .HasColumnType("nvarchar(512)");
 
                 model.HasOne(m => m.User)
                     .WithMany(u => u.Notifications)
-                    .HasForeignKey(m => m.UserId);
+                    .HasForeignKey(m => m.MemberId);
             });
         }
     }
