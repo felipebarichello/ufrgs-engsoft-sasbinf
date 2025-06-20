@@ -17,7 +17,8 @@ const buttonStyle = { marginLeft: "1rem" };
 
 const wrapper = (content: React.ReactNode) => (
 	<MemberWrapper>
-		<div className="d-flex justify-content-center pt-5">
+		<div className="d-flex flex-column justify-content-center pt-5">
+			<h1 className="page-title">Notificações</h1>
 			<div
 				className="member-bookings-list"
 				style={{
@@ -69,7 +70,6 @@ export default function NotificationsPage() {
 
 	return wrapper(
 		<>
-			<h1 style={{ paddingBottom: "2rem" }}>Notificações</h1>
 			{notifications.map((notification, index) => (
 				<div
 					className="d-flex justify-content-between align-items-center"

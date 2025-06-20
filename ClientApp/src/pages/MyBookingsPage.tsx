@@ -17,7 +17,7 @@ function MyBookingsPage() {
   const wrapper = (content: React.ReactNode) => (
     <MemberWrapper>
       <div className="d-flex flex-column justify-content-center pt-5">
-        <h1 style={{ marginBottom: "2rem" }}>Suas reservas</h1>
+        <h1 className="page-title">Suas reservas</h1>
         {content}
       </div>
     </MemberWrapper>
