@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Header from './Header';
-import Restricted from './MemberRestricted';
+import Restricted from './member/MemberRestricted';
 
 type MemberWrapperProps = {
   children: ReactNode;

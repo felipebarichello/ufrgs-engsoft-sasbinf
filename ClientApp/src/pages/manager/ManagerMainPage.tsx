@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Restricted from "../../components/MemberRestricted";
+import Restricted from "../../components/member/MemberRestricted";
 import logoImg from "../../assets/logo-sasbinf.png";
 import "./ManagerMainPage.css";
 
