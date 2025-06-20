@@ -65,7 +65,7 @@ export default function SimpleRoom({
     borderRadius: "4px",
     fontSize: "15px",
     whiteSpace: "nowrap",
-    opacity: hovered ? 1 : 0,
+    opacity: (selected) ? 1 : (hovered ? 0.7 : 0),
     transition: "opacity 0.2s ease-in-out",
     pointerEvents: "none",
     zIndex: 10,
@@ -77,7 +77,7 @@ return (
        onMouseEnter={() => setHovered(true)}
        onMouseLeave={() => setHovered(false)}>
        
-    {hovered && (
+    {(hovered || selected) && (
       <div style={{ ...tooltipStyle, visibility: 'visible' }}>
       Sala {props.name}
       </div>
