@@ -33,7 +33,7 @@ export default function Header() {
   return (
     <header style={headerStyle}>
       <a href="/" style={{ display: "flex", alignItems: "center" }}>
-        <img src={logoImg} alt="SASBINF Logo" style={logoStyle} />
+        <img src={logoImg} alt="SASBINF" style={logoStyle} />
       </a>
       <nav className="header-nav">
         <a href="/rooms">
