@@ -2,7 +2,7 @@ import BigRoom from "./BigRoom";
 import Hallway from "./Hallway";
 import SimpleRoom from "./SimpleRoom";
 import {
-	usePostAvailableRoomsSearchQuery,
+	useLazyPostAvailableRoomsSearchQuery,
 	usePostRoomBookRequestMutation,
 } from "../api/sasbinfAPI";
 import { RoomFilters } from "../pages/RoomsPage";
@@ -31,7 +31,7 @@ export default function INFLibrary({
 	setAvailable: (a: { id: number; name: string }[]) => void;
 }) {
 	const [triggerBookRequest] = usePostRoomBookRequestMutation();
-	const availableRoomsState = usePostAvailableRoomsSearchQuery(filtersState);
+	const [triggerRoomSearch] = useLazyPostAvailableRoomsSearchQuery();
 
 	async function handleBookPress() {
 		if (selected === null) {
@@ -53,19 +53,18 @@ export default function INFLibrary({
 			roomId: selected.id,
 		};
 
-		triggerBookRequest(bookRequest);
+		await triggerBookRequest(bookRequest);
 
+		const newAvailableRooms = await triggerRoomSearch(filtersState);
 		try {
-			// const newAvailableState = await triggerAvailableRoomsQuery().unwrap();
-			if (availableRoomsState.data === undefined) {
-				return <>Falha ao buscar salas</>;
+			if (newAvailableRooms.data) {
+				setAvailable(newAvailableRooms.data);
 			}
-			setAvailable(availableRoomsState.data);
 		} catch {
 			console.log(
-				availableRoomsState.error,
-				availableRoomsState.isLoading,
-				availableRoomsState.data
+				newAvailableRooms.error,
+				newAvailableRooms.isLoading,
+				newAvailableRooms.data
 			);
 		}
 	}
@@ -95,28 +94,30 @@ export default function INFLibrary({
 				setSelected={setSelected}
 			/>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => {
-            handleBookPress();
-            setSelected(null);
-          }}
-          disabled={selected === null || !available.map((r) => r.id).includes(selected.id)}
-        >
-          Reservar
-        </button>
+			<button
+				type="button"
+				className="btn btn-primary"
+				onClick={() => {
+					handleBookPress();
+					setSelected(null);
+				}}
+				disabled={
+					selected === null || !available.map((r) => r.id).includes(selected.id)
+				}
+			>
+				Reservar
+			</button>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => {
-            setSelected(null);
-          }}
-          disabled={selected === null}
-        >
-          Limpar Seleção
-        </button>
+			<button
+				type="button"
+				className="btn btn-primary"
+				onClick={() => {
+					setSelected(null);
+				}}
+				disabled={selected === null}
+			>
+				Limpar Seleção
+			</button>
 
 			{/*what is this luis???*/}
 			{/*metadata.isError && Erroralert({ error: metadata.error })*/}

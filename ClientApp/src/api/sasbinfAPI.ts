@@ -399,6 +399,7 @@ export const sasbinf = createApi({
 export const {
   useGetHealthQuery,
   usePostAvailableRoomsSearchQuery,
+  useLazyPostAvailableRoomsSearchQuery,
   usePostLoginMutation,
   usePostRoomBookRequestMutation,
   usePostLoginManagerMutation,

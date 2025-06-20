@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent } from "react";
 import { Erroralert } from "./ErrorAlert";
 import { Epoch, RoomFilters } from "../pages/RoomsPage";
 import { usePostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
@@ -46,11 +46,6 @@ function RoomsFormInputs({
 	setAvailable: (a: { name: string; id: number }[]) => void;
 }) {
 	const availableRoomsState = usePostAvailableRoomsSearchQuery(inputs);
-	const [refetch, setRefetch] = useState(false);
-
-	useEffect(() => {
-		availableRoomsState.refetch();
-	}, [refetch]);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const label = event.target.name;
@@ -65,7 +60,6 @@ function RoomsFormInputs({
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		try {
-			setRefetch(!refetch);
 			if (availableRoomsState.data) {
 				setAvailable(availableRoomsState.data);
 			}
