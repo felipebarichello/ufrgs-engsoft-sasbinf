@@ -51,7 +51,7 @@ function RoomsFormInputs({
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    setAvailable([]);
+    //setAvailable([]);
     e.preventDefault();
     try {
       const newAvailableState = await triggerAvailableRoomsQuery(
@@ -139,7 +139,7 @@ function RoomsFormInputs({
             </button>
           </div>
         </div>
-        {!availableRoomsState.isLoading &&
+        {
           !availableRoomsState.isError &&
           available !== null &&
           available.length === 0 && (

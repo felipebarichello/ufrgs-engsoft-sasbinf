@@ -57,14 +57,10 @@ export default function INFLibrary({
       roomId: selected.id,
     };
 
-    console.log(bookRequest);
-
     triggerBookRequest(bookRequest);
 
-    setAvailable([]);
-
     try {
-      await sleep(500);
+      //await sleep(500);
 
       const newAvailableState = await triggerAvailableRoomsQuery(
         filtersState
