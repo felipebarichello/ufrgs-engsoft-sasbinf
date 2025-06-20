@@ -4,6 +4,7 @@ import {
 	useDeleteNotificationMutation,
 	useGetNotificationsQuery,
 } from "../api/sasbinfAPI";
+import { NotificationKind } from "../schemas/notifications";
 
 const notificationCardStyle: React.CSSProperties = {
 	background: "#e5e7eb", // Lighter gray card
@@ -78,7 +79,7 @@ export default function NotificationsPage() {
 					<div style={{ minWidth: "5em", fontWeight: 600 }}>#{index + 1}</div>
 					{notification.body}
 					<div className="d-flex justify-content-evenly">
-						{notification.kind === 1 && (
+						{notification.kind === NotificationKind.BookingTransfer && (
 							<>
 								<button
 									className="btn btn-success"
@@ -100,7 +101,7 @@ export default function NotificationsPage() {
 								</button>
 							</>
 						)}
-						{notification.kind === 0 && (
+						{notification.kind !== NotificationKind.BookingTransfer && (
 							<button
 								className="btn btn-primary"
 								style={buttonStyle}
