@@ -99,6 +99,7 @@ export default function INFLibrary({
             handleBookPress();
             setSelected(null);
           }}
+          disabled={selected === null || !available.map((r) => r.id).includes(selected.id)}
         >
           Reservar
         </button>
@@ -109,6 +110,7 @@ export default function INFLibrary({
           onClick={() => {
             setSelected(null);
           }}
+          disabled={selected === null}
         >
           Limpar Seleção
         </button>
