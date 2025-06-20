@@ -40,7 +40,7 @@ function ManagerRoomsPageRestricted() {
 
   useEffect(() => {
     fetchRooms();
-  }, []);
+  });
 
   const handleSearchRoom = (e: React.FormEvent) => {
     e.preventDefault();
