@@ -63,6 +63,7 @@ export default function NotificationsPage() {
 		}
 	}
 
+	// TODO: Is this needed?
 	if (notifications === undefined) {
 		console.log("ERRO GROTESCO");
 		return <>Falha ao carregar notificações</>;
