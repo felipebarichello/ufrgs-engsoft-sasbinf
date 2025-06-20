@@ -39,7 +39,7 @@ export default function SimpleRoom({
     width: "100%",
     height: "100%",
     backgroundColor: "#6fdd6f",
-    opacity: 0.5,
+    opacity: 0.3,
     pointerEvents: "none",
     borderRadius: "1px",
   };
