@@ -25,10 +25,6 @@ public class NotificationsController : ControllerBase {
             .Where(n => n.MemberId == userId)
             .ToListAsync();
 
-        var builder = WebApplication.CreateBuilder();
-        var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
-        logger.LogInformation("Example: {Var}", notifications.Count);
-
         return Ok(notifications);
     }
 
@@ -64,13 +60,7 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity($"Cannot process transfer with status {status}");
         }
 
-        if (status == "REJECTED") {
-            // Notify original user of the rejection
-            // Delete notification
-            return Ok(new { message = "Transferência recusada com sucesso!" });
-        }
-
-        // Update notification to point to new userId (the user who just accepted)
+        // Body is the bookingId of to be transfered
         string? bookingIdString = await _dbContext.Notifications
             .Where(n => n.NotificationId == notificationId && n.Kind == NotificationKind.BookingTransfer)
             .Select(n => n.Body)
@@ -84,19 +74,36 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity("O ID de locação não está no formato correto. Tente novamente");
         }
 
-        // Body is the bookingId of to be transfered
-        var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == bookingId)
-            .FirstOrDefaultAsync();
+        var originalUserId = 0; // TODO: remove this mock
+        if (status == "REJECTED") {
+            // Notify original user of the rejection
+            var notification = Notification.Create(
+                memberId: originalUserId,
+                kind: NotificationKind.
+            );
 
-        if (booking == null) {
-            return NotFound($"Could not find booking with Id {bookingId}");
+            // Delete notification
+            await DeleteNotification(notificationId);
+
+            return Ok(new { message = "Transferência recusada com sucesso!" });
         }
 
-        booking.UserId = userId;
+        if (status == "ACCEPTED") {
+            // Update notification to point to new userId (the user who just accepted)
+            var booking = await _dbContext.Bookings
+                .Where(b => b.BookingId == bookingId)
+                .FirstOrDefaultAsync();
 
-        await DeleteNotification(notificationId);
-        await _dbContext.SaveChangesAsync();
+            if (booking == null) {
+                return NotFound($"Could not find booking with Id {bookingId}");
+            }
+
+            booking.UserId = userId;
+
+            // Delete notification
+            await DeleteNotification(notificationId);
+            await _dbContext.SaveChangesAsync();
+        }
 
         return Ok(new { message = "Transferência aceita com sucesso!" });
     }
