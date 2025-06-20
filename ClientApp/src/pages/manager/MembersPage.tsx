@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
-import Restricted from "../../components/Restricted";
+import Restricted from "../../components/MemberRestricted";
 import { usePostMembersMutation } from "../../api/sasbinfAPI";
 import "./ManagerActionsPages.css";
 import { Member } from "../../components/manager/Member";
