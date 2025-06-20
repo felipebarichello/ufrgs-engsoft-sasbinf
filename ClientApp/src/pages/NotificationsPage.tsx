@@ -3,6 +3,7 @@ import MemberWrapper from "../components/MemberWrapper";
 import {
 	useDeleteNotificationMutation,
 	useGetNotificationsQuery,
+	useUpdateTransferStatusMutation,
 } from "../api/sasbinfAPI";
 import { NotificationKind } from "../schemas/notifications";
 
@@ -39,13 +40,30 @@ export default function NotificationsPage() {
 	const notifications = queryResult.data;
 
 	const [deleteNotificationById] = useDeleteNotificationMutation();
+	const [updateTransferStatus] = useUpdateTransferStatusMutation();
 
-	function acceptTransfer(notificationId: number) {
-		alert(`Accept Transfer Not Implemented. notificationId: ${notificationId}`);
+	async function acceptTransfer(notificationId: number) {
+		const response = await updateTransferStatus({
+			notificationId: notificationId,
+			status: "ACCEPTED",
+		});
+
+		if (response.error) {
+			console.log(response.error);
+			alert("Falha ao aceitar transferência");
+		}
 	}
 
-	function rejectTransfer(notificationId: number) {
-		alert(`Reject Transfer Not Implemented. notificationId: ${notificationId}`);
+	async function rejectTransfer(notificationId: number) {
+		const response = await updateTransferStatus({
+			notificationId: notificationId,
+			status: "REJECTED",
+		});
+
+		if (response.error) {
+			console.log(response.error);
+			alert("Falha ao recusar transferência");
+		}
 	}
 
 	async function deleteNotification(notificationId: number) {
@@ -56,7 +74,6 @@ export default function NotificationsPage() {
 				throw error;
 			}
 
-			alert("Notificação removida com sucesso!");
 			console.log(data);
 		} catch {
 			alert(`Falha ao remover notificação`);

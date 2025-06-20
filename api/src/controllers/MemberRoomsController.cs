@@ -136,7 +136,7 @@ public class MemberRoomsController : ControllerBase {
         var notification = Notification.Create(
             memberId: request.newUserId,
             kind: NotificationKind.BookingTransfer,
-            body: booking.BookingId.ToString()
+            body: booking.BookingId.ToString() + "," + userId
         );
 
         await _dbContext.Notifications.AddAsync(notification);

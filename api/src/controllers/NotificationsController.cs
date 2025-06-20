@@ -45,7 +45,8 @@ public class NotificationsController : ControllerBase {
 
     // TODO: Use fkn constants or enums
     [HttpPost("update-transfer/{notificationIdString}")]
-    public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] string status) {
+    public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] UpdateTransferStatusDTO statusDTO) {
+        string status = statusDTO.status;
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
@@ -71,7 +72,7 @@ public class NotificationsController : ControllerBase {
         }
 
         string bookingIdString = notificationBody.Split(",")[0];
-        string originalUserIdString = notificationBody.Split(",")[1]; // TODO: remove this mock
+        string originalUserIdString = notificationBody.Split(",")[1];
 
         if (!long.TryParse(bookingIdString, out var bookingId)) {
             return UnprocessableEntity("O ID de locação não está no formato correto. Tente novamente");
@@ -157,4 +158,6 @@ public class NotificationsController : ControllerBase {
 
         return (hasFailed, deletedRows);
     }
+
+    public record UpdateTransferStatusDTO(string status);
 }
