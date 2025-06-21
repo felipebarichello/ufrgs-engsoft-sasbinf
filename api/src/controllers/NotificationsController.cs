@@ -41,23 +41,28 @@ public class NotificationsController : ControllerBase {
                     return Unauthorized("ID do usuário não está em formato válido");
                 }
 
-                string oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).First();
-                Booking booking = _dbContext.Bookings.Where(b => b.BookingId == bookingId).First();
+                string? oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefault();
+                if (oldUserName == null) {
+                    return NotFound($"Usuário com ID {originalUserId} não encontrado.");
+                }
+
+                Booking? booking = _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefault();
+                if (booking == null) {
+                    return NotFound($"Reserva com ID {bookingId} não encontrada.");
+                }
 
                 newBody = $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?";
             }
 
-            notificationsDTO =
-            [
-                .. notificationsDTO,
+            notificationsDTO.Add(
                 Notification.Create(
                     notificationId: notification.NotificationId,
                     memberId: notification.MemberId,
                     kind: notification.Kind,
                     body: newBody,
                     createdAt: notification.CreatedAt
-                ),
-            ];
+                )
+            );
         }
 
         return Ok(notificationsDTO);

@@ -96,8 +96,6 @@ public class MemberRoomsController : ControllerBase {
 
     [HttpPost("cancel-booking")]
     public async Task<IActionResult> CancelBooking([FromBody] CancelBookingDTO request) {
-        var builder = WebApplication.CreateBuilder();
-        var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (!long.TryParse(userIdString, out var userId)) {
@@ -114,18 +112,11 @@ public class MemberRoomsController : ControllerBase {
         }
 
         if (booking.Status == BookingStatus.Transfering) {
-            try {
-                await _dbContext.Notifications
-                    .Where(n => n.Body == $"{booking.BookingId},{userId}")
-                    .ExecuteDeleteAsync();
-                await _dbContext.SaveChangesAsync();
+            await _dbContext.Notifications
+                .Where(n => n.Body == $"{booking.BookingId},{userId}")
+                .ExecuteDeleteAsync();
+            await _dbContext.SaveChangesAsync();
 
-            }
-            catch (Exception e) {
-                
-                logger.LogInformation("Example: {Var}", e);
-            }
-            logger.LogInformation("Example: {Var}", $"{booking.BookingId},{userId}");
         }
 
         booking.Status = BookingStatus.Withdrawn;
