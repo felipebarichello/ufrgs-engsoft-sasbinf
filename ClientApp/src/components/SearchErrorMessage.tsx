@@ -2,7 +2,7 @@ import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import * as v from "valibot";
 
-export function Erroralert({
+export function SearchErrorMessage({
   error,
 }: {
   error: FetchBaseQueryError | SerializedError;

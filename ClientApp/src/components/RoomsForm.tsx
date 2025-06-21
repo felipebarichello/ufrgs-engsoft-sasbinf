@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent } from "react";
-import { Erroralert } from "./ErrorAlert";
+import { SearchErrorMessage } from "./SearchErrorMessage";
 import { Epoch, RoomFilters } from "../pages/RoomsPage";
 import { usePostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
 
@@ -160,7 +160,7 @@ function RoomsFormInputs({
 					)}
 				{availableRoomsState.isError &&
 					!anyInputIsEmpty(inputs) &&
-					Erroralert({ error: availableRoomsState.error })}
+					SearchErrorMessage({ error: availableRoomsState.error })}
 			</form>
 		</div>
 	);
