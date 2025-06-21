@@ -88,8 +88,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 							<div style={{ fontWeight: 500 }}>{booking.roomName}</div>
 							<div style={{ fontSize: "0.95em", color: "#666" }}>
 								{new Date(booking.startTime).toLocaleString()} &ndash;{" "}
-								{new Date(booking.endTime).toLocaleString()} &ndash;{" "}
-								{booking.status}
+								{new Date(booking.endTime).toLocaleString()}
 							</div>
 						</div>
 
@@ -116,7 +115,10 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 									booking.status === BookingStatus.Transferring
 										? "#ffc107"
 										: "#ef4444",
-								color: booking.status === BookingStatus.Transferring ? "black" : "#fff",
+								color:
+									booking.status === BookingStatus.Transferring
+										? "black"
+										: "#fff",
 								transition: "background 0.2s",
 							}}
 							onClick={() => handleCancelBooking(booking.bookingId)}
