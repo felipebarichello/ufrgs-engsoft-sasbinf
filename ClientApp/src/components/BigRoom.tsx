@@ -47,18 +47,18 @@ export default function SimpleRoom({
 
   const selectedBorderStyle: CSSProperties = {
     position: "absolute",
+    top: 0, 
     inset: 0,
-    border: "2px solid #b22222",
-    borderRadius: "1px",
+    border: "3px solid #b22222",
+    borderRadius: "2px",
     pointerEvents: "none",
     boxSizing: "border-box",
   };
 
   const tooltipStyle: CSSProperties = {
     position: "absolute",
-    top: "50%",
-    left: "-10px",
-    transform: "translate(-100%, -50%)",
+    top: 0,
+    left: 0,
     // blue
     backgroundColor: "#cc2222",
     color: "#fff",
