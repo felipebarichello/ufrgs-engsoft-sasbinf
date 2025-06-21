@@ -179,6 +179,8 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("WHAT");
         }
 
+        history?.Sort((a, b) => DateTime.Compare(b.startTime, a.startTime));
+
         return Ok(history);
     }
 
