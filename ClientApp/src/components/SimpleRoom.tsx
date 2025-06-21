@@ -1,4 +1,9 @@
-import { ClassAttributes, ImgHTMLAttributes, CSSProperties, useState } from "react";
+import {
+  ClassAttributes,
+  ImgHTMLAttributes,
+  CSSProperties,
+  useState,
+} from "react";
 import { JSX } from "react/jsx-runtime";
 import SimpleRoomSvg from "#svgs/SimpleRoom.svg";
 
@@ -11,7 +16,7 @@ export default function SimpleRoom({
   selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
-    ImgHTMLAttributes<HTMLImageElement> &{
+    ImgHTMLAttributes<HTMLImageElement> & {
       name?: string;
     };
 }) {
@@ -69,24 +74,24 @@ export default function SimpleRoom({
     zIndex: 10,
   };
 
-  
-return (
-  <div style={wrapperStyle} {...props}
-       onMouseEnter={() => setHovered(true)}
-       onMouseLeave={() => setHovered(false)}>
-       
-    {(hovered || selected) && (
-      <div style={{ ...tooltipStyle, visibility: 'visible' }}>
-      Sala {props.name}
-      </div>
-      
-    )}
+  return (
+    <div
+      style={wrapperStyle}
+      {...props}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {(hovered || selected) && (
+        <div style={{ ...tooltipStyle, visibility: "visible" }}>
+          Sala {props.name}
+        </div>
+      )}
 
-    <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={imgStyle} />
+      <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={imgStyle} />
 
-    {available && <div style={overlayStyle} />}
+      {available && <div style={overlayStyle} />}
 
-    {selected && <div style={selectedBorderStyle} />}
-  </div>
-);
+      {selected && <div style={selectedBorderStyle} />}
+    </div>
+  );
 }
