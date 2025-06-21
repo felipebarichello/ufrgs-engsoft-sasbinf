@@ -1,14 +1,12 @@
 import { useState } from "react";
 import {
   useGetBookingQuery,
-  usePostBanMemberMutation,
   usePostCheckinAbsenceMutation,
 } from "../../api/sasbinfAPI";
 
 export function Booking({ bookingId }: { bookingId: number }) {
   const getBooking = useGetBookingQuery(bookingId);
   const [checkinOrAbsence] = usePostCheckinAbsenceMutation();
-  const [banMember] = usePostBanMemberMutation();
 
   const token = sessionStorage.getItem("authToken")!;
   const [showBooking, setShowBooking] = useState(false);
@@ -25,11 +23,6 @@ export function Booking({ bookingId }: { bookingId: number }) {
     checkinOrAbsence({
       bookingId: bookingId,
       status: "MISSED", // TODO: Use constants
-      token: token,
-    });
-    banMember({
-      memberId: getBooking.data!.userId,
-      shouldBan: true,
       token: token,
     });
   };
