@@ -118,9 +118,6 @@ export default function INFLibrary({
       >
         Limpar Seleção
       </button>
-
-      {/*what is this luis???*/}
-      {/*metadata.isError && Erroralert({ error: metadata.error })*/}
     </div>
   );
 }
