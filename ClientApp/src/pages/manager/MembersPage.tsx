@@ -31,7 +31,7 @@ function ManagerMembersPageRestricted() {
 
   useEffect(() => {
     fetchMembers();
-  });
+  }, []);
 
   const handleSearchMembers = (e: React.FormEvent) => {
     e.preventDefault();
