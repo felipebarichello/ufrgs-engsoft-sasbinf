@@ -56,7 +56,7 @@ function TranslateStatus(status: BookingStatus): string {
 			return "Cancelada por Administrador";
 
 		case BookingStatus.Claimed:
-			return "Reclamada";
+			return "Reivindicada";
 
 		case BookingStatus.Missed:
 			return "Abandonada";
