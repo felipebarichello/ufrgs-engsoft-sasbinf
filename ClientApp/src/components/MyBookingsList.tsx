@@ -88,28 +88,35 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 							<div style={{ fontWeight: 500 }}>{booking.roomName}</div>
 							<div style={{ fontSize: "0.95em", color: "#666" }}>
 								{new Date(booking.startTime).toLocaleString()} &ndash;{" "}
-								{new Date(booking.endTime).toLocaleString()}
+								{new Date(booking.endTime).toLocaleString()} &ndash;{" "}
+								{booking.status}
 							</div>
 						</div>
-						<button
-							style={{
-								padding: "0.5em 1em",
-								border: "none",
-								background: "#2563eb",
-								color: "#fff",
-								transition: "background 0.2s",
-							}}
-							onClick={() => handleTransferBooking(booking.bookingId)}
-						>
-							Transferir
-						</button>
+
+						{booking.status === BookingStatus.Booked && (
+							<button
+								style={{
+									padding: "0.5em 1em",
+									border: "none",
+									background: "#2563eb",
+									color: "#fff",
+									transition: "background 0.2s",
+								}}
+								onClick={() => handleTransferBooking(booking.bookingId)}
+							>
+								Transferir
+							</button>
+						)}
 
 						<button
 							style={{
 								padding: "0.5em 1em",
 								border: "none",
-								background: "#ef4444",
-								color: "#fff",
+								background:
+									booking.status === BookingStatus.Transferring
+										? "#ffc107"
+										: "#ef4444",
+								color: booking.status === BookingStatus.Transferring ? "black" : "#fff",
 								transition: "background 0.2s",
 							}}
 							onClick={() => handleCancelBooking(booking.bookingId)}
