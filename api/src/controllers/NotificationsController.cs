@@ -48,6 +48,14 @@ public class NotificationsController : ControllerBase {
                     (_, newBody) = NewBodyUntimedOut();
                     break;
 
+                case NotificationKind.RoomMaintenance:
+                    (result, newBody) = await NewBodyRoomMaintenance(notification);
+                    if (newBody == "") { // Go goes brrrrrr
+                        return result;
+                    }
+
+                    break;
+
                 default: break;
             }
 
@@ -250,6 +258,24 @@ public class NotificationsController : ControllerBase {
     }
     private (IActionResult, string) NewBodyUntimedOut() {
         return (Ok(), "Seu banimento foi removido por um administrador do sistema. Você já pode alugar salas e aceitar transferências novamente");
+    }
+
+    private async Task<(IActionResult, string)> NewBodyRoomMaintenance(Notification notification) {
+        var bookingIdStr = notification.Body;
+        if (!long.TryParse(bookingIdStr, out var bookingId)) {
+            return (UnprocessableEntity("O bookingId informado no campo de notificação não estava no formato correto"), "");
+        }
+
+        var cancelledBooking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        if (cancelledBooking != null) {
+            var room = await _dbContext.Rooms.Where(r => r.RoomId == cancelledBooking.RoomId).FirstOrDefaultAsync();
+            if (room != null) {
+                return (Ok(), $"Sua reserva da sala '{room.Name}' no dia {cancelledBooking.StartDate.ToShortDateString()}, das {cancelledBooking.StartDate.ToShortTimeString()} às {cancelledBooking.EndDate.ToShortTimeString()}, foi cancelada devido à manutenção da sala");
+            }
+        }
+
+        return (NotFound("Could not find a booking with the booking id notified as cancelled"), "");
+
     }
     public record UpdateTransferStatusDTO(string status);
 }
