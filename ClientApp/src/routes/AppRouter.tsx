@@ -25,6 +25,8 @@ function AppRouter() {
 
       <Route path="/doom" element={<DoomPage />} />
 
+      <Route path="/manager" element={<Navigate to="/manager/login" replace />} />
+
       <Route path="/manager/login" element={<LoginManagerPage />} />
 
       <Route path="/manager/main-page" element={<ManagerMainPage />} />
