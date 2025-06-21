@@ -25,10 +25,10 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 
 	function handleTransferBooking(bookingId: number) {
 		const newUserId_str = prompt(
-			"Insira o id do usuário para o qual deseja transferir:"
+			"Insira o ID do usuário para o qual deseja transferir:"
 		);
 		if (newUserId_str === null) {
-			throw new Error("New User Id cannot be null!"); // TODO: treat gracefully
+			throw new Error("ID do usuário não pode ser nulo!"); // TODO: treat gracefully
 		}
 
 		const newUserId = parseInt(newUserId_str);
