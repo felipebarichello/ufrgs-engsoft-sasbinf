@@ -98,7 +98,3 @@ export default function SimpleRoom({
     </div>
   );
 }
-
-//140
-//100
-//borderRight: "3px solid #ccc",
