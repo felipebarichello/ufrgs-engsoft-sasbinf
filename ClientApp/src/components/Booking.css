@@ -1,0 +1,56 @@
+.booking-actions {
+  margin-top: 8px;
+  justify-content: center;
+  display: flex;
+  gap: 8px;
+}
+
+.booking-actions button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Botão de check-in (verde suave) */
+.booking-actions .checkin {
+  background-color: #265f28;
+}
+
+.booking-actions .checkin:hover {
+  background-color: #449d48;
+}
+
+/* Botão de ausência (vermelho suave) */
+.booking-actions .absence {
+  background-color: #8a251d;
+}
+
+.booking-actions .absence:hover {
+  background-color: #e53935;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.booking-actions button {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff; /* Azul padrão do layout */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
