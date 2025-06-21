@@ -20,7 +20,7 @@ export function Erroralert({
         </div>
       );
     }
-    return <div>erro ao procurar sala</div>;
+    return <div>Erro ao procurar sala</div>;
   }
-  return <div>erro ao procurar sala</div>;
+  return <div>Erro ao procurar sala</div>;
 }
