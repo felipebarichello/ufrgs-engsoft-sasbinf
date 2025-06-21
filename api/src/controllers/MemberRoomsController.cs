@@ -143,9 +143,13 @@ public class MemberRoomsController : ControllerBase {
         }
 
         booking.Status = BookingStatus.Transferring;
+        var newUserId = await _dbContext.Members
+            .Where(m => m.Username == request.newUser)
+            .Select(m => m.MemberId)
+            .FirstOrDefaultAsync();
 
         var notification = Notification.Create(
-            memberId: request.newUserId,
+            memberId: newUserId,
             kind: NotificationKind.BookingTransfer,
             body: booking.BookingId.ToString() + "," + userId
         );
