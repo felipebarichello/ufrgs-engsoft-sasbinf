@@ -68,6 +68,6 @@ function TranslateStatus(status: BookingStatus): string {
 			return "Cancelada";
 
 		default:
-			throw new Error("Sanity error: room status is not in enum");
+			return status;
 	}
 }
