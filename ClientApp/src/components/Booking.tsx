@@ -34,6 +34,9 @@ export function Booking({ booking }: { booking: MyBooking }) {
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 		>
+			<h5 style={bookingDetailsStyle}>
+				<strong>Sala:</strong> {booking.roomName}
+			</h5>
 			<p style={bookingDetailsStyle}>
 				<strong>Início:</strong> {new Date(booking.startTime).toLocaleString()}
 			</p>
