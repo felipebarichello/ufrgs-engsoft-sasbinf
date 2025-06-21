@@ -78,6 +78,7 @@ export default function SimpleRoom({
 
   return (
     <div
+      className="room-selector"
       style={wrapperStyle}
       {...props}
       onMouseEnter={() => setHovered(true)}
