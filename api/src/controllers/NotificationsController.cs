@@ -165,7 +165,6 @@ public class NotificationsController : ControllerBase {
                 return Forbid("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
             }
 
-            // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferAccepted,
