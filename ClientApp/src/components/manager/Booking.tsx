@@ -16,7 +16,7 @@ export function Booking({ bookingId }: { bookingId: number }) {
   const handleCheckin = async () => {
     checkinOrAbsence({
       bookingId: bookingId,
-      status: "WITHDRAWN",
+      status: "CLAIMED", // TODO: Use constants
       token: token,
     });
   };
@@ -24,7 +24,7 @@ export function Booking({ bookingId }: { bookingId: number }) {
   const handleAbsence = async () => {
     checkinOrAbsence({
       bookingId: bookingId,
-      status: "MISSED",
+      status: "MISSED", // TODO: Use constants
       token: token,
     });
     banMember({
