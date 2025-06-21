@@ -428,8 +428,9 @@ export const sasbinf = createApi({
         url: `update-transfer/${notificationId}`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
-        body: { status: status }
+        body: { status }
       }),
+      invalidatesTags: ["notifications"]
     }),
 
 

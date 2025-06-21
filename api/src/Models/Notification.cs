@@ -7,6 +7,16 @@ namespace api.src.Models {
         public Member User { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public static Notification Create(long notificationId, long memberId, NotificationKind kind, string body, DateTime createdAt) {
+            return new Notification {
+                NotificationId = notificationId,
+                MemberId = memberId,
+                Kind = kind,
+                Body = body,
+                CreatedAt = createdAt
+            };
+        }
+
         public static Notification Create(long memberId, NotificationKind kind, string body) {
             return new Notification {
                 MemberId = memberId,

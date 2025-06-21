@@ -15,21 +15,52 @@ public class NotificationsController : ControllerBase {
     }
 
     [HttpGet("notifications")]
-    public async Task<IActionResult> GetNotifications() {
+    [Authorize]
+    public IActionResult GetNotifications() {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
         }
 
-        var notifications = await _dbContext.Notifications
+        var notifications = _dbContext.Notifications
             .Where(n => n.MemberId == userId)
-            .ToListAsync();
+            .ToList();
 
-        var builder = WebApplication.CreateBuilder();
-        var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
-        logger.LogInformation("Example: {Var}", notifications.Count);
+        var notificationsDTO = new List<Notification>();
+        foreach (var notification in notifications) {
+            string newBody = notification.Body;
+            if (notification.Kind == NotificationKind.BookingTransfer) {
+                string bookingIdString = notification.Body.Split(",")[0];
+                string originalUserIdString = notification.Body.Split(",")[1];
 
-        return Ok(notifications);
+                if (!long.TryParse(bookingIdString, out var bookingId)) {
+                    return Unauthorized("ID do usuário não está em formato válido");
+                }
+
+                if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+                    return Unauthorized("ID do usuário não está em formato válido");
+                }
+
+                string oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).First();
+                Booking booking = _dbContext.Bookings.Where(b => b.BookingId == bookingId).First();
+
+                newBody = $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?";
+            }
+
+            notificationsDTO =
+            [
+                .. notificationsDTO,
+                Notification.Create(
+                    notificationId: notification.NotificationId,
+                    memberId: notification.MemberId,
+                    kind: notification.Kind,
+                    body: newBody,
+                    createdAt: notification.CreatedAt
+                ),
+            ];
+        }
+
+        return Ok(notificationsDTO);
     }
 
     [HttpDelete("delete-notification/{notificationIdString}")]
@@ -49,7 +80,8 @@ public class NotificationsController : ControllerBase {
 
     // TODO: Use fkn constants or enums
     [HttpPost("update-transfer/{notificationIdString}")]
-    public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] string status) {
+    public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] UpdateTransferStatusDTO statusDTO) {
+        string status = statusDTO.status;
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
@@ -64,27 +96,28 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity($"Cannot process transfer with status {status}");
         }
 
-        if (status == "REJECTED") {
-            // Notify original user of the rejection
-            // Delete notification
-            return Ok(new { message = "Transferência recusada com sucesso!" });
-        }
-
-        // Update notification to point to new userId (the user who just accepted)
-        string? bookingIdString = await _dbContext.Notifications
+        // Body is the bookingId to be transfered, with the original user's id
+        string? notificationBody = await _dbContext.Notifications
             .Where(n => n.NotificationId == notificationId && n.Kind == NotificationKind.BookingTransfer)
             .Select(n => n.Body)
             .FirstOrDefaultAsync();
 
-        if (bookingIdString == null) {
+        if (notificationBody == null) {
             return NotFound($"Could not find transfer with Id {notificationId}");
         }
 
-        if (!long.TryParse(notificationIdString, out var bookingId)) {
+        string bookingIdString = notificationBody.Split(",")[0];
+        string originalUserIdString = notificationBody.Split(",")[1];
+
+        if (!long.TryParse(bookingIdString, out var bookingId)) {
             return UnprocessableEntity("O ID de locação não está no formato correto. Tente novamente");
         }
 
-        // Body is the bookingId of to be transfered
+        if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+            return UnprocessableEntity("O ID do membro original não está no formato correto. Tente novamente");
+        }
+
+        // Update notification to point to new userId (the user who just accepted)
         var booking = await _dbContext.Bookings
             .Where(b => b.BookingId == bookingId)
             .FirstOrDefaultAsync();
@@ -93,10 +126,45 @@ public class NotificationsController : ControllerBase {
             return NotFound($"Could not find booking with Id {bookingId}");
         }
 
-        booking.UserId = userId;
+        booking.Status = "BOOKED";
 
-        await DeleteNotification(notificationId);
-        await _dbContext.SaveChangesAsync();
+        if (status == "REJECTED") {
+            // Notify original user of the rejection
+            var notification = Notification.Create(
+                memberId: originalUserId,
+                kind: NotificationKind.TransferRejected,
+                body: $"Sua transferência da reserva {bookingId} foi rejeitada"
+            );
+
+            await _dbContext.Notifications.AddAsync(notification);
+
+            // Delete notification
+            if ((await DeleteNotification(notificationId)).Item1) {
+                throw new Exception("Delete transaction failed. Returning Internal Server Error");
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return Ok(new { message = "Transferência recusada com sucesso!" });
+        }
+
+        if (status == "ACCEPTED") {
+
+            booking.UserId = userId;
+
+            // Notify original user of the rejection
+            var notification = Notification.Create(
+                memberId: originalUserId,
+                kind: NotificationKind.TransferAccepted,
+                body: $"Sua transferência da reserva {bookingId} foi aceita"
+            );
+
+            await _dbContext.Notifications.AddAsync(notification);
+
+            // Delete notification
+            await DeleteNotification(notificationId);
+
+            await _dbContext.SaveChangesAsync();
+        }
 
         return Ok(new { message = "Transferência aceita com sucesso!" });
     }
@@ -129,4 +197,6 @@ public class NotificationsController : ControllerBase {
 
         return (hasFailed, deletedRows);
     }
+
+    public record UpdateTransferStatusDTO(string status);
 }

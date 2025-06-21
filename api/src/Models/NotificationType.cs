@@ -3,4 +3,6 @@ public enum NotificationKind {
     UntimedOut,
     RoomMaintenance,
     BookingTransfer,
+    TransferAccepted,
+    TransferRejected
 }
