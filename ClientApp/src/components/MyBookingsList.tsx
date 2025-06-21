@@ -35,8 +35,9 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 			(response) => {
 				console.log(response);
 				if (response.data && response.error === undefined) {
-					alert(`Reserva #${bookingId} transferida com sucesso!`);
-					window.location.reload(); // TODO: Refetch bookings instead of reloading
+					alert(
+						`Reserva #${bookingId} transferida com sucesso! O usuário ${newUser} receberá uma notificação para confirmar a transferência`
+					);
 					return;
 				} else {
 					alert(`Falha ao transferir reserva #${bookingId}`);
