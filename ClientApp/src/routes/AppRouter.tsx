@@ -10,33 +10,36 @@ import ManagerRoomsPage from "../pages/manager/RoomsPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
 import ManagerMembersPage from "../pages/manager/MembersPage";
 import NotificationsPage from "../pages/NotificationsPage";
+import HistoryPage from "../pages/HistoryPage";
 function AppRouter() {
-  return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/rooms" replace />} />
+	return (
+		<Routes>
+			<Route path="/" element={<Navigate to="/rooms" replace />} />
 
-      <Route path="/login" element={<LoginPage />} />
+			<Route path="/login" element={<LoginPage />} />
 
-      <Route path="/rooms" element={<RoomsPage />} />
+			<Route path="/rooms" element={<RoomsPage />} />
 
-      <Route path="/my-bookings" element={<MyBookingsPage />} />
+			<Route path="/my-bookings" element={<MyBookingsPage />} />
 
-      <Route path="/notifications" element={<NotificationsPage />} />
+			<Route path="/notifications" element={<NotificationsPage />} />
 
-      <Route path="/doom" element={<DoomPage />} />
+			<Route path="/history" element={<HistoryPage />} />
 
-      <Route path="/manager/login" element={<LoginManagerPage />} />
+			<Route path="/doom" element={<DoomPage />} />
 
-      <Route path="/manager/main-page" element={<ManagerMainPage />} />
+			<Route path="/manager/login" element={<LoginManagerPage />} />
 
-      <Route path="/manager/rooms-page" element={<ManagerRoomsPage />} />
+			<Route path="/manager/main-page" element={<ManagerMainPage />} />
 
-      <Route path="/manager/members-page" element={<ManagerMembersPage />} />
+			<Route path="/manager/rooms-page" element={<ManagerRoomsPage />} />
 
-      {/* Catch-all for 404 */}
-      <Route path="*" element={<Error404Page />} />
-    </Routes>
-  );
+			<Route path="/manager/members-page" element={<ManagerMembersPage />} />
+
+			{/* Catch-all for 404 */}
+			<Route path="*" element={<Error404Page />} />
+		</Routes>
+	);
 }
 
 export default AppRouter;
