@@ -1,5 +1,6 @@
 import {
 	usePostCancelBookingMutation,
+	usePostCancelTransferMutation,
 	usePostTransferBookingMutation,
 } from "../api/sasbinfAPI";
 import { BookingStatus, MyBooking } from "../schemas/myBookings";
@@ -22,6 +23,7 @@ const bookingCardStyle: React.CSSProperties = {
 export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 	const [cancelBooking] = usePostCancelBookingMutation();
 	const [transferBooking] = usePostTransferBookingMutation();
+	const [cancelTransfer] = usePostCancelTransferMutation();
 
 	function handleTransferBooking(bookingId: number) {
 		const newUser = prompt(
@@ -41,7 +43,6 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 					return;
 				} else {
 					alert(`Falha ao transferir reserva #${bookingId}`);
-					window.location.reload(); // TODO: Refetch bookings instead of reloading
 					return;
 				}
 			}
@@ -52,10 +53,25 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 		cancelBooking({ bookingId }).then((response) => {
 			if (response.data && response.data.success === true) {
 				alert(`Reserva #${bookingId} cancelada com sucesso!`);
-				window.location.reload(); // TODO: Refetch bookings instead of reloading
 				return;
 			} else {
 				alert(`Falha ao cancelar reserva #${bookingId}`);
+				return;
+			}
+		});
+	}
+
+	function handleTransferCancelling(bookingId: number) {
+		cancelTransfer({ bookingId }).then((response) => {
+			if (response.data && response.error === undefined) {
+				alert(
+					`A transferência relativa à reserva #${bookingId} foi cancelada com sucesso`
+				);
+				return;
+			} else {
+				alert(
+					`Falha ao cancelar transferência relativa à reserva #${bookingId}`
+				);
 				return;
 			}
 		});
@@ -121,7 +137,13 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 										: "#fff",
 								transition: "background 0.2s",
 							}}
-							onClick={() => handleCancelBooking(booking.bookingId)}
+							onClick={() => {
+								if (booking.status === BookingStatus.Transferring) {
+									handleTransferCancelling(booking.bookingId);
+								} else {
+									handleCancelBooking(booking.bookingId);
+								}
+							}}
 						>
 							{booking.status === BookingStatus.Transferring
 								? "Cancelar Transferência"

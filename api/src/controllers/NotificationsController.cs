@@ -182,6 +182,34 @@ public class NotificationsController : ControllerBase {
         return Ok(new { message = "Transferência aceita com sucesso!" });
     }
 
+    [HttpPost("cancel-transfer/{bookingId}")]
+    public async Task<IActionResult> CancelTransfer([FromRoute] long bookingId) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("ID do usuário não está em formato válido");
+        }
+
+        var notificationId = await _dbContext.Notifications
+            .Where(n => n.Body == $"{bookingId},{userId}")
+            .Select(n => n.NotificationId)
+            .FirstOrDefaultAsync();
+
+        var booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        if (booking == null) {
+            return UnprocessableEntity("Não foi possível encontrar uma reserva com este id. Tente novamente após atualizar a página");
+        }
+
+        booking.Status = BookingStatus.Booked;
+        await _dbContext.SaveChangesAsync();
+
+        var (hasFailed, deleted) = await DeleteNotification(notificationId);
+        if (hasFailed || deleted != 1) {
+            return UnprocessableEntity("Falha ao cancelar transferência");
+        }
+
+        return Ok(new { message = "Transferência cancelada com sucesso" });
+    }
+
     private async Task<(bool, int)> DeleteNotification(long notificationId) {
         var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
         bool hasFailed = false;

@@ -396,6 +396,21 @@ export const sasbinf = createApi({
       invalidatesTags: ["bookings"]
     }),
 
+    postCancelTransfer: build.mutation({
+      query: ({
+        bookingId,
+      }: {
+        bookingId: number;
+      }) => ({
+        url: `cancel-transfer/${bookingId}`,
+        method: "POST",
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (d) => ({ data: d }),
+      transformErrorResponse: (e) => ({ error: e }),
+      invalidatesTags: ["bookings"]
+    }),
+
     getNotifications: build.query<Notifications, void>({
       query: () => ({
         url: 'notifications',
@@ -466,5 +481,6 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
-  useUpdateTransferStatusMutation
+  useUpdateTransferStatusMutation,
+  usePostCancelTransferMutation
 } = sasbinf;
