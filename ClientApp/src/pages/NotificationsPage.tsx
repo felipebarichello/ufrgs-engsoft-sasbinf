@@ -80,6 +80,12 @@ export default function NotificationsPage() {
 		);
 	}
 
+	if (notifications.length === 0) {
+		return wrapper(
+			<p>Você não possui notificações</p>
+		);
+	}
+
 	return wrapper(
 		<div
 			className="member-bookings-list"
