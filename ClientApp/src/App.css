@@ -82,3 +82,7 @@
 .room-selector:hover {
   cursor: pointer;
 }
+
+.rooms-dropdown:hover {
+  cursor: pointer;
+}

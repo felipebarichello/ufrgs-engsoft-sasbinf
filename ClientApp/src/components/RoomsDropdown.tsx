@@ -10,6 +10,7 @@ export default function RoomsDropdown({
   return (
     <div>
       <select
+        className="rooms-dropdown"
         value={selected?.id ?? -1}
         onChange={(e) => {
           const roomId = parseInt(e.target.value);
