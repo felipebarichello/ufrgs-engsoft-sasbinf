@@ -30,27 +30,28 @@ export default function Header() {
 		navigate("/login");
 	};
 
-  return (
-    <header style={headerStyle}>
-      <a href="/" style={{ display: "flex", alignItems: "center" }}>
-        <img className="main-logo" src={logoImg} alt="SASBINF" style={logoStyle} />
-      </a>
-      <nav className="header-nav">
-        <a href="/rooms">
-          Salas
-        </a>
-        <div className="header-nav-divider"></div>
-        <a href="/my-bookings">
-          Minhas Reservas
-        </a>
-        <div className="header-nav-divider"></div>
-        <a href="/notifications">
-          Notificações
-        </a>
-      </nav>
-      <button style={buttonStyle} onClick={logout}>
-        Logout
-      </button>
-    </header>
-  );
+	return (
+		<header style={headerStyle}>
+			<a href="/" style={{ display: "flex", alignItems: "center" }}>
+				<img
+					className="main-logo"
+					src={logoImg}
+					alt="SASBINF"
+					style={logoStyle}
+				/>
+			</a>
+			<nav className="header-nav">
+				<a href="/rooms">Salas</a>
+				<div className="header-nav-divider"></div>
+				<a href="/my-bookings">Minhas Reservas</a>
+				<div className="header-nav-divider"></div>
+				<a href="/notifications">Notificações</a>
+				<div className="header-nav-divider"></div>
+				<a href="/history">Histórico</a>
+			</nav>
+			<button style={buttonStyle} onClick={logout}>
+				Logout
+			</button>
+		</header>
+	);
 }

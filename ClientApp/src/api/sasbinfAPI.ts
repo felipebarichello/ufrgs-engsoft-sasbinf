@@ -24,7 +24,7 @@ import { NotficationsSchema, Notifications } from "../schemas/notifications";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["bookings", "member", "room", "notifications"],
+  tagTypes: ["bookings", "member", "room", "notifications", "history"],
   endpoints: (build) => ({
     getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
@@ -225,17 +225,13 @@ export const sasbinf = createApi({
       query: ({
         bookingId,
         status,
-        token,
       }: {
         bookingId: number;
         status: string;
-        token: string;
       }) => ({
         url: `manager/bookings/change-status/${bookingId}/${status}`,
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
-        },
+        headers: new HeaderBuilder().withAuthToken().build(),
       }),
       invalidatesTags: ["bookings"],
     }),
@@ -435,7 +431,21 @@ export const sasbinf = createApi({
       invalidatesTags: ["notifications"]
     }),
 
-
+    getHistory: build.query<MyBooking[], void>({
+      query: () => ({
+        url: 'rooms/history',
+        method: "GET",
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MyBookingsResponseSchema, response);
+        } catch (e) {
+          throw new Error("Falha ao obter as reservas do usuário. Erro: " + e);
+        }
+      },
+      providesTags: ["history"],
+    }),
   }),
 });
 
@@ -466,5 +476,6 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
-  useUpdateTransferStatusMutation
+  useUpdateTransferStatusMutation,
+  useGetHistoryQuery
 } = sasbinf;
