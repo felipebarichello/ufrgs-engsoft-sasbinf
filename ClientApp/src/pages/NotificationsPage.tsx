@@ -21,14 +21,7 @@ const wrapper = (content: React.ReactNode) => (
 	<MemberWrapper>
 		<div className="d-flex flex-column justify-content-center pt-5">
 			<h1 className="page-title">Notificações</h1>
-			<div
-				className="member-bookings-list"
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					gap: "1rem",
-				}}
-			>
+			<div>
 				{content}
 			</div>
 		</div>
@@ -87,7 +80,14 @@ export default function NotificationsPage() {
 	}
 
 	return wrapper(
-		<>
+		<div
+			className="member-bookings-list"
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "1rem",
+			}}
+		>
 			{notifications.map((notification, index) => (
 				<div
 					className="d-flex justify-content-between align-items-center"
@@ -132,6 +132,6 @@ export default function NotificationsPage() {
 					</div>
 				</div>
 			))}
-		</>
+		</div>
 	);
 }
