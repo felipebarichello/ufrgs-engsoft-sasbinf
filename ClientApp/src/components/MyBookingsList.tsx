@@ -24,16 +24,14 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 	const [transferBooking] = usePostTransferBookingMutation();
 
 	function handleTransferBooking(bookingId: number) {
-		const newUserId_str = prompt(
-			"Insira o ID do usuário para o qual deseja transferir:"
+		const newUser = prompt(
+			"Insira o nome do usuário para o qual deseja transferir:"
 		);
-		if (newUserId_str === null) {
-			throw new Error("ID do usuário não pode ser nulo!"); // TODO: treat gracefully
+		if (newUser === null) {
+			throw new Error("Nome do usuário não pode ser nulo!"); // TODO: treat gracefully
 		}
 
-		const newUserId = parseInt(newUserId_str);
-
-		transferBooking({ bookingId: bookingId, newUserId: newUserId }).then(
+		transferBooking({ bookingId: bookingId, newUser: newUser }).then(
 			(response) => {
 				console.log(response);
 				if (response.data && response.error === undefined) {

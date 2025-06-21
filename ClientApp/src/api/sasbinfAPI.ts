@@ -380,15 +380,15 @@ export const sasbinf = createApi({
     postTransferBooking: build.mutation({
       query: ({
         bookingId,
-        newUserId,
+        newUser,
       }: {
         bookingId: number;
-        newUserId: number;
+        newUser: string;
       }) => ({
         url: "rooms/transfer-booking",
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
-        body: { bookingId, newUserId },
+        body: { bookingId, newUser },
       }),
       transformResponse: (d) => ({ data: d }),
       transformErrorResponse: (e) => ({ error: e }),
