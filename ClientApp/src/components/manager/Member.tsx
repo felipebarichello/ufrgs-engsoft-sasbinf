@@ -36,6 +36,8 @@ export function Member({ memberId }: { memberId: number }) {
     return <></>;
   }
 
+  const isTimedOut = getMember.data!.timedOutUntil ? true : false;
+
   return (
     <li
       key={memberId}
@@ -48,7 +50,7 @@ export function Member({ memberId }: { memberId: number }) {
           <p>
             Estado:{" "}
             <strong>
-              {getMember.data!.timedOutUntil
+              {isTimedOut
                 ? `banido até ${getMember.data!.timedOutUntil}`
                 : "Regular"}
             </strong>
@@ -58,7 +60,11 @@ export function Member({ memberId }: { memberId: number }) {
           </p>
           <div className="room-buttons">
             <button onClick={() => handleBan(true)}>Banir por 1 mês</button>
-            <button onClick={() => handleBan(false)}>Remover Banimento</button>
+            {isTimedOut && (
+              <button onClick={() => handleBan(false)}>
+                Remover Banimento
+              </button>
+            )}
             <button onClick={() => setShowHistory((prev) => !prev)}>
               {showHistory ? "Ocultar Histórico" : "Ver Histórico"}
             </button>
