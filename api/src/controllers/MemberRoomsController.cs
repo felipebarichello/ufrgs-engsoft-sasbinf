@@ -78,7 +78,7 @@ public class MemberRoomsController : ControllerBase {
 
         var bookings = await _dbContext.Bookings
             .Where(b => b.UserId == userId)
-            .Where(b => b.Status == BookingStatus.Booked)
+            .Where(b => b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transfering)
             .Include(b => b.Room)
             .OrderByDescending(b => b.StartDate)
             .ToListAsync();
@@ -88,6 +88,7 @@ public class MemberRoomsController : ControllerBase {
             roomName = b.Room?.Name ?? "",
             startTime = b.StartDate.ToString("o"),
             endTime = b.EndDate.ToString("o"),
+            status = b.Status
         }).ToList();
 
         return Ok(bookingDtos);
@@ -95,6 +96,8 @@ public class MemberRoomsController : ControllerBase {
 
     [HttpPost("cancel-booking")]
     public async Task<IActionResult> CancelBooking([FromBody] CancelBookingDTO request) {
+        var builder = WebApplication.CreateBuilder();
+        var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>(); // Get logger
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (!long.TryParse(userIdString, out var userId)) {
@@ -102,12 +105,27 @@ public class MemberRoomsController : ControllerBase {
         }
 
         var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.Status == BookingStatus.Booked)
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transfering))
             .OrderByDescending(b => b.StartDate)
             .FirstOrDefaultAsync();
 
         if (booking == null) {
             return UnprocessableEntity("Você não pode cancelar essa reserva ou ela não existe");
+        }
+
+        if (booking.Status == BookingStatus.Transfering) {
+            try {
+                await _dbContext.Notifications
+                    .Where(n => n.Body == $"{booking.BookingId},{userId}")
+                    .ExecuteDeleteAsync();
+                await _dbContext.SaveChangesAsync();
+
+            }
+            catch (Exception e) {
+                
+                logger.LogInformation("Example: {Var}", e);
+            }
+            logger.LogInformation("Example: {Var}", $"{booking.BookingId},{userId}");
         }
 
         booking.Status = BookingStatus.Withdrawn;
