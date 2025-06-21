@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using api.src.Models;
-using DotNext.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,8 @@ public class NotificationsController : ControllerBase {
     }
 
     [HttpGet("notifications")]
-    public async Task<IActionResult> GetNotifications() {
+    [Authorize]
+    public IActionResult GetNotifications() {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
