@@ -73,7 +73,7 @@ public class ManagerController : ControllerBase {
                     room.IsActive = isActive;
                     if (!isActive) {
                         var bookingsToNotify = await _dbContext.Bookings
-                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.Status == BookingStatus.Booked)
+                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.IsBooked())
                             .ToListAsync();
 
                         if (bookingsToNotify.Any()) {

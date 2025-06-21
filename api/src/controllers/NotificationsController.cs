@@ -131,9 +131,9 @@ public class NotificationsController : ControllerBase {
             return NotFound($"Could not find booking with Id {bookingId}");
         }
 
-        booking.Status = "BOOKED";
+        booking.Status = BookingStatus.Booked;
 
-        if (status == "REJECTED") {
+        if (status == "REJECTED") { // TODO: Use a constant for this
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,

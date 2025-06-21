@@ -8,5 +8,9 @@ namespace api.src.Models {
         public string Status { get; set; } = default!;
         public Member User { get; set; } = null!;
         public Room Room { get; set; } = null!;
+
+        public bool IsBooked() {
+            return Status == BookingStatus.Booked || Status == BookingStatus.Transferring;
+        }
     }
 }
