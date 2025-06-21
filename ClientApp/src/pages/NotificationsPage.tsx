@@ -73,10 +73,11 @@ export default function NotificationsPage() {
 		}
 	}
 
-	// TODO: Is this needed?
+	// FIXME: Bad way to check for loading state, but the old code was worse
 	if (notifications === undefined) {
-		console.log("ERRO GROTESCO");
-		return <>Falha ao carregar notificações</>;
+		return wrapper(
+			<p>Carregando...</p>
+		);
 	}
 
 	return wrapper(
