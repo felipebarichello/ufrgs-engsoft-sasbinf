@@ -156,6 +156,10 @@ public class NotificationsController : ControllerBase {
 
             booking.UserId = userId;
 
+            if (await IsUserPunished(userId)) {
+                return Forbid("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
+            }
+
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
@@ -202,6 +206,16 @@ public class NotificationsController : ControllerBase {
 
         return (hasFailed, deletedRows);
     }
+    internal async Task<bool> IsUserPunished(long userId) {
+        var member = await _dbContext.Members
+            .Where(m => m.MemberId == userId)
+            .FirstOrDefaultAsync() ?? throw new Exception("Could not check for user's punishments because userId was not found");
 
+        if (member.IsTimedOut()) {
+            return true;
+        }
+
+        return false;
+    }
     public record UpdateTransferStatusDTO(string status);
 }
