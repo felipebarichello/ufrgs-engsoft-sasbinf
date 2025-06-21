@@ -24,9 +24,9 @@ import { NotficationsSchema, Notifications } from "../schemas/notifications";
 export const sasbinf = createApi({
   reducerPath: "sasbinfAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["bookings", "member", "room", "notifications"],
+  tagTypes: ["bookings", "member", "room", "notifications", "history"],
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string }, void>({
+    getHealth: build.query<{ message: string; }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -48,7 +48,7 @@ export const sasbinf = createApi({
     }),
 
     postAvailableRoomsSearch: build.query<
-      { name: string; id: number }[],
+      { name: string; id: number; }[],
       RoomFilters
     >({
       query: (filters: RoomFilters) => ({
@@ -124,7 +124,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -367,7 +367,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number }) => ({
+      query: ({ bookingId }: { bookingId: number; }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -433,7 +433,21 @@ export const sasbinf = createApi({
       invalidatesTags: ["notifications"]
     }),
 
-
+    getHistory: build.query<MyBooking[], void>({
+      query: () => ({
+        url: 'rooms/history',
+        method: "GET",
+        headers: new HeaderBuilder().withAuthToken().build(),
+      }),
+      transformResponse: (response) => {
+        try {
+          return v.parse(MyBookingsResponseSchema, response);
+        } catch (e) {
+          throw new Error("Falha ao obter as reservas do usuário. Erro: " + e);
+        }
+      },
+      providesTags: ["history"],
+    }),
   }),
 });
 
@@ -464,5 +478,6 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
-  useUpdateTransferStatusMutation
+  useUpdateTransferStatusMutation,
+  useGetHistoryQuery
 } = sasbinf;

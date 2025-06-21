@@ -156,6 +156,32 @@ public class MemberRoomsController : ControllerBase {
         return Ok(new { message = "Reserva transferida com sucesso; pendente aceitação do outro membro" });
     }
 
+    [HttpGet("history")]
+    public async Task<IActionResult> GetHistory() {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
+        }
+
+        var history = await _dbContext.Bookings
+            .Where(b => b.UserId == userId)
+            .Select(b => new {
+                bookingId = b.BookingId,
+                roomName = b.Room.Name,
+                startTime = b.StartDate,
+                endTime = b.EndDate,
+                status = b.Status,
+            })
+            .ToListAsync();
+
+        if (history.Count < 1) {
+            return UnprocessableEntity("WHAT");
+        }
+
+        return Ok(history);
+    }
+
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
         // Validate the search parameters
         if (search == null || search.capacity < 1) {
