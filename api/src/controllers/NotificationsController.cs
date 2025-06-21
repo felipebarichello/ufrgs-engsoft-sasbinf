@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ public class NotificationsController : ControllerBase {
 
     [HttpGet("notifications")]
     [Authorize]
-    public IActionResult GetNotifications() {
+    public async Task<IActionResult> GetNotifications() {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
             return Unauthorized("ID do usuário não está em formato válido");
@@ -29,29 +30,25 @@ public class NotificationsController : ControllerBase {
         var notificationsDTO = new List<Notification>();
         foreach (var notification in notifications) {
             string newBody = notification.Body;
-            if (notification.Kind == NotificationKind.BookingTransfer) {
-                string bookingIdString = notification.Body.Split(",")[0];
-                string originalUserIdString = notification.Body.Split(",")[1];
+            IActionResult result = Ok();
+            switch (notification.Kind) {
+                case NotificationKind.BookingTransfer:
+                    (result, newBody) = await NewBodyTransfers(notification);
+                    if (newBody == "") { // Go goes brrrrrr
+                        return result;
+                    }
 
-                if (!long.TryParse(bookingIdString, out var bookingId)) {
-                    return Unauthorized("ID do usuário não está em formato válido");
-                }
+                    break;
 
-                if (!long.TryParse(originalUserIdString, out var originalUserId)) {
-                    return Unauthorized("ID do usuário não está em formato válido");
-                }
+                case NotificationKind.TimedOut:
+                    (_, newBody) = NewBodyTimedOut(notification);
+                    break;
 
-                string? oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefault();
-                if (oldUserName == null) {
-                    return NotFound($"Usuário com ID {originalUserId} não encontrado.");
-                }
+                case NotificationKind.UntimedOut:
+                    (_, newBody) = NewBodyUntimedOut();
+                    break;
 
-                Booking? booking = _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefault();
-                if (booking == null) {
-                    return NotFound($"Reserva com ID {bookingId} não encontrada.");
-                }
-
-                newBody = $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?";
+                default: break;
             }
 
             notificationsDTO.Add(
@@ -216,6 +213,43 @@ public class NotificationsController : ControllerBase {
         }
 
         return false;
+    }
+
+    internal async Task<(IActionResult, string)> NewBodyTransfers(Notification notification) {
+        string bookingIdString = notification.Body.Split(",")[0];
+        string originalUserIdString = notification.Body.Split(",")[1];
+
+        if (!long.TryParse(bookingIdString, out var bookingId)) {
+            return (Unauthorized("ID do usuário não está em formato válido"), "");
+        }
+
+        if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+            return (Unauthorized("ID do usuário não está em formato válido"), "");
+        }
+
+        string? oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefault();
+        if (oldUserName == null) {
+            return (NotFound($"Usuário com ID {originalUserId} não encontrado."), "");
+        }
+
+        Booking? booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        if (booking == null) {
+            return (NotFound($"Reserva com ID {bookingId} não encontrada."), "");
+        }
+
+        return (Ok(), $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?");
+    }
+
+    internal (IActionResult, string) NewBodyTimedOut(Notification notification) {
+        // The notification body is a timestamp (or timestring?) of the timeout expiry
+
+        // This is a bit less evil. Just be aware of this locale, which may not match your local db's
+        DateTime timeoutExpiry = DateTime.Parse(notification.Body, new CultureInfo("en-US"));
+
+        return (Ok(), $"Você foi banido por um administrador. Seu banimento expira em {timeoutExpiry.ToShortDateString()}, às {timeoutExpiry.ToLongTimeString()}");
+    }
+    private (IActionResult, string) NewBodyUntimedOut() {
+        return (Ok(), "Seu banimento foi removido por um administrador do sistema. Você já pode alugar salas e aceitar transferências novamente");
     }
     public record UpdateTransferStatusDTO(string status);
 }
