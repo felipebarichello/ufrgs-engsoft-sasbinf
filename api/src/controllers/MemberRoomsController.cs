@@ -78,7 +78,7 @@ public class MemberRoomsController : ControllerBase {
 
         var bookings = await _dbContext.Bookings
             .Where(b => b.UserId == userId)
-            .Where(b => b.IsBooked())
+            .Where(b => b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring)
             .Include(b => b.Room)
             .OrderByDescending(b => b.StartDate)
             .ToListAsync();
@@ -103,7 +103,7 @@ public class MemberRoomsController : ControllerBase {
         }
 
         var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.IsBooked())
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring))
             .OrderByDescending(b => b.StartDate)
             .FirstOrDefaultAsync();
 
@@ -205,7 +205,7 @@ public class MemberRoomsController : ControllerBase {
             .Where(b => (
                 b.StartDate <= endDateTime
                 && b.EndDate >= startDateTime
-                && b.IsBooked()
+                && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring)
             ));
 
         // Extract the IDs of rooms that are already booked

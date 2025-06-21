@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +72,7 @@ public class ManagerController : ControllerBase {
                     room.IsActive = isActive;
                     if (!isActive) {
                         var bookingsToNotify = await _dbContext.Bookings
-                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && b.IsBooked())
+                            .Where(b => b.StartDate >= DateTime.UtcNow && b.RoomId == roomId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring))
                             .ToListAsync();
 
                         if (bookingsToNotify.Any()) {
