@@ -26,16 +26,14 @@ function ManagerMembersPageRestricted() {
 
   const fetchMembers = () => {
     searchMembers({ memberName: null, token });
-    console.log("busque agora");
   };
 
   useEffect(() => {
     fetchMembers();
   }, []);
 
-  const handleSearchMembers = (e: React.FormEvent) => {
+  const handleSearchMembers = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!memberName) return;
     searchMembers({
       memberName: memberName,
       token,

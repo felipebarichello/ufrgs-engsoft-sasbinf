@@ -26,7 +26,7 @@ export const sasbinf = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   tagTypes: ["bookings", "member", "room", "notifications"],
   endpoints: (build) => ({
-    getHealth: build.query<{ message: string; }, void>({
+    getHealth: build.query<{ message: string }, void>({
       // Espera um objeto com a chave message
       query: () => "health",
     }),
@@ -48,7 +48,7 @@ export const sasbinf = createApi({
     }),
 
     postAvailableRoomsSearch: build.query<
-      { name: string; id: number; }[],
+      { name: string; id: number }[],
       RoomFilters
     >({
       query: (filters: RoomFilters) => ({
@@ -124,7 +124,7 @@ export const sasbinf = createApi({
     }),
 
     deleteRoom: build.mutation({
-      query: ({ roomId, token }: { roomId: number; token: string; }) => ({
+      query: ({ roomId, token }: { roomId: number; token: string }) => ({
         url: `manager/delete-room/${roomId}`,
         method: "DELETE",
         headers: {
@@ -279,7 +279,7 @@ export const sasbinf = createApi({
         memberName,
         token,
       }: {
-        memberName: string | null;
+        memberName: string | null | undefined;
         token: string;
       }) => ({
         url: "manager/members",
@@ -343,7 +343,7 @@ export const sasbinf = createApi({
         capacity,
         token,
       }: {
-        roomName: string | null;
+        roomName: string | null | undefined;
         capacity: number | null;
         token: string;
       }) => ({
@@ -367,7 +367,7 @@ export const sasbinf = createApi({
     }),
 
     postCancelBooking: build.mutation({
-      query: ({ bookingId }: { bookingId: number; }) => ({
+      query: ({ bookingId }: { bookingId: number }) => ({
         url: `rooms/cancel-booking`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
@@ -396,8 +396,8 @@ export const sasbinf = createApi({
 
     getNotifications: build.query<Notifications, void>({
       query: () => ({
-        url: 'notifications',
-        method: 'GET',
+        url: "notifications",
+        method: "GET",
         headers: new HeaderBuilder().withAuthToken().build(),
       }),
       transformResponse: (e) => {
@@ -405,16 +405,18 @@ export const sasbinf = createApi({
           return v.parse(NotficationsSchema, e);
         } catch (e) {
           console.log(e);
-          throw new Error('Algo falhou ao buscar suas notificações. Tente novamente mais tarde');
+          throw new Error(
+            "Algo falhou ao buscar suas notificações. Tente novamente mais tarde"
+          );
         }
       },
-      providesTags: ["notifications"]
+      providesTags: ["notifications"],
     }),
 
-    deleteNotification: build.mutation<{ message: string; }, number>({
+    deleteNotification: build.mutation<{ message: string }, number>({
       query: (id: number) => ({
         url: `delete-notification/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
         headers: new HeaderBuilder().withAuthToken().build(),
       }),
       transformResponse: (e) => {
@@ -424,15 +426,19 @@ export const sasbinf = createApi({
     }),
 
     updateTransferStatus: build.mutation({
-      query: ({ notificationId, status }: { notificationId: number, status: "ACCEPTED" | "REJECTED"; }) => ({
+      query: ({
+        notificationId,
+        status,
+      }: {
+        notificationId: number;
+        status: "ACCEPTED" | "REJECTED";
+      }) => ({
         url: `update-transfer/${notificationId}`,
         method: "POST",
         headers: new HeaderBuilder().withAuthToken().build(),
-        body: { status: status }
+        body: { status: status },
       }),
     }),
-
-
   }),
 });
 
@@ -462,5 +468,5 @@ export const {
   usePostTransferBookingMutation,
   useGetNotificationsQuery,
   useDeleteNotificationMutation,
-  useUpdateTransferStatusMutation
+  useUpdateTransferStatusMutation,
 } = sasbinf;

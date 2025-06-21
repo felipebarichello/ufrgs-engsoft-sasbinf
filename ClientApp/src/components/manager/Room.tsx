@@ -31,7 +31,7 @@ export function Room({ roomId }: { roomId: number }) {
   }
 
   if (getMember.isError) {
-    return <>Erro ao carregar sala</>;
+    return <></>;
   }
 
   if (getMember.data === undefined) {
