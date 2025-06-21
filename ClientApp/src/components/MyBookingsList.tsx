@@ -115,7 +115,7 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 							}}
 							onClick={() => handleCancelBooking(booking.bookingId)}
 						>
-							{booking.status === BookingStatus.Transfering
+							{booking.status === BookingStatus.Transferring
 								? "Cancelar Transferência"
 								: "Cancelar"}
 						</button>

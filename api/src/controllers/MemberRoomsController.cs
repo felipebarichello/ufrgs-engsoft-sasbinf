@@ -78,7 +78,7 @@ public class MemberRoomsController : ControllerBase {
 
         var bookings = await _dbContext.Bookings
             .Where(b => b.UserId == userId)
-            .Where(b => b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transfering)
+            .Where(b => b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring)
             .Include(b => b.Room)
             .OrderByDescending(b => b.StartDate)
             .ToListAsync();
@@ -103,7 +103,7 @@ public class MemberRoomsController : ControllerBase {
         }
 
         var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transfering))
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring))
             .OrderByDescending(b => b.StartDate)
             .FirstOrDefaultAsync();
 
@@ -111,7 +111,7 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Você não pode cancelar essa reserva ou ela não existe");
         }
 
-        if (booking.Status == BookingStatus.Transfering) {
+        if (booking.Status == BookingStatus.Transferring) {
             await _dbContext.Notifications
                 .Where(n => n.Body == $"{booking.BookingId},{userId}")
                 .ExecuteDeleteAsync();
@@ -142,7 +142,7 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Você não pode transferir essa reserva ou ela não existe");
         }
 
-        booking.Status = "TRANSFERING";
+        booking.Status = BookingStatus.Transferring;
 
         var notification = Notification.Create(
             memberId: request.newUserId,

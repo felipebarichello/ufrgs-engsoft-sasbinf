@@ -6,7 +6,7 @@ export enum BookingStatus {
   Missed = "MISSED",
   Cancelled = "CANCELLED",
   Withdrawn = "WITHDRAWN",
-  Transfering = "TRANSFERING",
+  Transferring = "TRANSFERRING",
 }
 
 export const MyBookingSchema = v.object({
