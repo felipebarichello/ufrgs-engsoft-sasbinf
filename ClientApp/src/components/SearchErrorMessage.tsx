@@ -25,7 +25,9 @@ export function SearchErrorMessage({
     if (errorMsg.success) {
       return showMsg(errorMsg.output.message);
     }
+
+    return showMsg("Erro ao buscar dados.");
   }
 
-  return showMsg("Erro ao procurar sala");
+  return showMsg("Não foi possível conectar ao servidor.");
 }
