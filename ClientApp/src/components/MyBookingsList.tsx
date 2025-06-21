@@ -2,7 +2,7 @@ import {
 	usePostCancelBookingMutation,
 	usePostTransferBookingMutation,
 } from "../api/sasbinfAPI";
-import { MyBooking } from "../schemas/myBookings";
+import { BookingStatus, MyBooking } from "../schemas/myBookings";
 
 interface MyBookingsListProps {
 	bookingsList: MyBooking[];
@@ -115,7 +115,9 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 							}}
 							onClick={() => handleCancelBooking(booking.bookingId)}
 						>
-							Cancelar
+							{booking.status === BookingStatus.Transfering
+								? "Cancelar Transferência"
+								: "Cancelar"}
 						</button>
 					</div>
 				))
