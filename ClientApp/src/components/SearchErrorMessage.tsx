@@ -2,6 +2,14 @@ import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import * as v from "valibot";
 
+function showMsg(msg: string) {
+  return (
+    <div style={{ color: "red", padding: "8px", margin: "8px 0" }}>
+      {msg}
+    </div>
+  );
+}
+
 export function SearchErrorMessage({
   error,
 }: {
@@ -13,14 +21,11 @@ export function SearchErrorMessage({
 
   if ("data" in error) {
     const errorMsg = v.safeParse(errorSchema, error.data);
+    
     if (errorMsg.success) {
-      return (
-        <div style={{ color: "red", padding: "8px", margin: "8px 0" }}>
-          {errorMsg.output.message}
-        </div>
-      );
+      return showMsg(errorMsg.output.message);
     }
-    return <div>Erro ao procurar sala</div>;
   }
-  return <div>Erro ao procurar sala</div>;
+
+  return showMsg("Erro ao procurar sala");
 }
