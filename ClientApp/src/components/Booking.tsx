@@ -64,7 +64,6 @@ export function Booking({ booking }: { booking: MyBooking }) {
 		checkinOrAbsence({
 			bookingId: booking.bookingId,
 			status: status,
-			token: token,
 		});
 	};
 

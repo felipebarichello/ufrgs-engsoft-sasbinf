@@ -225,17 +225,13 @@ export const sasbinf = createApi({
       query: ({
         bookingId,
         status,
-        token,
       }: {
         bookingId: number;
         status: string;
-        token: string;
       }) => ({
         url: `manager/bookings/change-status/${bookingId}/${status}`,
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // TODO: Use HeaderBuilder
-        },
+        headers: new HeaderBuilder().withAuthToken().build(),
       }),
       invalidatesTags: ["bookings"],
     }),
