@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using api.src.Models;
+using DotNext.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,35 +22,45 @@ public class NotificationsController : ControllerBase {
             return Unauthorized("ID do usuário não está em formato válido");
         }
 
-        var notifications = await _dbContext.Notifications
+        var notifications = _dbContext.Notifications
             .Where(n => n.MemberId == userId)
-            .ToListAsync();
+            .ToList();
 
+        var notificationsDTO = new List<Notification>();
         foreach (var notification in notifications) {
-            if (notification.Kind != NotificationKind.BookingTransfer) {
-                continue;
+            string newBody = notification.Body;
+            if (notification.Kind == NotificationKind.BookingTransfer) {
+                string bookingIdString = notification.Body.Split(",")[0];
+                string originalUserIdString = notification.Body.Split(",")[1];
+
+                if (!long.TryParse(bookingIdString, out var bookingId)) {
+                    return Unauthorized("ID do usuário não está em formato válido");
+                }
+
+                if (!long.TryParse(originalUserIdString, out var originalUserId)) {
+                    return Unauthorized("ID do usuário não está em formato válido");
+                }
+
+                string oldUserName = _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).First();
+                Booking booking = _dbContext.Bookings.Where(b => b.BookingId == bookingId).First();
+
+                newBody = $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?";
             }
 
-            string bookingIdString = notification.Body.Split(",")[0];
-            string originalUserIdString = notification.Body.Split(",")[1];
-
-            if (!long.TryParse(bookingIdString, out var bookingId)) {
-                return Unauthorized("ID do usuário não está em formato válido");
-            }
-
-            if (!long.TryParse(originalUserIdString, out var originalUserId)) {
-                return Unauthorized("ID do usuário não está em formato válido");
-            }
-
-            string oldUserName = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstAsync();
-            Booking booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstAsync();
-
-            // This does not work because the string attribution will not happen until we sync the database. Could we clone those notifications?
-            notification.Body = $"O usuário {oldUserName} deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString}. Você deseja aceitar?";
-
+            notificationsDTO =
+            [
+                .. notificationsDTO,
+                Notification.Create(
+                    notificationId: notification.NotificationId,
+                    memberId: notification.MemberId,
+                    kind: notification.Kind,
+                    body: newBody,
+                    createdAt: notification.CreatedAt
+                ),
+            ];
         }
 
-        return Ok(notifications);
+        return Ok(notificationsDTO);
     }
 
     [HttpDelete("delete-notification/{notificationIdString}")]
