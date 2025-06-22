@@ -4,6 +4,7 @@ export const BookingStatus = {
     MISSED: "MISSED",
     CANCELLED: "CANCELLED",
     WITHDRAWN: "WITHDRAWN",
+    TRANSFERRING: "TRANSFERRING",
 } as const;
 
 export type BookingStatusType = typeof BookingStatus[keyof typeof BookingStatus];

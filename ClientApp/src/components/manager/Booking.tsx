@@ -3,6 +3,7 @@ import {
 	useGetBookingQuery,
 	usePostCheckinAbsenceMutation,
 } from "../../api/sasbinfAPI";
+import { BookingStatus } from "../../lib/BookingStatus";
 
 export function Booking({ bookingId }: { bookingId: number }) {
 	const getBooking = useGetBookingQuery(bookingId);
@@ -39,7 +40,7 @@ export function Booking({ bookingId }: { bookingId: number }) {
 				{new Date(getBooking.data!.endDate).toLocaleString()}
 			</p>
 			<p>
-				<strong>Status:</strong> {getBooking.data!.status}
+				<strong>Status:</strong> {translateStatus(getBooking.data!.status)}
 			</p>
 			{showBooking && (
 				<div className="booking-actions">
@@ -53,4 +54,30 @@ export function Booking({ bookingId }: { bookingId: number }) {
 			)}
 		</li>
 	);
+}
+
+// TODO: Unify with the other translateStatus function
+function translateStatus(status: string): string {
+    switch (status) {
+        case BookingStatus.BOOKED:
+            return "Alugada";
+
+        case BookingStatus.CANCELLED:
+            return "Cancelada por administrador";
+
+        case BookingStatus.CLAIMED:
+            return "Reivindicada";
+
+        case BookingStatus.MISSED:
+            return "Abandonada";
+
+        case BookingStatus.TRANSFERRING:
+            return "Em Transferência";
+
+        case BookingStatus.WITHDRAWN:
+            return "Cancelada";
+
+        default:
+            return status;
+    }
 }

@@ -50,6 +50,7 @@ export function Booking({ booking }: { booking: MyBooking }) {
 	);
 }
 
+// TODO: Unify with the other translateStatus function
 function TranslateStatus(status: BookingStatus): string {
 	switch (status) {
 		case BookingStatus.Booked:
