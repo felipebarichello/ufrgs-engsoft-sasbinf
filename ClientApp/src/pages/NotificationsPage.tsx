@@ -41,9 +41,8 @@ export default function NotificationsPage() {
 			status: "ACCEPTED",
 		});
 
-		if (response.error) {
-			console.log(response.error);
-			alert("Falha ao aceitar transferência");
+		if (response.error && 'data' in response.error) {
+			alert("Falha ao aceitar transferência: " + response.error["data"]);
 		}
 	}
 
