@@ -143,7 +143,7 @@ public class NotificationsController : ControllerBase {
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferRejected,
-                body: $"Sua transferência da reserva {bookingId} foi rejeitada"
+                body: $"Sua transferência da reserva {bookingId} foi rejeitada" // TODO: Should only have bookingId; the complete text is the client's responsibility
             );
 
             await _dbContext.Notifications.AddAsync(notification);
