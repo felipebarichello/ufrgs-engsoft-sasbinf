@@ -10,7 +10,7 @@ export function Member({ memberId }: { memberId: number }) {
   const getMember = useGetMemberQuery(memberId);
   const getHistory = useGetMemberRoomsHistorySearchQuery({
     memberId: memberId,
-    numberOfBooks: 5,
+    numberOfBooks: 50,
     token: sessionStorage.getItem("authToken")!,
   });
   const [banMember] = usePostBanMemberMutation();
@@ -72,11 +72,7 @@ export function Member({ memberId }: { memberId: number }) {
           {showHistory && (
             <ul className="history-list">
               {getHistory.data!.map((b) => (
-                <Booking
-                  key={b.bookingId}
-                  bookingId={b.bookingId}
-                  showRoomName={true}
-                />
+                <Booking key={b} bookingId={b} showRoomName={true} />
               ))}
             </ul>
           )}
