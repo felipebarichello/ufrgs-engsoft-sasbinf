@@ -45,9 +45,9 @@ export default function Header() {
 				<div className="header-nav-divider"></div>
 				<a href="/my-bookings">Minhas Reservas</a>
 				<div className="header-nav-divider"></div>
-				<a href="/notifications">Notificações</a>
-				<div className="header-nav-divider"></div>
 				<a href="/history">Histórico</a>
+				<div className="header-nav-divider"></div>
+				<a href="/notifications">Notificações</a>
 			</nav>
 			<button style={buttonStyle} onClick={logout}>
 				Logout
