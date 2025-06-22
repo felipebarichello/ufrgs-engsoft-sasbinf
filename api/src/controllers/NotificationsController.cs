@@ -25,6 +25,7 @@ public class NotificationsController : ControllerBase {
 
         var notifications = _dbContext.Notifications
             .Where(n => n.MemberId == userId)
+            .OrderByDescending(n => n.CreatedAt)
             .ToList();
 
         var notificationsDTO = new List<Notification>();
