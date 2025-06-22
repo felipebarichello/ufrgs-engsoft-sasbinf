@@ -16,7 +16,6 @@ public class MemberNotificationsController : ControllerBase {
     }
 
     [HttpGet("notifications")]
-    [Authorize]
     public async Task<IActionResult> GetNotifications() {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdString, out var userId)) {
