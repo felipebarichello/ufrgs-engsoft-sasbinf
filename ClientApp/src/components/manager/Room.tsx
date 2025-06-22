@@ -11,7 +11,7 @@ export function Room({ roomId }: { roomId: number }) {
   const getMember = useGetRoomQuery(roomId);
   const getHistory = useGetRoomsHistorySearchQuery({
     roomId: roomId,
-    numberOfBooks: 5,
+    numberOfBooks: 50,
     token: sessionStorage.getItem("authToken")!,
   });
   const [roomActivation] = usePostRoomActivationMutation();

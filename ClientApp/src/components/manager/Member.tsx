@@ -10,7 +10,7 @@ export function Member({ memberId }: { memberId: number }) {
   const getMember = useGetMemberQuery(memberId);
   const getHistory = useGetMemberRoomsHistorySearchQuery({
     memberId: memberId,
-    numberOfBooks: 5,
+    numberOfBooks: 50,
     token: sessionStorage.getItem("authToken")!,
   });
   const [banMember] = usePostBanMemberMutation();
