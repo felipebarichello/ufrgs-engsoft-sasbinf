@@ -117,11 +117,13 @@ public class ManagerController : ControllerBase {
         var books = _dbContext.Bookings.Where(b => b.UserId == memberId).Select(b => new BookingDto {
             BookingId = b.BookingId,
             UserId = b.UserId,
+            UserName = b.User.Username,
             StartDate = b.StartDate,
             EndDate = b.EndDate,
             Status = b.Status,
-            RoomId = b.RoomId
-        }).OrderBy(b => b.StartDate).Reverse();
+            RoomId = b.RoomId,
+            RoomName = b.Room.Name,
+        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -131,7 +133,18 @@ public class ManagerController : ControllerBase {
     [HttpGet("booking/{bookingId}")]
     public async Task<IActionResult> GetBooking([FromRoute] long bookingId) {
 
-        var booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        var booking = await _dbContext.Bookings
+            .Where(b => b.BookingId == bookingId)
+            .Select(b => new BookingDto {
+                BookingId = b.BookingId,
+                UserId = b.UserId,
+                UserName = b.User.Username,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Status = b.Status,
+                RoomId = b.RoomId,
+                RoomName = b.Room.Name,
+            }).FirstOrDefaultAsync();
         if (booking == null) {
             return BadRequest(new { message = $"booking {bookingId} não existe" });
         }
@@ -151,11 +164,13 @@ public class ManagerController : ControllerBase {
         var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto {
             BookingId = b.BookingId,
             UserId = b.UserId,
+            UserName = b.User.Username,
             StartDate = b.StartDate,
             EndDate = b.EndDate,
             Status = b.Status,
-            RoomId = b.RoomId
-        }).OrderBy(b => b.StartDate).Reverse();
+            RoomId = b.RoomId,
+            RoomName = b.Room.Name,
+        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -320,9 +335,11 @@ public class ManagerController : ControllerBase {
     public record BookingDto {
         public long BookingId { get; set; }
         public long UserId { get; set; }
+        public string UserName { get; set; } = default!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = default!;
         public long RoomId { get; set; }
+        public string RoomName { get; set; } = default!;
     }
 }
