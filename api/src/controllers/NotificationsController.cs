@@ -106,7 +106,7 @@ public class NotificationsController : ControllerBase {
             return UnprocessableEntity($"Cannot process transfer with status {status}");
         }
 
-        // Body is the bookingId to be transfered, with the original user's id
+        // Body is the bookingId to be transferred, with the original user's id
         string? notificationBody = await _dbContext.Notifications
             .Where(n => n.NotificationId == notificationId && n.Kind == NotificationKind.BookingTransfer)
             .Select(n => n.Body)
