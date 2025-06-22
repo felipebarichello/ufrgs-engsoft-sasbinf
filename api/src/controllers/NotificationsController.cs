@@ -161,6 +161,8 @@ public class NotificationsController : ControllerBase {
 
             booking.UserId = userId;
 
+            string? oldUsername = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefaultAsync();
+
             if (await IsUserPunished(userId)) {
                 return UnprocessableEntity("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
             }
@@ -168,7 +170,7 @@ public class NotificationsController : ControllerBase {
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferAccepted,
-                body: $"Sua transferência da reserva {bookingId} foi aceita"
+                body: $"Sua transferência da reserva {bookingId}, das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{oldUsername}'"
             );
 
             await _dbContext.Notifications.AddAsync(notification);
