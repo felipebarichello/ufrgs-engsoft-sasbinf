@@ -3,7 +3,9 @@ import MemberWrapper from "../components/MemberWrapper";
 import {
 	useDeleteNotificationMutation,
 	useGetNotificationsQuery,
+	useUpdateTransferStatusMutation,
 } from "../api/sasbinfAPI";
+import { NotificationKind } from "../schemas/notifications";
 
 const notificationCardStyle: React.CSSProperties = {
 	background: "#e5e7eb", // Lighter gray card
@@ -19,14 +21,7 @@ const wrapper = (content: React.ReactNode) => (
 	<MemberWrapper>
 		<div className="d-flex flex-column justify-content-center pt-5">
 			<h1 className="page-title">Notificações</h1>
-			<div
-				className="member-bookings-list"
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					gap: "1rem",
-				}}
-			>
+			<div>
 				{content}
 			</div>
 		</div>
@@ -38,13 +33,29 @@ export default function NotificationsPage() {
 	const notifications = queryResult.data;
 
 	const [deleteNotificationById] = useDeleteNotificationMutation();
+	const [updateTransferStatus] = useUpdateTransferStatusMutation();
 
-	function acceptTransfer(notificationId: number) {
-		alert(`Accept Transfer Not Implemented. notificationId: ${notificationId}`);
+	async function acceptTransfer(notificationId: number) {
+		const response = await updateTransferStatus({
+			notificationId: notificationId,
+			status: "ACCEPTED",
+		});
+
+		if (response.error && 'data' in response.error) {
+			alert("Falha ao aceitar transferência: " + response.error["data"]);
+		}
 	}
 
-	function rejectTransfer(notificationId: number) {
-		alert(`Reject Transfer Not Implemented. notificationId: ${notificationId}`);
+	async function rejectTransfer(notificationId: number) {
+		const response = await updateTransferStatus({
+			notificationId: notificationId,
+			status: "REJECTED",
+		});
+
+		if (response.error) {
+			console.log(response.error);
+			alert("Falha ao recusar transferência");
+		}
 	}
 
 	async function deleteNotification(notificationId: number) {
@@ -55,21 +66,34 @@ export default function NotificationsPage() {
 				throw error;
 			}
 
-			alert("Notificação removida com sucesso!");
 			console.log(data);
 		} catch {
 			alert(`Falha ao remover notificação`);
 		}
 	}
 
-	// TODO: Is this needed?
+	// FIXME: Bad way to check for loading state, but the old code was worse
 	if (notifications === undefined) {
-		console.log("ERRO GROTESCO");
-		return <>Falha ao carregar notificações</>;
+		return wrapper(
+			<p>Carregando...</p>
+		);
+	}
+
+	if (notifications.length === 0) {
+		return wrapper(
+			<p>Você não possui notificações</p>
+		);
 	}
 
 	return wrapper(
-		<>
+		<div
+			className="member-bookings-list"
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "1rem",
+			}}
+		>
 			{notifications.map((notification, index) => (
 				<div
 					className="d-flex justify-content-between align-items-center"
@@ -78,7 +102,7 @@ export default function NotificationsPage() {
 					<div style={{ minWidth: "5em", fontWeight: 600 }}>#{index + 1}</div>
 					{notification.body}
 					<div className="d-flex justify-content-evenly">
-						{notification.kind === 1 && (
+						{notification.kind === NotificationKind.BookingTransfer && (
 							<>
 								<button
 									className="btn btn-success"
@@ -100,7 +124,7 @@ export default function NotificationsPage() {
 								</button>
 							</>
 						)}
-						{notification.kind === 0 && (
+						{notification.kind !== NotificationKind.BookingTransfer && (
 							<button
 								className="btn btn-primary"
 								style={buttonStyle}
@@ -114,6 +138,6 @@ export default function NotificationsPage() {
 					</div>
 				</div>
 			))}
-		</>
+		</div>
 	);
 }

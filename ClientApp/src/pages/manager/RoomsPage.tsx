@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import logoImg from "../../assets/logo-sasbinf.png";
-import Restricted from "../../components/Restricted";
+import Restricted from "../../components/member/MemberRestricted";
 import {
   usePostCreateRoomMutation,
   usePostRoomsMutation,
 } from "../../api/sasbinfAPI";
-import { Erroralert } from "../../components/ErrorAlert";
+import { SearchErrorMessage } from "../../components/SearchErrorMessage";
 import "./ManagerActionsPages.css";
 import { Room } from "../../components/manager/Room";
 import { useNavigate } from "react-router-dom";
@@ -113,7 +113,7 @@ function ManagerRoomsPageRestricted() {
         </div>
 
         {createRoomState.isError && (
-          <Erroralert error={createRoomState.error} />
+          <SearchErrorMessage error={createRoomState.error} />
         )}
       </form>
 

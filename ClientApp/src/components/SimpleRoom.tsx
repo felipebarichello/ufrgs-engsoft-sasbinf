@@ -1,7 +1,11 @@
-import { ClassAttributes, ImgHTMLAttributes } from "react";
+import {
+  ClassAttributes,
+  ImgHTMLAttributes,
+  CSSProperties,
+  useState,
+} from "react";
 import { JSX } from "react/jsx-runtime";
 import SimpleRoomSvg from "#svgs/SimpleRoom.svg";
-import SelectedSimpleRoomSvg from "#svgs/SelectedSimpleRoom.svg";
 
 export default function SimpleRoom({
   available,
@@ -12,24 +16,83 @@ export default function SimpleRoom({
   selected: boolean;
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLImageElement> &
-    ImgHTMLAttributes<HTMLImageElement>;
+    ImgHTMLAttributes<HTMLImageElement> & {
+      name?: string;
+    };
 }) {
-  const style = { width: "100%", border: selected ? '3px solid red' : undefined };
-  if (available) {
-    return (
-      <div {...props}>
-        <img
-          src={SelectedSimpleRoomSvg}
-          alt="SelectedSimpleRoomImg"
-          style={style}
-        />
-      </div>
-    );
-  } else {
-    return (
-      <div {...props}>
-        <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={style} />
-      </div>
-    );
-  }
+  const [hovered, setHovered] = useState(false);
+  const imgStyle: CSSProperties = {
+    borderBottom: "3px solid #ccc",
+    borderRight: "3px solid #ccc",
+    borderRadius: "1px",
+    width: "140px",
+    height: "60px",
+    display: "block",
+  };
+
+  const wrapperStyle: CSSProperties = {
+    position: "relative",
+    width: "140px",
+    height: "60px",
+    display: "inline-block",
+  };
+
+  const overlayStyle: CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#6fdd6f",
+    opacity: 0.3,
+    pointerEvents: "none",
+    borderRadius: "1px",
+  };
+
+  const selectedBorderStyle: CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    border: "3px solid #b22222",
+    borderRadius: "2px",
+    pointerEvents: "none",
+    boxSizing: "border-box",
+  };
+
+  const tooltipStyle: CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    backgroundColor: "#cc2222",
+    color: "#fff",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    fontSize: "15px",
+    whiteSpace: "nowrap",
+    opacity: selected ? 1 : hovered ? 0.7 : 0,
+    transition: "opacity 0.2s ease-in-out",
+    pointerEvents: "none",
+    zIndex: 10,
+  };
+
+  return (
+    <div
+      className="room-selector"
+      style={wrapperStyle}
+      {...props}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {(hovered || selected) && (
+        <div style={{ ...tooltipStyle, visibility: "visible" }}>
+          Sala {props.name}
+        </div>
+      )}
+
+      <img src={SimpleRoomSvg} alt="SimpleRoomImg" style={imgStyle} />
+
+      {available && <div style={overlayStyle} />}
+
+      {selected && <div style={selectedBorderStyle} />}
+    </div>
+  );
 }

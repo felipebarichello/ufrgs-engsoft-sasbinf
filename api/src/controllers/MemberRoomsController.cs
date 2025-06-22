@@ -38,7 +38,7 @@ public class MemberRoomsController : ControllerBase {
         }
 
         if (member.IsTimedOut()) {
-            return Forbid("Você está em timeout e portanto temporariamente impedido de reservar salas.");
+            return UnprocessableEntity("Você está em timeout e portanto temporariamente impedido de reservar salas.");
         }
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
@@ -78,7 +78,7 @@ public class MemberRoomsController : ControllerBase {
 
         var bookings = await _dbContext.Bookings
             .Where(b => b.UserId == userId)
-            .Where(b => b.Status == BookingStatus.Booked)
+            .Where(b => b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring)
             .Include(b => b.Room)
             .OrderByDescending(b => b.StartDate)
             .ToListAsync();
@@ -88,6 +88,7 @@ public class MemberRoomsController : ControllerBase {
             roomName = b.Room?.Name ?? "",
             startTime = b.StartDate.ToString("o"),
             endTime = b.EndDate.ToString("o"),
+            status = b.Status
         }).ToList();
 
         return Ok(bookingDtos);
@@ -102,12 +103,20 @@ public class MemberRoomsController : ControllerBase {
         }
 
         var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && b.Status == BookingStatus.Booked)
+            .Where(b => b.BookingId == request.bookingId && b.UserId == userId && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring))
             .OrderByDescending(b => b.StartDate)
             .FirstOrDefaultAsync();
 
         if (booking == null) {
             return UnprocessableEntity("Você não pode cancelar essa reserva ou ela não existe");
+        }
+
+        if (booking.Status == BookingStatus.Transferring) {
+            await _dbContext.Notifications
+                .Where(n => n.Body == $"{booking.BookingId},{userId}")
+                .ExecuteDeleteAsync();
+            await _dbContext.SaveChangesAsync();
+
         }
 
         booking.Status = BookingStatus.Withdrawn;
@@ -133,16 +142,50 @@ public class MemberRoomsController : ControllerBase {
             return UnprocessableEntity("Você não pode transferir essa reserva ou ela não existe");
         }
 
+        booking.Status = BookingStatus.Transferring;
+        var newUserId = await _dbContext.Members
+            .Where(m => m.Username == request.newUser)
+            .Select(m => m.MemberId)
+            .FirstOrDefaultAsync();
+
         var notification = Notification.Create(
-            memberId: request.newUserId,
+            memberId: newUserId,
             kind: NotificationKind.BookingTransfer,
-            body: booking.BookingId.ToString()
+            body: booking.BookingId.ToString() + "," + userId
         );
 
         await _dbContext.Notifications.AddAsync(notification);
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "Reserva transferida com sucesso; pendente aceitação do outro membro" });
+    }
+
+    [HttpGet("history")]
+    public async Task<IActionResult> GetHistory() {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!long.TryParse(userIdString, out var userId)) {
+            return Unauthorized("Não foi possível encontrar o usuário para o token fornecido: ID do usuário inválido");
+        }
+
+        var history = await _dbContext.Bookings
+            .Where(b => b.UserId == userId)
+            .Select(b => new {
+                bookingId = b.BookingId,
+                roomName = b.Room.Name,
+                startTime = b.StartDate,
+                endTime = b.EndDate,
+                status = b.Status,
+            })
+            .ToListAsync();
+
+        if (history.Count < 1) {
+            return UnprocessableEntity("WHAT");
+        }
+
+        history?.Sort((a, b) => DateTime.Compare(b.startTime, a.startTime));
+
+        return Ok(history);
     }
 
     private async Task<List<AvailableRoomDTO>> GetAvailableRooms(AvailableRoomsSearchDTO search) {
@@ -190,7 +233,7 @@ public class MemberRoomsController : ControllerBase {
             .Where(b => (
                 b.StartDate <= endDateTime
                 && b.EndDate >= startDateTime
-                && b.Status == BookingStatus.Booked
+                && (b.Status == BookingStatus.Booked || b.Status == BookingStatus.Transferring)
             ));
 
         // Extract the IDs of rooms that are already booked

@@ -1,9 +1,10 @@
 export const BookingStatus = {
-    BOOKED: "BOOKED",
-    CLAIMED: "CLAIMED",
-    MISSED: "MISSED",
-    CANCELLED: "CANCELLED",
-    WITHDRAWN: "WITHDRAWN",
+    Booked: "BOOKED",
+    Claimed: "CLAIMED",
+    Missed: "MISSED",
+    Cancelled: "CANCELLED",
+    Withdrawn: "WITHDRAWN",
+    Transferring: "TRANSFERRING",
 } as const;
 
 export type BookingStatusType = typeof BookingStatus[keyof typeof BookingStatus];

@@ -1,17 +1,12 @@
-import NewPointer from "./NewPointer";
-import SimpleTable from "./TableSeats";
-import { VerticalSpacer } from "./Spacer";
 import BigRoom from "./BigRoom";
+import Hallway from "./Hallway";
 import SimpleRoom from "./SimpleRoom";
 import {
   useLazyPostAvailableRoomsSearchQuery,
   usePostRoomBookRequestMutation,
 } from "../api/sasbinfAPI";
 import { RoomFilters } from "../pages/RoomsPage";
-import { Erroralert } from "./ErrorAlert";
 import RoomsDropdown from "./RoomsDropdown";
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const simpleRooms = Object.freeze([
   { id: 1, name: "104G" },
@@ -35,9 +30,8 @@ export default function INFLibrary({
   setSelected: (a: { id: number; name: string } | null) => void;
   setAvailable: (a: { id: number; name: string }[]) => void;
 }) {
-  const [triggerBookRequest, metadata] = usePostRoomBookRequestMutation();
-  const [triggerAvailableRoomsQuery, availableRoomsState] =
-    useLazyPostAvailableRoomsSearchQuery();
+  const [triggerBookRequest] = usePostRoomBookRequestMutation();
+  const [triggerRoomSearch] = useLazyPostAvailableRoomsSearchQuery();
 
   async function handleBookPress() {
     if (selected === null) {
@@ -59,79 +53,57 @@ export default function INFLibrary({
       roomId: selected.id,
     };
 
-    console.log(bookRequest);
+    await triggerBookRequest(bookRequest);
 
-    triggerBookRequest(bookRequest);
-
-    setAvailable([]);
-
+    const newAvailableRooms = await triggerRoomSearch(filtersState);
     try {
-      await sleep(500);
-
-      const newAvailableState = await triggerAvailableRoomsQuery(
-        filtersState
-      ).unwrap();
-
-      setAvailable(newAvailableState);
+      if (newAvailableRooms.data) {
+        setAvailable(newAvailableRooms.data);
+      }
     } catch {
       console.log(
-        availableRoomsState.error,
-        availableRoomsState.isLoading,
-        availableRoomsState.data
+        newAvailableRooms.error,
+        newAvailableRooms.isLoading,
+        newAvailableRooms.data
       );
     }
   }
 
   return (
-    <div>
-      <div className="d-flex flex-row justify-content-center">
-        <h5 style={{ marginRight: "10px", marginLeft: "100px" }}>
-          Salas Disponíveis:
-        </h5>
-        <RoomsDropdown
-          availableRooms={available}
-          selected={selected}
-          setSelected={setSelected}
-        />
-      </div>
-      <div className="d-flex justify-content-end">
-        <NewPointer
-          // This 'enabled' clause poses a problem: the rooms on the map must have exact, hard-coded ids and names on the database;
-          // Not a big deal if you ask me, especially since we are matching it with INF's, but it would be nice to discuss it with the team
-          enabled={
-            selected !== null &&
-            (simpleRooms.map((r) => r.id).includes(selected.id) ||
-              selected.id === 7)
-          }
-          room={selected ?? { id: 1, name: "104G" }}
-          props={{ style: { width: "200px" } }}
-        />
-        <div
-          className="d-flex flex-row"
-          style={{
-            width: "820px",
-            border: "3px solid black",
-            backgroundColor: "#D9D9D9",
-          }}
-        >
-          <RoomSelector
-            available={available}
-            setSelected={setSelected}
-            //TODO remover esse -1
-            selected={selected ?? { id: -1, name: "" }}
-          />
-          <StandaloneTables />
-        </div>
-      </div>
+    <div
+      className="card shadow-lg"
+      style={{
+        width: "400px",
+        height: "700px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <div className="text-center fw-bold">Salas Disponíveis:</div>
+
+      <RoomsDropdown
+        availableRooms={available}
+        selected={selected}
+        setSelected={setSelected}
+      />
+
+      <RoomsMap
+        available={available}
+        selected={selected ?? { id: -1, name: "" }}
+        setSelected={setSelected}
+      />
 
       <button
         type="button"
         className="btn btn-primary"
-        style={{ margin: "10px" }}
         onClick={() => {
           handleBookPress();
           setSelected(null);
         }}
+        disabled={
+          selected === null || !available.map((r) => r.id).includes(selected.id)
+        }
       >
         Reservar
       </button>
@@ -139,24 +111,45 @@ export default function INFLibrary({
       <button
         type="button"
         className="btn btn-primary"
-        style={{ margin: "10px" }}
         onClick={() => {
           setSelected(null);
         }}
+        disabled={selected === null}
       >
         Limpar Seleção
       </button>
-      {metadata.isError && Erroralert({ error: metadata.error })}
     </div>
   );
 }
 
-const SimpleRoomStyle = {
-  width: "40%",
-  borderRight: "3px solid black",
-  borderBottom: "3px solid black",
-};
-const BigRoomStyle = { width: "40%", borderRight: "3px solid black" };
+function RoomsMap({
+  available,
+  selected,
+  setSelected,
+}: {
+  available: { id: number; name: string }[];
+  selected: { id: number; name: string } | null;
+  setSelected: (a: { id: number; name: string } | null) => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        border: "3px solid #ccc",
+        gap: "40px",
+      }}
+    >
+      <RoomSelector
+        available={available}
+        setSelected={setSelected}
+        //TODO remover esse -1
+        selected={selected ?? { id: -1, name: "" }}
+      />
+      <Hallway />
+    </div>
+  );
+}
 
 function RoomSelector({
   available,
@@ -170,48 +163,29 @@ function RoomSelector({
   // TODO Retrieve this from the database
 
   return (
-    <div>
-      {simpleRooms.map((room) => {
-        return (
-          <SimpleRoom
-            available={available.map((r) => r.id).includes(room.id)}
-            selected={selected.id === room.id}
-            props={{
-              style: SimpleRoomStyle,
-              onClick: () => {
-                setSelected(room);
-              },
-            }}
-          />
-        );
-      })}
+    <div style={{ display: "flex", flexDirection: "column", flexWrap: "wrap" }}>
+      {simpleRooms.map((room) => (
+        <SimpleRoom
+          available={available.map((r) => r.id).includes(room.id)}
+          selected={selected.id === room.id}
+          props={{
+            name: room.name,
+            onClick: () => {
+              setSelected(room);
+            },
+          }}
+        />
+      ))}
       <BigRoom
         available={available.map((r) => r.id).includes(7)}
         selected={selected.id === 7}
         props={{
-          style: BigRoomStyle,
+          name: "104A",
           onClick: () => {
-            // TODO: Retrieve this from the database
             setSelected({ id: 7, name: "104A" });
           },
         }}
       />
-    </div>
-  );
-}
-
-const SimpleTableStyle = { width: "40%", paddingBottom: "15px" };
-function StandaloneTables() {
-  return (
-    <div className="d-flex flex-column">
-      <VerticalSpacer size={`${((1280 + 100) * 0.25 * 0.4 * 36) / 84}px`} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
-      <SimpleTable style={SimpleTableStyle} />
     </div>
   );
 }

@@ -32,7 +32,13 @@ function RoomsPage() {
   return (
     <MemberWrapper>
       <div
-        className="d-flex justify-content-around pt-5"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "100px",
+          justifyContent: "center", // horizontal alignment (along main axis)
+          alignItems: "center", // vertical alignment (cross axis)
+        }}
       >
         <RoomsForm
           available={availableRooms}

@@ -78,3 +78,11 @@
   font-size: 3.2em;
   margin-bottom: 3rem;
 }
+
+.room-selector:hover {
+  cursor: pointer;
+}
+
+.rooms-dropdown:hover {
+  cursor: pointer;
+}
