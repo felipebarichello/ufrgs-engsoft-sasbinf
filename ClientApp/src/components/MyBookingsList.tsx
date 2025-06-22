@@ -56,9 +56,9 @@ export default function MyBookingsList({ bookingsList, refetch }: MyBookingsList
 				alert(`Falha ao cancelar reserva #${bookingId}`);
 				return;
 			}
-		});
 
-		refetch();
+			refetch();
+		});
 	}
 
 	function handleTransferCancelling(bookingId: number) {

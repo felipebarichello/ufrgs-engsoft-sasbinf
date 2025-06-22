@@ -6,12 +6,16 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 [Route("api/manager")]
 [Authorize(Roles = Roles.Manager)]
-public class ManagerController : ControllerBase {
+public class ManagerRoomsController : ControllerBase {
     private readonly IConfiguration configuration;
     private readonly string jwtSecret;
     private readonly AppDbContext _dbContext;
 
-    public ManagerController(IConfiguration configuration, AppDbContext dbContext) {
+    public async Task NotifyMembers(IList<Notification> notifications) {
+        await _dbContext.Notifications.AddRangeAsync(notifications);
+    }
+
+    public ManagerRoomsController(IConfiguration configuration, AppDbContext dbContext) {
         this.configuration = configuration;
         jwtSecret = configuration["JWT:Secret"] ?? throw new ArgumentNullException("JWT:Secret");
         _dbContext = dbContext;
@@ -105,61 +109,6 @@ public class ManagerController : ControllerBase {
         });
     }
 
-    // TODO: Paginate
-    [HttpGet("member-history/{memberId}/{numberOfBooks}")]
-    public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
-
-        var room = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
-        if (room == null) {
-            return BadRequest(new { message = $"membro não existe" });
-        }
-
-        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).OrderBy(b => b.StartDate).Reverse().Select(b => b.BookingId).Take(numberOfBooks);
-
-        await _dbContext.SaveChangesAsync();
-
-        return Ok(books);
-    }
-
-    [HttpGet("booking/{bookingId}")]
-    public async Task<IActionResult> GetBooking([FromRoute] long bookingId) {
-
-        var booking = await _dbContext.Bookings
-            .Where(b => b.BookingId == bookingId)
-            .Select(b => new BookingDto {
-                BookingId = b.BookingId,
-                UserId = b.UserId,
-                UserName = b.User.Username,
-                StartDate = b.StartDate,
-                EndDate = b.EndDate,
-                Status = b.Status,
-                RoomId = b.RoomId,
-                RoomName = b.Room.Name,
-            }).FirstOrDefaultAsync();
-        if (booking == null) {
-            return BadRequest(new { message = $"booking {bookingId} não existe" });
-        }
-
-        return Ok(booking);
-    }
-
-    // TODO: Paginate
-    [HttpGet("room-history/{roomId}/{numberOfBooks}")]
-    public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
-
-        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
-        if (room == null) {
-            return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
-        }
-
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).OrderBy(b => b.StartDate).Reverse().Select(b => b.BookingId).Take(numberOfBooks);
-
-        await _dbContext.SaveChangesAsync();
-
-        return Ok(books);
-
-    }
-
     [HttpPost("bookings/change-status/{bookingId}/{status}")]
     public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
         var validStatuses = new[] { BookingStatus.Booked, BookingStatus.Claimed, BookingStatus.Missed, BookingStatus.Withdrawn, BookingStatus.Cancelled };
@@ -178,72 +127,6 @@ public class ManagerController : ControllerBase {
         await _dbContext.SaveChangesAsync();
 
         return Ok();
-    }
-
-    // TODO: The parameters could be a DTO in the body
-    [HttpPost("ban-member/{memberId}/{shouldBan}")]
-    public async Task<IActionResult> BanMember([FromRoute] long memberId, [FromRoute] bool shouldBan) {
-        Notification notification;
-
-        var member = await _dbContext.Members.Where(r => r.MemberId == memberId).FirstOrDefaultAsync();
-        if (member == null) {
-            return BadRequest(new { message = $"membro não existe" });
-        }
-
-        if (shouldBan) {
-            // Banir
-            var timedOutUntil = DateTime.UtcNow.AddMonths(1).Date;
-            member.TimedOutUntil = timedOutUntil;
-
-            notification = Notification.Create(
-                memberId: memberId,
-                kind: NotificationKind.TimedOut,
-                body: timedOutUntil.ToString()
-            );
-        }
-        else {
-            // Desbanir
-            member.TimedOutUntil = null;
-            notification = Notification.Create(
-                memberId: memberId,
-                kind: NotificationKind.UntimedOut
-            );
-        }
-
-        await NotifyMembers(notification);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok();
-    }
-
-    [HttpPost("members")]
-    public IActionResult GetMembers([FromBody] Search search) {
-
-        List<MemberDto> members;
-        if (search.name == null) {
-            members = _dbContext.Members.Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
-        }
-        else {
-            members = _dbContext.Members.Where(m => m.Username.Contains(search.name)).Select(m => new MemberDto {
-                Username = m.Username,
-                MemberId = m.MemberId,
-                TimedOutUntil = m.TimedOutUntil
-            }).ToList();
-        }
-
-        return Ok(members);
-    }
-
-    [HttpGet("member/{memberId}")]
-    public async Task<IActionResult> GetMember([FromRoute] long memberId) {
-
-        var member = await _dbContext.Members.Where(m => m.MemberId == memberId).Select(m => new MemberDto {
-            Username = m.Username,
-            MemberId = m.MemberId,
-            TimedOutUntil = m.TimedOutUntil
-        }).FirstOrDefaultAsync();
-
-        return Ok(member);
     }
 
     [HttpPost("rooms")]
@@ -283,28 +166,9 @@ public class ManagerController : ControllerBase {
         return Ok(room);
     }
 
-    public async Task NotifyMembers(IList<Notification> notifications) {
-        await _dbContext.Notifications.AddRangeAsync(notifications);
-    }
-
-    public async Task NotifyMembers(Notification notification) {
-        await _dbContext.Notifications.AddAsync(notification);
-    }
-
-    public record Search {
-        public string? name { get; set; }
-        public int? capacity { get; set; }
-    }
-
     public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = null!;
-    }
-
-    public record MemberDto {
-        public string Username { get; set; } = default!;
-        public long MemberId { get; set; } = default!;
-        public DateTime? TimedOutUntil { get; set; }
     }
 
     public record RoomDto {
@@ -314,14 +178,8 @@ public class ManagerController : ControllerBase {
         public string Name { get; set; } = null!;
     }
 
-    public record BookingDto {
-        public long BookingId { get; set; }
-        public long UserId { get; set; }
-        public string UserName { get; set; } = default!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string Status { get; set; } = default!;
-        public long RoomId { get; set; }
-        public string RoomName { get; set; } = default!;
+    public record Search {
+        public string? name { get; set; }
+        public int? capacity { get; set; }
     }
 }
