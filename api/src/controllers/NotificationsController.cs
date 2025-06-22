@@ -137,13 +137,14 @@ public class NotificationsController : ControllerBase {
         }
 
         booking.Status = BookingStatus.Booked;
+        string? oldUsername = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefaultAsync();
 
         if (status == "REJECTED") { // TODO: Use a constant for this
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferRejected,
-                body: $"Sua transferência da reserva {bookingId} foi rejeitada" // TODO: Should only have bookingId; the complete text is the client's responsibility
+                body: $"Sua transferência da reserva {bookingId}, das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{oldUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
             );
 
             await _dbContext.Notifications.AddAsync(notification);
@@ -160,8 +161,6 @@ public class NotificationsController : ControllerBase {
         if (status == "ACCEPTED") { // TODO: Use a constant for this
 
             booking.UserId = userId;
-
-            string? oldUsername = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefaultAsync();
 
             if (await IsUserPunished(userId)) {
                 return UnprocessableEntity("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
