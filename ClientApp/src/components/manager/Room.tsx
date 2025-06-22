@@ -76,11 +76,7 @@ export function Room({ roomId }: { roomId: number }) {
           {showHistory && (
             <ul className="history-list">
               {getHistory.data!.map((b) => (
-                <Booking
-                  bookingId={b.bookingId}
-                  key={b.bookingId}
-                  showMemberName={true}
-                />
+                <Booking bookingId={b} key={b} showMemberName={true} />
               ))}
             </ul>
           )}

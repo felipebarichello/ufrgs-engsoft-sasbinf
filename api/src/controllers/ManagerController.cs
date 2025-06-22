@@ -114,16 +114,7 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"membro não existe" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).Select(b => new BookingDto {
-            BookingId = b.BookingId,
-            UserId = b.UserId,
-            UserName = b.User.Username,
-            StartDate = b.StartDate,
-            EndDate = b.EndDate,
-            Status = b.Status,
-            RoomId = b.RoomId,
-            RoomName = b.Room.Name,
-        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).OrderBy(b => b.StartDate).Reverse().Select(b => b.BookingId).Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -161,16 +152,7 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto {
-            BookingId = b.BookingId,
-            UserId = b.UserId,
-            UserName = b.User.Username,
-            StartDate = b.StartDate,
-            EndDate = b.EndDate,
-            Status = b.Status,
-            RoomId = b.RoomId,
-            RoomName = b.Room.Name,
-        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).OrderBy(b => b.StartDate).Reverse().Select(b => b.BookingId).Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 

@@ -10,8 +10,8 @@ import {
 } from "../schemas/rooms";
 import {
   Booking,
-  BookingArray,
-  BookingArraySchema,
+  BookingIdArray,
+  BookingIdArraySchema,
   BookingSchema,
 } from "../schemas/booking";
 import { RoomFilters } from "../pages/RoomsPage";
@@ -154,7 +154,7 @@ export const sasbinf = createApi({
     }),
 
     getRoomsHistorySearch: build.query<
-      BookingArray,
+      BookingIdArray,
       {
         roomId: number;
         numberOfBooks: number;
@@ -171,7 +171,7 @@ export const sasbinf = createApi({
       providesTags: ["bookings"],
       transformResponse: (response) => {
         try {
-          return v.parse(BookingArraySchema, response);
+          return v.parse(BookingIdArraySchema, response);
         } catch {
           throw new Error("Falha ao obter histórico de salas");
         }
@@ -197,7 +197,7 @@ export const sasbinf = createApi({
     }),
 
     getMemberRoomsHistorySearch: build.query<
-      BookingArray,
+      BookingIdArray,
       {
         memberId: number;
         numberOfBooks: number;
@@ -212,9 +212,9 @@ export const sasbinf = createApi({
         },
       }),
       providesTags: ["bookings"],
-      transformResponse: (response: unknown): BookingArray => {
+      transformResponse: (response) => {
         try {
-          return v.parse(BookingArraySchema, response);
+          return v.parse(BookingIdArraySchema, response);
         } catch {
           throw new Error("Falha ao obter histórico de salas");
         }

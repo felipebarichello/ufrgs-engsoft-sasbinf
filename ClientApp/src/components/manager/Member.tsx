@@ -72,11 +72,7 @@ export function Member({ memberId }: { memberId: number }) {
           {showHistory && (
             <ul className="history-list">
               {getHistory.data!.map((b) => (
-                <Booking
-                  key={b.bookingId}
-                  bookingId={b.bookingId}
-                  showRoomName={true}
-                />
+                <Booking key={b} bookingId={b} showRoomName={true} />
               ))}
             </ul>
           )}

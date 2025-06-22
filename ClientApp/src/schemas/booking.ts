@@ -12,5 +12,5 @@ export const BookingSchema = v.object({
   status: v.string(),
 });
 
-export type BookingArray = v.InferInput<typeof BookingArraySchema>;
-export const BookingArraySchema = v.array(BookingSchema);
+export type BookingIdArray = v.InferInput<typeof BookingIdArraySchema>;
+export const BookingIdArraySchema = v.array(v.number());
