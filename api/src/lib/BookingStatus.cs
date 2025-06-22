@@ -1,4 +1,4 @@
-public class BookingStatus {
+public static class BookingStatus {
     public const string Booked = "BOOKED";
     public const string Claimed = "CLAIMED";
     public const string Missed = "MISSED";
