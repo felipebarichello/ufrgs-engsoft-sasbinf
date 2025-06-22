@@ -283,7 +283,7 @@ public class NotificationsController : ControllerBase {
         // The notification body is a timestamp (or timestring?) of the timeout expiry
 
         // This is a bit less evil. Just be aware of this locale, which may not match your local db's
-        DateTime timeoutExpiry = DateTime.Parse(notification.Body, new CultureInfo("en-US"));
+        DateTime timeoutExpiry = DateTime.Parse(notification.Body, System.Globalization.CultureInfo.CurrentCulture);
 
         return (Ok(), $"Você foi banido por um administrador. Seu banimento expira em {timeoutExpiry.ToShortDateString()}, às {timeoutExpiry.ToLongTimeString()}");
     }
