@@ -129,6 +129,43 @@ public class ManagerRoomsController : ControllerBase {
         return Ok();
     }
 
+    [HttpPost("rooms")]
+    public IActionResult GetRooms([FromBody] Search search) {
+        var capacity = search.capacity ?? 1;
+        List<RoomDto>? rooms;
+        if (search.name == null) {
+            rooms = _dbContext.Rooms.Where(r => r.Capacity >= capacity).Select(m => new RoomDto {
+                Name = m.Name,
+                RoomId = m.RoomId,
+                IsActive = m.IsActive,
+                Capacity = m.Capacity
+            }).ToList();
+        }
+        else {
+            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name) && m.Capacity >= capacity).Select(m => new RoomDto {
+                Name = m.Name,
+                RoomId = m.RoomId,
+                IsActive = m.IsActive,
+                Capacity = m.Capacity
+            }).ToList();
+        }
+
+        return Ok(rooms);
+    }
+
+    [HttpGet("room/{roomId}")]
+    public async Task<IActionResult> GetRoom([FromRoute] long roomId) {
+
+        var room = await _dbContext.Rooms.Where(m => m.RoomId == roomId).Select(m => new RoomDto {
+            Name = m.Name,
+            RoomId = m.RoomId,
+            IsActive = m.IsActive,
+            Capacity = m.Capacity
+        }).FirstOrDefaultAsync();
+
+        return Ok(room);
+    }
+
     public record CreateRoomDto {
         public int capacity { get; set; }
         public string name { get; set; } = null!;
