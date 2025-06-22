@@ -42,10 +42,9 @@ function ManagerRoomsPageRestricted() {
     fetchRooms();
   }, []);
 
-  const handleSearchRoom = (e: React.FormEvent) => {
+  const handleSearchRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formState) return;
-    searchRooms({
+    await searchRooms({
       roomName: formState.roomName,
       capacity: formState.capacity,
       token,
@@ -54,7 +53,6 @@ function ManagerRoomsPageRestricted() {
 
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formState) return;
     await createRoom({
       name: formState.roomName!,
       capacity: formState.capacity,
@@ -62,6 +60,14 @@ function ManagerRoomsPageRestricted() {
     });
     setFormState(inicialFormState);
     fetchRooms();
+  };
+
+  const hasName = () => {
+    return (
+      formState.roomName !== null &&
+      formState.roomName !== undefined &&
+      formState.roomName !== ""
+    );
   };
 
   return (
@@ -100,7 +106,7 @@ function ManagerRoomsPageRestricted() {
         </div>
 
         <div className="form-buttons">
-          <button type="submit" disabled={!formState}>
+          <button type="submit" disabled={!hasName()}>
             Criar Sala
           </button>
           <button onClick={handleSearchRoom}>Buscar Salas</button>
