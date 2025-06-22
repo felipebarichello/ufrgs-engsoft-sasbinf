@@ -157,7 +157,7 @@ public class NotificationsController : ControllerBase {
             return Ok(new { message = "Transferência recusada com sucesso!" });
         }
 
-        if (status == "ACCEPTED") {
+        if (status == "ACCEPTED") { // TODO: Use a constant for this
 
             booking.UserId = userId;
 
@@ -238,6 +238,8 @@ public class NotificationsController : ControllerBase {
 
         return (hasFailed, deletedRows);
     }
+
+    // TODO: This isn't NotificationController's responsibility
     internal async Task<bool> IsUserPunished(long userId) {
         var member = await _dbContext.Members
             .Where(m => m.MemberId == userId)
