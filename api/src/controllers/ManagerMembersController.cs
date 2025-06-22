@@ -17,20 +17,6 @@ public class ManagerMembersController : ControllerBase {
         _dbContext = dbContext;
     }
 
-    [HttpDelete("delete-room/{roomId}")]
-    public async Task<IActionResult> Delete([FromRoute] long roomId) {
-        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
-        if (room == null) {
-            return BadRequest(new { message = $"Não é possível deletar uma sala inexistente - {roomId}" });
-        }
-
-        _dbContext.Rooms.Remove(room);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok(new { roomName = room.Name });
-
-    }
-
     // TODO: Paginate
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
     public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
