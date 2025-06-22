@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 [Route("api")] // TODO: Use a more specific route prefix
 [Authorize(Roles = Roles.Member)]
-public class NotificationsController : ControllerBase {
+public class MemberNotificationsController : ControllerBase {
     private readonly AppDbContext _dbContext;
 
-    public NotificationsController(AppDbContext dbContext) {
+    public MemberNotificationsController(AppDbContext dbContext) {
         _dbContext = dbContext;
     }
 
