@@ -25,6 +25,7 @@ public class NotificationsController : ControllerBase {
 
         var notifications = _dbContext.Notifications
             .Where(n => n.MemberId == userId)
+            .OrderByDescending(n => n.CreatedAt)
             .ToList();
 
         var notificationsDTO = new List<Notification>();
@@ -137,13 +138,14 @@ public class NotificationsController : ControllerBase {
         }
 
         booking.Status = BookingStatus.Booked;
+        string? oldUsername = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefaultAsync();
 
         if (status == "REJECTED") { // TODO: Use a constant for this
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferRejected,
-                body: $"Sua transferência da reserva {bookingId} foi rejeitada" // TODO: Should only have bookingId; the complete text is the client's responsibility
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{oldUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
             );
 
             await _dbContext.Notifications.AddAsync(notification);
@@ -168,7 +170,7 @@ public class NotificationsController : ControllerBase {
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferAccepted,
-                body: $"Sua transferência da reserva {bookingId} foi aceita"
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{oldUsername}'"
             );
 
             await _dbContext.Notifications.AddAsync(notification);
@@ -281,7 +283,7 @@ public class NotificationsController : ControllerBase {
         // The notification body is a timestamp (or timestring?) of the timeout expiry
 
         // This is a bit less evil. Just be aware of this locale, which may not match your local db's
-        DateTime timeoutExpiry = DateTime.Parse(notification.Body, new CultureInfo("en-US"));
+        DateTime timeoutExpiry = DateTime.Parse(notification.Body, System.Globalization.CultureInfo.CurrentCulture);
 
         return (Ok(), $"Você foi banido por um administrador. Seu banimento expira em {timeoutExpiry.ToShortDateString()}, às {timeoutExpiry.ToLongTimeString()}");
     }
