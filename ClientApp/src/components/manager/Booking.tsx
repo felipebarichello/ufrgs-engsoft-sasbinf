@@ -59,22 +59,22 @@ export function Booking({ bookingId }: { bookingId: number }) {
 // TODO: Unify with the other translateStatus function
 function translateStatus(status: string): string {
     switch (status) {
-        case BookingStatus.BOOKED:
+        case BookingStatus.Booked:
             return "Alugada";
 
-        case BookingStatus.CANCELLED:
+        case BookingStatus.Cancelled:
             return "Cancelada por administrador";
 
-        case BookingStatus.CLAIMED:
+        case BookingStatus.Claimed:
             return "Reivindicada";
 
-        case BookingStatus.MISSED:
+        case BookingStatus.Missed:
             return "Abandonada";
 
-        case BookingStatus.TRANSFERRING:
+        case BookingStatus.Transferring:
             return "Em Transferência";
 
-        case BookingStatus.WITHDRAWN:
+        case BookingStatus.Withdrawn:
             return "Cancelada";
 
         default:
