@@ -37,8 +37,8 @@ public class MemberRoomsController : ControllerBase {
             return Unauthorized("Token de autorização inválido");
         }
 
-        if (member.IsTimedOut()) {
-            return UnprocessableEntity("Você está em timeout e portanto temporariamente impedido de reservar salas.");
+        if (member.IsTimedOut() && member.TimedOutUntil.HasValue) {
+            return UnprocessableEntity($"Você está em timeout até {member.TimedOutUntil.Value} e portanto temporariamente impedido de reservar salas.");
         }
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
