@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent } from "react";
 import { SearchErrorMessage } from "./SearchErrorMessage";
 import { Epoch, RoomFilters } from "../pages/RoomsPage";
-import { usePostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
+import { useLazyPostAvailableRoomsSearchQuery, usePostAvailableRoomsSearchQuery } from "../api/sasbinfAPI";
 
 export default function RoomsForm({
 	available,
@@ -46,6 +46,7 @@ function RoomsFormInputs({
 	setAvailable: (a: { name: string; id: number }[]) => void;
 }) {
 	const availableRoomsState = usePostAvailableRoomsSearchQuery(inputs);
+	const [triggerRoomSearch] = useLazyPostAvailableRoomsSearchQuery();
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const label = event.target.name;
@@ -68,6 +69,21 @@ function RoomsFormInputs({
 				availableRoomsState.error,
 				availableRoomsState.isLoading,
 				availableRoomsState.data
+			);
+		}
+
+		// TODO: I'm deeply sorry for this. I hope you understand this is not who I am.
+		// I was really forced to do this due to the limited time I had to implement this.
+		const newAvailableRooms = await triggerRoomSearch(inputs);
+		try {
+			if (newAvailableRooms.data) {
+			setAvailable(newAvailableRooms.data);
+			}
+		} catch {
+			console.log(
+			newAvailableRooms.error,
+			newAvailableRooms.isLoading,
+			newAvailableRooms.data
 			);
 		}
 	}
