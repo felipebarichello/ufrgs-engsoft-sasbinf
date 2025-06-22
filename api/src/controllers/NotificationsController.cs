@@ -144,7 +144,7 @@ public class NotificationsController : ControllerBase {
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferRejected,
-                body: $"Sua transferência da reserva {bookingId}, das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{oldUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{oldUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
             );
 
             await _dbContext.Notifications.AddAsync(notification);
@@ -169,7 +169,7 @@ public class NotificationsController : ControllerBase {
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferAccepted,
-                body: $"Sua transferência da reserva {bookingId}, das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{oldUsername}'"
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{oldUsername}'"
             );
 
             await _dbContext.Notifications.AddAsync(notification);
