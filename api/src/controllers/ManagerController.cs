@@ -105,7 +105,7 @@ public class ManagerController : ControllerBase {
         });
     }
 
-    // TODO: Unused `numberOfBooks`
+    // TODO: Paginate
     [HttpGet("member-history/{memberId}/{numberOfBooks}")]
     public async Task<IActionResult> GetMemberHistory([FromRoute] long memberId, [FromRoute] int numberOfBooks) {
 
@@ -143,7 +143,7 @@ public class ManagerController : ControllerBase {
         return Ok(booking);
     }
 
-    // TODO: Unused `numberOfBooks`
+    // TODO: Paginate
     [HttpGet("room-history/{roomId}/{numberOfBooks}")]
     public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
 
