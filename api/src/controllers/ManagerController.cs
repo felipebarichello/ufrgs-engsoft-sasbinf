@@ -113,7 +113,14 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"membro não existe" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status, RoomId = b.RoomId }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.UserId == memberId).Select(b => new BookingDto {
+            BookingId = b.BookingId,
+            UserId = b.UserId,
+            StartDate = b.StartDate,
+            EndDate = b.EndDate,
+            Status = b.Status,
+            RoomId = b.RoomId
+        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -139,7 +146,14 @@ public class ManagerController : ControllerBase {
             return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
         }
 
-        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto { BookingId = b.BookingId, UserId = b.UserId, StartDate = b.StartDate, EndDate = b.EndDate, Status = b.Status, RoomId = b.RoomId }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).Select(b => new BookingDto {
+            BookingId = b.BookingId,
+            UserId = b.UserId,
+            StartDate = b.StartDate,
+            EndDate = b.EndDate,
+            Status = b.Status,
+            RoomId = b.RoomId
+        }).OrderBy(b => b.StartDate).Reverse().Take(numberOfBooks);
 
         await _dbContext.SaveChangesAsync();
 
@@ -211,7 +225,11 @@ public class ManagerController : ControllerBase {
             members = _dbContext.Members.Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
         }
         else {
-            members = _dbContext.Members.Where(m => m.Username.Contains(search.name)).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).ToList();
+            members = _dbContext.Members.Where(m => m.Username.Contains(search.name)).Select(m => new MemberDto {
+                Username = m.Username,
+                MemberId = m.MemberId,
+                TimedOutUntil = m.TimedOutUntil
+            }).ToList();
         }
 
         return Ok(members);
@@ -220,7 +238,11 @@ public class ManagerController : ControllerBase {
     [HttpGet("member/{memberId}")]
     public async Task<IActionResult> GetMember([FromRoute] long memberId) {
 
-        var member = await _dbContext.Members.Where(m => m.MemberId == memberId).Select(m => new MemberDto { Username = m.Username, MemberId = m.MemberId, TimedOutUntil = m.TimedOutUntil }).FirstOrDefaultAsync();
+        var member = await _dbContext.Members.Where(m => m.MemberId == memberId).Select(m => new MemberDto {
+            Username = m.Username,
+            MemberId = m.MemberId,
+            TimedOutUntil = m.TimedOutUntil
+        }).FirstOrDefaultAsync();
 
         return Ok(member);
     }
@@ -230,10 +252,20 @@ public class ManagerController : ControllerBase {
         var capacity = search.capacity ?? 1;
         List<RoomDto>? rooms;
         if (search.name == null) {
-            rooms = _dbContext.Rooms.Where(r => r.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+            rooms = _dbContext.Rooms.Where(r => r.Capacity >= capacity).Select(m => new RoomDto {
+                Name = m.Name,
+                RoomId = m.RoomId,
+                IsActive = m.IsActive,
+                Capacity = m.Capacity
+            }).ToList();
         }
         else {
-            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name) && m.Capacity >= capacity).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).ToList();
+            rooms = _dbContext.Rooms.Where(m => m.Name.Contains(search.name) && m.Capacity >= capacity).Select(m => new RoomDto {
+                Name = m.Name,
+                RoomId = m.RoomId,
+                IsActive = m.IsActive,
+                Capacity = m.Capacity
+            }).ToList();
         }
 
         return Ok(rooms);
@@ -242,7 +274,12 @@ public class ManagerController : ControllerBase {
     [HttpGet("room/{roomId}")]
     public async Task<IActionResult> GetRoom([FromRoute] long roomId) {
 
-        var room = await _dbContext.Rooms.Where(m => m.RoomId == roomId).Select(m => new RoomDto { Name = m.Name, RoomId = m.RoomId, IsActive = m.IsActive, Capacity = m.Capacity }).FirstOrDefaultAsync();
+        var room = await _dbContext.Rooms.Where(m => m.RoomId == roomId).Select(m => new RoomDto {
+            Name = m.Name,
+            RoomId = m.RoomId,
+            IsActive = m.IsActive,
+            Capacity = m.Capacity
+        }).FirstOrDefaultAsync();
 
         return Ok(room);
     }
