@@ -31,7 +31,7 @@ function MyBookingsPage() {
     return wrapper(<span>Falha ao carregar</span>);
   }
 
-  return wrapper(<MyBookingsList bookingsList={myBookings} />);
+  return wrapper(<MyBookingsList bookingsList={myBookings} refetch={getMyBookings.refetch} />);
 }
 
 export default MyBookingsPage;

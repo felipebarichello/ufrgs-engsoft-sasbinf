@@ -7,6 +7,7 @@ import { BookingStatus, MyBooking } from "../schemas/myBookings";
 
 interface MyBookingsListProps {
 	bookingsList: MyBooking[];
+	refetch: () => void;
 }
 
 const bookingCardStyle: React.CSSProperties = {
@@ -20,7 +21,7 @@ const bookingCardStyle: React.CSSProperties = {
 	gap: "2rem",
 };
 
-export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
+export default function MyBookingsList({ bookingsList, refetch }: MyBookingsListProps) {
 	const [cancelBooking] = usePostCancelBookingMutation();
 	const [transferBooking] = usePostTransferBookingMutation();
 	const [cancelTransfer] = usePostCancelTransferMutation();
@@ -51,24 +52,18 @@ export default function MyBookingsList({ bookingsList }: MyBookingsListProps) {
 
 	function handleCancelBooking(bookingId: number) {
 		cancelBooking({ bookingId }).then((response) => {
-			if (response.data && response.data.success === true) {
-				alert(`Reserva #${bookingId} cancelada com sucesso!`);
-				return;
-			} else {
+			if (!response.data || response.data.success !== true) {
 				alert(`Falha ao cancelar reserva #${bookingId}`);
 				return;
 			}
 		});
+
+		refetch();
 	}
 
 	function handleTransferCancelling(bookingId: number) {
 		cancelTransfer({ bookingId }).then((response) => {
-			if (response.data && response.error === undefined) {
-				alert(
-					`A transferência relativa à reserva #${bookingId} foi cancelada com sucesso`
-				);
-				return;
-			} else {
+			if (!response.data || response.error !== undefined) {
 				alert(
 					`Falha ao cancelar transferência relativa à reserva #${bookingId}`
 				);
