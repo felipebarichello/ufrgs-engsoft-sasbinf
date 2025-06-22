@@ -162,7 +162,7 @@ public class NotificationsController : ControllerBase {
             booking.UserId = userId;
 
             if (await IsUserPunished(userId)) {
-                return Forbid("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
+                return UnprocessableEntity("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
             }
 
             var notification = Notification.Create(

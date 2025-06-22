@@ -38,7 +38,7 @@ public class MemberRoomsController : ControllerBase {
         }
 
         if (member.IsTimedOut()) {
-            return Forbid("Você está em timeout e portanto temporariamente impedido de reservar salas.");
+            return UnprocessableEntity("Você está em timeout e portanto temporariamente impedido de reservar salas.");
         }
 
         var availableRoomIds = await GetAvailableRooms(new AvailableRoomsSearchDTO(request.day.ToString(), request.startTime.ToString(), request.endTime.ToString(), 6));
