@@ -74,9 +74,9 @@ export const sasbinf = createApi({
         body: req,
         headers: new HeaderBuilder().withAuthToken().build(),
       }),
-      transformErrorResponse: () => {
-        alert("Falha ao alugar sala");
-        return { message: "Falha ao alugar sala" };
+      transformErrorResponse: (e) => {
+        alert(e.data || "Falha ao reservar a sala");
+        return { message: e.data || "Falha ao reservar a sala" };
       },
       transformResponse: (e) => {
         console.log(e);
