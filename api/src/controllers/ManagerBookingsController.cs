@@ -2,6 +2,7 @@ using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DTO;
 
 [ApiController]
 [Route("api/manager")]
@@ -57,16 +58,5 @@ public class ManagerBookingsController : ControllerBase {
         await _dbContext.SaveChangesAsync();
 
         return Ok();
-    }
-
-    public record BookingDto {
-        public long BookingId { get; set; }
-        public long UserId { get; set; }
-        public string UserName { get; set; } = default!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string Status { get; set; } = default!;
-        public long RoomId { get; set; }
-        public string RoomName { get; set; } = default!;
     }
 }

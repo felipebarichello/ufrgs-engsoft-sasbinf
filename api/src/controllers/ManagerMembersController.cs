@@ -2,6 +2,7 @@ using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DTO;
 
 [ApiController]
 [Route("api/manager")]
@@ -105,15 +106,5 @@ public class ManagerMembersController : ControllerBase {
 
     public async Task NotifyMembers(Notification notification) {
         await _dbContext.Notifications.AddAsync(notification);
-    }
-
-    public record Search {
-        public string? name { get; set; }
-        public int? capacity { get; set; }
-    }
-    public record MemberDto {
-        public string Username { get; set; } = default!;
-        public long MemberId { get; set; } = default!;
-        public DateTime? TimedOutUntil { get; set; }
     }
 }
