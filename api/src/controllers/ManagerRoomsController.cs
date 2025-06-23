@@ -109,26 +109,6 @@ public class ManagerRoomsController : ControllerBase {
         });
     }
 
-    [HttpPost("bookings/change-status/{bookingId}/{status}")]
-    public async Task<IActionResult> ChangeBookingStatus([FromRoute] long bookingId, [FromRoute] string status) {
-        var validStatuses = new[] { BookingStatus.Booked, BookingStatus.Claimed, BookingStatus.Missed, BookingStatus.Withdrawn, BookingStatus.Cancelled };
-
-        if (!validStatuses.Contains(status)) {
-            string validStatusesString = string.Join(", ", validStatuses); // Create a comma separated string of valid statuses
-            return BadRequest(new { message = $"estado inválido; valores possíveis: {validStatusesString}" });
-        }
-
-        var booking = await _dbContext.Bookings.Where(r => r.BookingId == bookingId).FirstOrDefaultAsync();
-        if (booking == null) {
-            return BadRequest(new { message = $"booking não existe" });
-        }
-
-        booking.Status = status;
-        await _dbContext.SaveChangesAsync();
-
-        return Ok();
-    }
-
     [HttpPost("rooms")]
     public IActionResult GetRooms([FromBody] Search search) {
         var capacity = search.capacity ?? 1;
