@@ -274,7 +274,7 @@ public class MemberNotificationsController : ControllerBase {
             return (NotFound($"Reserva com ID {bookingId} não encontrada."), "");
         }
 
-        return (Ok(), $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?");
+        return (Ok(), $"O usuário '{oldUserName}' deseja transferir a sala {booking.Room.Name} das {booking.StartDate.ToLongTimeString()} às {booking.EndDate.ToLongTimeString()} do dia {booking.StartDate.ToShortDateString()}. Você deseja aceitar?");
     }
 
     internal (IActionResult, string) NewBodyTimedOut(Notification notification) {
