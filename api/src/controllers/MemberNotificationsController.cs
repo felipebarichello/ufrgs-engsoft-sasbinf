@@ -269,7 +269,11 @@ public class MemberNotificationsController : ControllerBase {
             return (NotFound($"Usuário com ID {originalUserId} não encontrado."), "");
         }
 
-        Booking? booking = await _dbContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+        Booking? booking = await _dbContext.Bookings
+            .Include(b => b.Room)
+            .Where(b => b.BookingId == bookingId)
+            .FirstOrDefaultAsync();
+            
         if (booking == null) {
             return (NotFound($"Reserva com ID {bookingId} não encontrada."), "");
         }
