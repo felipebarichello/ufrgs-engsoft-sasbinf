@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Claims;
 using api.src.Models;
 using Microsoft.AspNetCore.Authorization;
