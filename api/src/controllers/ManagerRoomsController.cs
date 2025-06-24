@@ -44,6 +44,21 @@ public class ManagerRoomsController : ControllerBase {
 
     }
 
+    [HttpGet("room-history/{roomId}/{numberOfBooks}")]
+    public async Task<IActionResult> GetRoomHistory([FromRoute] long roomId, [FromRoute] int numberOfBooks) {
+
+        var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null) {
+            return BadRequest(new { message = $"Não é possível consultar o histórico de uma sala inexistente - {roomId}" });
+        }
+        
+        var books = _dbContext.Bookings.Where(b => b.RoomId == roomId).OrderBy(b => b.StartDate).Reverse().Select(b => b.BookingId).Take(numberOfBooks);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(books);
+    }
+
     [HttpDelete("delete-room/{roomId}")]
     public async Task<IActionResult> Delete([FromRoute] long roomId) {
         var room = await _dbContext.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
