@@ -92,7 +92,7 @@ public class MemberNotificationsController : ControllerBase {
     public async Task<IActionResult> ProcessTransfer([FromRoute] string notificationIdString, [FromBody] UpdateTransferStatusDTO statusDTO) {
         string status = statusDTO.status;
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!long.TryParse(userIdString, out var userId)) {
+        if (!long.TryParse(userIdString, out var recipientUserId)) {
             return Unauthorized("ID do usuário não está em formato válido");
         }
 
@@ -136,14 +136,14 @@ public class MemberNotificationsController : ControllerBase {
         }
 
         booking.Status = BookingStatus.Booked;
-        string? oldUsername = await _dbContext.Members.Where(m => m.MemberId == originalUserId).Select(m => m.Username).FirstOrDefaultAsync();
+        string? recipientUsername = await _dbContext.Members.Where(m => m.MemberId == recipientUserId).Select(m => m.Username).FirstOrDefaultAsync();
 
         if (status == "REJECTED") { // TODO: Use a constant for this
             // Notify original user of the rejection
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferRejected,
-                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{oldUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi recusada pelo usuário '{recipientUsername}'" // TODO: Should only have bookingId; the complete text is the client's responsibility
             );
 
             await _dbContext.Notifications.AddAsync(notification);
@@ -159,16 +159,16 @@ public class MemberNotificationsController : ControllerBase {
 
         if (status == "ACCEPTED") { // TODO: Use a constant for this
 
-            booking.UserId = userId;
+            booking.UserId = recipientUserId;
 
-            if (await IsUserPunished(userId)) {
+            if (await IsUserPunished(recipientUserId)) {
                 return UnprocessableEntity("Você está banido temporariamente, e não pode aceitar transferências nem alugar salas enquato estiver banido");
             }
 
             var notification = Notification.Create(
                 memberId: originalUserId,
                 kind: NotificationKind.TransferAccepted,
-                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{oldUsername}'"
+                body: $"Sua transferência da reserva das {booking.StartDate.ToShortTimeString()} às {booking.EndDate.ToShortTimeString()} do dia {booking.StartDate.ToShortDateString()} foi aceita pelo usuário '{recipientUsername}'"
             );
 
             await _dbContext.Notifications.AddAsync(notification);
